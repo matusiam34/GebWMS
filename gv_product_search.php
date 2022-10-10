@@ -1,9 +1,5 @@
 <?php
 
-// checking for minimum PHP version
-if (version_compare(PHP_VERSION, '5.3.7', '<') ) {    
-  exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");  
-}
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
@@ -16,17 +12,13 @@ require_once("lib_db.php");
 require_once("lib_login.php");
 
 
-
-
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process. in consequence, you can simply ...
 $login = new Login();
 
 
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
-
 
 	// load the supporting functions....
 	require_once("lib_functions.php");
@@ -52,37 +44,36 @@ if ($login->isUserLoggedIn() == true)
 <html lang="en">
 <head>
 
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>Product Search</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<!-- Basic Page Needs
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta charset="utf-8">
+	<title>Product Search</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-  <link rel="stylesheet" href="css/bulma.css">
-  <link rel="stylesheet" href="css/custom.css">
+	<!-- Mobile Specific Metas
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
+	<!-- CSS
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
-  <!-- Scripts
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script src="js/jquery.js"></script>
-
-  <!--	Include all custom scripts - tables gen and other related ! -->
-  <script src="js/myFunctions.js"></script>
+	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="css/custom.css">
 
 
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
+	<!-- Scripts
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<script src="js/jquery.js"></script>
+
+	<!--	Include all custom scripts	-->
+	<script src="js/myFunctions.js"></script>
+
+
+	<!-- Favicon
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="icon" type="image/png" href="images/favicon.png">
 
 
 
@@ -109,7 +100,6 @@ if ($login->isUserLoggedIn() == true)
 
 <?php
 
-	// Generate the container for everything!
 
 	// A little gap at the top to make it look better a notch.
 	echo '<div style="height:12px"></div>';
@@ -149,19 +139,19 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Show the page header aka Product Search input field!
-	// This has to show before the tables!
 
-	// The menu!
+
+	// The "menu"!
 	echo '<nav class="level">
 
-	  <!-- Left side -->
-	  <div class="level-left">
+	<!-- Left side -->
+		<div class="level-left">
 
 		<div class="level-item">
 	' . $page_form . '
 		</div>
 
-	  </div>
+		</div>
 
 	</nav>';
 
@@ -170,22 +160,11 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
-
-		// Works with one only! As I am not expecting duplicate entries of products !!!!!
-		// BAD!!
-
-		// 22:43pm 25 Apr 2022: Ability to search via INNER and OUTER barcode.
-
-		// I will split the table in two so it is nice to look at ish!
-
-
-		$product_id		=	0;		// I want to search quicker via primary key instead of querying the prod_code string column
-
+		$product_id	=	0;	// for stock query of the product
 
 		// Figure out is the $product variable is numeric only (barcode) or alphanumeric aka Product!
 		$is_barcode	=	false;
-		
-		
+
 		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
 
 		$sql	=	"
@@ -205,7 +184,7 @@ if ($login->isUserLoggedIn() == true)
 
 		if ($is_barcode)
 		{
-			// Search for a product by barcode :)
+			// Needs fixing
 			$sql	.=	" product_master.product_master_barcode_inner = :innerbar OR product_master.product_master_barcode_outer = :outerbar ";
 			
 		}
@@ -219,7 +198,6 @@ if ($login->isUserLoggedIn() == true)
 		
 		$columns_html	=	"";
 		$details_html	=	"";
-		$stock_html		=	"";
 
 		$backclrA	=	'#d6bfa9';
 		$backclrB	=	'#f7f2ee';
@@ -229,12 +207,11 @@ if ($login->isUserLoggedIn() == true)
 		if ($stmt = $db->prepare($sql))
 		{
 
-
 			if ($is_barcode)
 			{
+				// Needs fixing
 				$stmt->bindValue(':innerbar',	$product_or_barcode,	PDO::PARAM_STR);
 				$stmt->bindValue(':outerbar',	$product_or_barcode,	PDO::PARAM_STR);
-
 			}
 			else
 			{
@@ -457,15 +434,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
-
-
-
-
-
-
-
 	}		// Establishing the database connection - end bracket !
 	catch(PDOException $e)
 	{
@@ -473,22 +441,9 @@ if ($login->isUserLoggedIn() == true)
 	}
 
 
+	echo '</div>';
+echo '</section>';
 
-?>
-
-
-
-
-
-			</div>
-		</section>
-
-
-
-
-
-
-<?php
 
 
 	}
@@ -503,8 +458,7 @@ if ($login->isUserLoggedIn() == true)
 else
 {
 
-    // the user is not logged in. you can do whatever you want here.
-    // for demonstration purposes, we simply show the "you are not logged in" view.
+    // the user is not logged in.
     include("not_logged_in.php");
 
 }
@@ -512,9 +466,6 @@ else
 ?>
 
 
-
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
 

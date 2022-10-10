@@ -1,12 +1,5 @@
 <?php
 
-// Admin page !! ACL needs to be changed !!!
-
-
-// checking for minimum PHP version
-if (version_compare(PHP_VERSION, '5.3.7', '<') ) {    
-  exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");  
-}
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
@@ -24,7 +17,6 @@ require_once("lib_functions.php");
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process. in consequence, you can simply ...
 $login = new Login();
 
 // ... ask if we are logged in here:
@@ -42,35 +34,35 @@ if ($login->isUserLoggedIn() == true)
 <html lang="en">
 <head>
 
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>Admin Dashboard</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<!-- Basic Page Needs
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta charset="utf-8">
+	<title>Admin Dashboard</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-  <link rel="stylesheet" href="css/bulma.css">
-  <link rel="stylesheet" href="css/custom.css">
-
-  <!-- Scripts
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script src="js/jquery.js"></script>
+	<!-- Mobile Specific Metas
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <!--	Include all custom scripts - tables gen and other related ! -->
-  <script src="js/myFunctions.js"></script>
+	<!-- CSS
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
+	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="css/custom.css">
+
+	<!-- Scripts
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<script src="js/jquery.js"></script>
+
+
+	<!--	Include all custom scripts - tables gen and other related ! -->
+	<script src="js/myFunctions.js"></script>
+
+	<!-- Favicon
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="icon" type="image/png" href="images/favicon.png">
 
 
 	<script language="javascript" type="text/javascript">
@@ -109,7 +101,7 @@ if ($login->isUserLoggedIn() == true)
 		echo	'<div class="container box has-background-light">';
 
 
-				$page_form	.=	'<p class="control">';
+				$page_form	=	'<p class="control">';
 				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
 				$page_form	.=	'</p>';
 
@@ -117,14 +109,14 @@ if ($login->isUserLoggedIn() == true)
 				// The menu!
 				echo '<nav class="level">
 
-				  <!-- Left side -->
-				  <div class="level-left">
+					<!-- Left side -->
+					<div class="level-left">
 
 					<div class="level-item">
 				' . $page_form . '
 					</div>
 
-				  </div>
+					</div>
 
 				</nav>';
 
@@ -180,7 +172,6 @@ else
 {
 
     // the user is not logged in. you can do whatever you want here.
-    // for demonstration purposes, we simply show the "you are not logged in" view.
     include("not_logged_in.php");
 
 }
@@ -188,10 +179,5 @@ else
 ?>
 
 
-
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
-
-

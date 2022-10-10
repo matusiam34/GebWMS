@@ -1,6 +1,7 @@
 <?php
 
-	// This script selects which database backend to use for all of the queries that will be run by everything.
+
+	// This selects which database backend to use for all of the queries that will be run by everything.
 
 	$db	=	null;
 
@@ -23,8 +24,6 @@
 	}
 
 */
-
-
 
 
 ?>

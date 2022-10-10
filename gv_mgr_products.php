@@ -1,10 +1,5 @@
 <?php
 
-// checking for minimum PHP version
-if (version_compare(PHP_VERSION, '5.3.7', '<') ) {    
-  exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");  
-}
-
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once("lib_passwd.php");
@@ -17,7 +12,6 @@ require_once("lib_login.php");
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process. in consequence, you can simply ...
 $login = new Login();
 
 
@@ -50,37 +44,37 @@ if ($login->isUserLoggedIn() == true)
 <html lang="en">
 <head>
 
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>Products</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<!-- Basic Page Needs
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta charset="utf-8">
+	<title>Products</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-  <link rel="stylesheet" href="css/bulma.css">
-  <link rel="stylesheet" href="css/custom.css">
+	<!-- Mobile Specific Metas
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
+	<!-- CSS
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
-  <!-- Scripts
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script src="js/jquery.js"></script>
-
-  <!--	Include all custom scripts - tables gen and other related ! -->
-  <script src="js/myFunctions.js"></script>
+	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="css/custom.css">
 
 
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
+
+	<!-- Scripts
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<script src="js/jquery.js"></script>
+
+	<!--	Include all custom scripts	-->
+	<script src="js/myFunctions.js"></script>
+
+
+	<!-- Favicon
+	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="icon" type="image/png" href="images/favicon.png">
 
 
 
@@ -95,17 +89,21 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 		// Add an item to the database
 		function add_item()
 		{
 
-			var item_name_str	=	get_Element_Value_By_ID('id_item_name');
+			$.post('ajax_add_product.php', { 
 
-
-			$.post('ajax_add_warehouse.php', { 
-
-				new_item_name_js	:	item_name_str
+				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
+				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
+				product_category_js		:	get_Element_Value_By_ID('id_product_category'),
+				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
+				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
+				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
+				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
+				pall_qty_js				:	get_Element_Value_By_ID('id_pall_qty'),
+				disabled_js				:	get_Element_Value_By_ID('id_disabled')
 
 			},
 
@@ -119,8 +117,8 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					set_Element_Value_By_ID('id_item_name', '');
-					get_all_items();	// repopulate the table !
+					//set_Element_Value_By_ID('id_item_name', '');
+					//get_all_items();	// repopulate the table !
 				}
 				else
 				{
@@ -161,8 +159,8 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					set_Element_Value_By_ID('id_item_name', '');
-					get_all_items();	// repopulate the table !
+//					set_Element_Value_By_ID('id_item_name', '');
+//					get_all_items();	// repopulate the table !
 				}
 				else
 				{
@@ -193,7 +191,6 @@ if ($login->isUserLoggedIn() == true)
 
 <?php
 
-	// Generate the container for everything!
 	// A little gap at the top to make it look better a notch.
 	echo '<div style="height:12px"></div>';
 
@@ -232,21 +229,22 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Show the page header aka Product Search input field!
-	// This has to show before the tables!
 
-	// The menu!
+
+	// The "menu"!
 	echo '<nav class="level">
 
-	  <!-- Left side -->
-	  <div class="level-left">
+	<!-- Left side -->
+		<div class="level-left">
 
 		<div class="level-item">
 	' . $page_form . '
 		</div>
 
-	  </div>
+		</div>
 
 	</nav>';
+
 
 
 
@@ -356,6 +354,16 @@ if ($login->isUserLoggedIn() == true)
 
 			$columns_html	.=	'<div class="column is-3">';
 
+			// do a little check for the Status selectbox...
+			// Note: ugly but works for now.
+			$status_html	=	'<option value="0"';
+			if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
+			$status_html	.=	'>Active</option>';
+
+			$status_html	.=	'<option value="1"';
+			if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
+			$status_html	.=	'>Disabled</option>';
+
 
 			// General product info
 			$details_html	=	'
@@ -382,7 +390,29 @@ if ($login->isUserLoggedIn() == true)
 	<div class="control">
 		<input id="id_product_category" class="input is-normal" type="text" placeholder="GARDENWARE" value="'. $prod_category. '" name="id_product_category">
 	</div>
-</div>';
+</div>
+
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Status:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_disabled" name="id_disabled">' . $status_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+';
+
+
+
+
 
 
 
@@ -449,16 +479,43 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-/*
 			// Third column.. buttons?
 			$columns_html	.=	'<div class="column is-3">';
+
+
+			// The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...
+
+			// More technical column
+			$details_html	=	'
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">&nbsp;</p>
+	<div class="control">
+		<button class="button manager_class is-fullwidth"  onclick="add_item();">Add</button>
+	</div>
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">&nbsp;</p>
+	<div class="control">
+		<button class="button manager_class is-fullwidth"  onclick="update_item();">Update</button>
+	</div>
+</div>';
+
+
+
+
+
+
 
 			$columns_html	.=	$details_html;	// place the table in the column...
 			$details_html	=	"";				// empty for the next run!
 
 			$columns_html	.=	'</div>';
-*/
+
 
 
 
@@ -491,22 +548,9 @@ if ($login->isUserLoggedIn() == true)
 	}
 
 
+	echo '</div>';
+echo '</section>';
 
-?>
-
-
-
-
-
-			</div>
-		</section>
-
-
-
-
-
-
-<?php
 
 
 	}
@@ -521,8 +565,7 @@ if ($login->isUserLoggedIn() == true)
 else
 {
 
-    // the user is not logged in. you can do whatever you want here.
-    // for demonstration purposes, we simply show the "you are not logged in" view.
+    // the user is not logged in.
     include("not_logged_in.php");
 
 }

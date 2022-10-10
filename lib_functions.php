@@ -9,6 +9,12 @@
 
 // Some GebWMS constants...
 
+
+//	There are only 3 types of locations in GebWMS
+//	10 aka Single: Only one item can be stored in such location
+//	20 aka Multi: Many identical items can be stored in this location. Imagine a box that holds pencils when they are sold as EACHES.
+//	30 aka Multi Mixed: You can throw anything you like into such location. Cases and eaches of different products and it will be happy.
+
 $loc_types_arr	=	array(
 
 	"10"	=>	"Single",
@@ -79,7 +85,7 @@ function core_acl_cookie_check($cookie_value)
 function can_user_access($cookie)
 {
 	$cookie_array	=	array();
-	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed from the $cookie input
+	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[0]);	// Check the first bit -> located at location: 1 !
 }
 

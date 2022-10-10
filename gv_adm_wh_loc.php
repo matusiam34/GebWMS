@@ -1,6 +1,5 @@
 <?php
 
-// Admin page !! ACL needs to be changed !!!
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
@@ -12,24 +11,24 @@ require_once("lib_db.php");
 // load the login class
 require_once("lib_login.php");
 
-// load the supporting functions....
-require_once("lib_functions.php");
-
-
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process. in consequence, you can simply ...
 $login = new Login();
 
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
 
+	// load the supporting functions....
+	require_once("lib_functions.php");
+
 
 	//	Certain access right checks should be executed here...
 	if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
 	{
+
+
 
 
 ?>
@@ -134,7 +133,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Get one location... potentially should be fixed in the future but for now this solution will do.
+		// Get one location... potentially should be fixed in the future but for now this will do.
 		function get_location()
 		{
 
@@ -384,19 +383,20 @@ if ($login->isUserLoggedIn() == true)
 				$page_form	.=	'</p>';
 
 
-				// The menu!
+				// The "menu"!
 				echo '<nav class="level">
 
-				  <!-- Left side -->
-				  <div class="level-left">
+				<!-- Left side -->
+					<div class="level-left">
 
 					<div class="level-item">
 				' . $page_form . '
 					</div>
 
-				  </div>
+					</div>
 
 				</nav>';
+
 
 
 
@@ -424,8 +424,8 @@ if ($login->isUserLoggedIn() == true)
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-								  <select id="id_warehouse" name="id_warehouse" >
-								  </select>
+									<select id="id_warehouse" name="id_warehouse" >
+									</select>
 								</div>
 							  </div>
 							</div>
@@ -433,7 +433,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Location</p>
+							<p class="help">Location:</p>
 							<div class="control">
 								<input id="id_location_name" class="input is-normal" type="text" placeholder="B003A">
 							</div>
@@ -441,7 +441,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Barcode</p>
+							<p class="help">Barcode:</p>
 							<div class="control">
 								<input id="id_barcode" class="input is-normal" type="text" placeholder="7334764234185">
 							</div>
@@ -449,7 +449,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Type</p>
+							<p class="help">Type:</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
@@ -465,7 +465,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Blocked</p>
+							<p class="help">Blocked:</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
@@ -480,28 +480,30 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Note</p>
+							<p class="help">Note:</p>
 							<div class="control">
 								<input id="id_desc" class="input is-normal" type="text" placeholder="do not use">
 							</div>
 						</div>
 
 
-						<div class="field">
+						<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
+
+						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help">&nbsp;</p>
 							<div class="control">
 								<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
 							</div>
 						</div>
 
-
-						<div class="field">
+						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help">&nbsp;</p>
 							<div class="control">
 								<button class="button admin_class is-fullwidth"  onclick="update_item();">Update</button>
 							</div>
 						</div>
 
 
-						<div class="blank_space_16px"></div>
 
 						<input id="id_hidden" class="input is-normal" type="hidden" value="0">
 
@@ -537,7 +539,7 @@ if ($login->isUserLoggedIn() == true)
 else
 {
 
-    // the user is not logged in. you can do whatever you want here.
+    // the user is not logged in.
     include("not_logged_in.php");
 
 }
@@ -546,7 +548,5 @@ else
 
 
 
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>

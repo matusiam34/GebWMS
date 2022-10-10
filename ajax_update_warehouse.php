@@ -10,11 +10,7 @@ require_once("lib_db.php");
 // load the login class
 require_once("lib_login.php");
 
-// load the supporting functions....
-require_once("lib_functions.php");
-
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process.
 $login = new Login();
 
 
@@ -29,8 +25,9 @@ if ($login->isUserLoggedIn() == true) {
 	{
 
 
-
-		include("lib_db_conn.php");
+		// load the supporting functions....
+		require_once("lib_functions.php");
+		require_once("lib_db_conn.php");
 
 
 		// Need to figure out some admin editing access control thing for this.....

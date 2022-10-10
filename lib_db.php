@@ -75,6 +75,7 @@ $application_folder		=	"my";
 
 //define("db_name", "/" . $application_folder . "/wdrive/db/auto.sqlite");
 //define("db_name", "/var/www/html/db/gebwms.db");
+
 define("db_name", "db/gebwms.db");
 
 
