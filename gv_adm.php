@@ -11,8 +11,6 @@ require_once("lib_db.php");
 // load the login class
 require_once("lib_login.php");
 
-// load the supporting functions....
-require_once("lib_functions.php");
 
 
 
@@ -22,6 +20,10 @@ $login = new Login();
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
+
+
+	// load the supporting functions....
+	require_once("lib_functions.php");
 
 
 	//	Certain access right checks should be executed here...

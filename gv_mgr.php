@@ -12,9 +12,6 @@ require_once("lib_db.php");
 // load the login class
 require_once("lib_login.php");
 
-// load the supporting functions....
-require_once("lib_functions.php");
-
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
 $login = new Login();
@@ -22,6 +19,10 @@ $login = new Login();
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
+
+
+	// load the supporting functions....
+	require_once("lib_functions.php");
 
 
 	//	Certain access right checks should be executed here...
@@ -170,7 +171,6 @@ else
 {
 
     // the user is not logged in. you can do whatever you want here.
-    // for demonstration purposes, we simply show the "you are not logged in" view.
     include("not_logged_in.php");
 
 }
@@ -179,9 +179,5 @@ else
 
 
 
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
-
-

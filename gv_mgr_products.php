@@ -138,14 +138,19 @@ if ($login->isUserLoggedIn() == true)
 		function update_item()
 		{
 
-			var item_name_str	=	get_Element_Value_By_ID('id_item_name');
-			var item_id_str		=	get_Element_Value_By_ID('id_hidden');
 
+			$.post('ajax_update_product.php', { 
 
-			$.post('ajax_update_warehouse.php', { 
-
-				item_name_js	:	item_name_str,
-				item_id_js		:	item_id_str
+				product_uid_js			:	get_Element_Value_By_ID('id_hidden'),
+				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
+				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
+				product_category_js		:	get_Element_Value_By_ID('id_product_category'),
+				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
+				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
+				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
+				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
+				pall_qty_js				:	get_Element_Value_By_ID('id_pall_qty'),
+				disabled_js				:	get_Element_Value_By_ID('id_disabled')
 
 			},
 
@@ -503,7 +508,21 @@ if ($login->isUserLoggedIn() == true)
 	<div class="control">
 		<button class="button manager_class is-fullwidth"  onclick="update_item();">Update</button>
 	</div>
-</div>';
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">&nbsp;</p>
+	<div class="control">
+		<input id="id_hidden" class="input is-normal" type="hidden" value="' . $prod_pkey . '">
+	</div>
+</div>
+
+
+
+
+';
 
 
 

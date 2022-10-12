@@ -16,6 +16,7 @@ require_once("lib_login.php");
 // create a login object. when this object is created, it will do all login/logout stuff automatically
 $login = new Login();
 
+
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
@@ -349,10 +350,13 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-			</div>
-		</section>
-
 <?php
+
+
+		echo '</div>';
+	echo '</section>';
+
+
 
 
 	}

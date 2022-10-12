@@ -64,7 +64,7 @@
 						</div>
 
 
-						<!--	Hack spacer...				-->
+						<!--	Hack spacer... good / bad ?			-->
 						<div style="height:24px;"></div>
 
 

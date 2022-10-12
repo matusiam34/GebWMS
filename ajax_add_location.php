@@ -1,15 +1,7 @@
 <?php
 
 
-// Adding locations only for the system admin me thinks!
-
-
 // Now, when looking for duplicates makes sure that they are not in the same WH as the user might wants to have same location in two different WHs!!
-
-// checking for minimum PHP version
-if (version_compare(PHP_VERSION, '5.3.7', '<') ) {    
-  exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");  
-}
 
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
@@ -27,7 +19,6 @@ require_once("lib_functions.php");
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process.
 $login = new Login();
 
 
@@ -65,11 +56,11 @@ if ($login->isUserLoggedIn() == true) {
 
 
 			// Data from the user to process...
-			$warehouse		=	trim($_POST['warehouse_js']);
+			$warehouse		=	leave_numbers_only($_POST['warehouse_js']);
 			$location		=	trim($_POST['location_js']);
 			$barcode		=	trim($_POST['barcode_js']);
 			$type			=	trim($_POST['type_js']);
-			$blocked		=	trim($_POST['blocked_js']);
+			$blocked		=	leave_numbers_only($_POST['blocked_js']);
 			$loc_desc		=	trim($_POST['loc_desc_js']);
 
 
@@ -218,7 +209,7 @@ if ($login->isUserLoggedIn() == true) {
 					// show an error if the query has an error
 					else
 					{
-						print_message(2, 'error' . ": x10002");
+						print_message(2, "Error" . ": x10002");
 					}
 
 				}
@@ -239,9 +230,6 @@ if ($login->isUserLoggedIn() == true) {
 		{
 			print_message(23, 'issue with user permissions');
 		}
-
-
-
 
 
 

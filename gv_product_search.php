@@ -255,6 +255,34 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'</tr>';
 
 
+						// Convert the product status into meaninful text.
+						$prod_status_id		=	leave_numbers_only($row['prod_disabled']);
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Status:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_status_arr[$prod_status_id] . '</td>';
+						$details_html	.=	'</tr>';
+
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Physical Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_phy_qty']) . '</td>';
+						$details_html	.=	'</tr>';
+
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Allocated Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_alloc_qty']) . '</td>';
+						$details_html	.=	'</tr>';
+
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Free Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_free_qty']) . '</td>';
+						$details_html	.=	'</tr>';
+
+
+
 					$details_html	.=	'</table>';
 
 
@@ -295,6 +323,12 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<tr>';
 						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">CASE Qty:</td>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_case_qty']) . '</td>';
+					$details_html	.=	'</tr>';
+
+
+					$details_html	.=	'<tr>';
+						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">PALLET Qty:</td>';
+						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_pall_qty']) . '</td>';
 					$details_html	.=	'</tr>';
 
 
@@ -352,19 +386,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 			WHERE
-			
+
 			stk_disabled = 0
-			
-			AND
-			
-			prod_disabled = 0
 
 			AND
 			
 			loc_disabled = 0
 
 			AND
-			
+
 			prod_pkey = :iprod_pkey
 
 
@@ -441,8 +471,9 @@ if ($login->isUserLoggedIn() == true)
 	}
 
 
-	echo '</div>';
-echo '</section>';
+
+		echo '</div>';
+	echo '</section>';
 
 
 

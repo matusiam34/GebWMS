@@ -24,6 +24,19 @@ $loc_types_arr	=	array(
 );
 
 
+
+
+// two status code so far for products...
+$product_status_arr	=	array(
+
+	"0"	=>	"Active",
+	"1"	=>	"Disabled"
+
+);
+
+
+
+
 // To have same size gaps between input and select 
 $box_size_str	=	"height:64px;";
 

@@ -50,28 +50,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-
-/*
-
-CREATE TABLE "geb_product" (
-	"prod_pkey"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"prod_code"	TEXT,
-	"prod_desc"	TEXT,
-	"prod_category"	TEXT,
-	"prod_each_barcode"	TEXT,
-	"prod_each_weight"	TEXT,
-	"prod_case_barcode"	TEXT,
-	"prod_case_qty"	INTEGER DEFAULT 0,
-	"prod_pall_qty"	INTEGER DEFAULT 0,
-	"prod_phy_qty"	INTEGER DEFAULT 0,
-	"prod_alloc_qty"	INTEGER DEFAULT 0,
-	"prod_free_qty"	INTEGER DEFAULT 0,
-	"prod_disabled"	INTEGER DEFAULT 0
-);
-
-*/
-
-
 			$product_code			= trim($_POST['product_code_js']);
 			$product_description 	= trim($_POST['product_description_js']);
 			$product_category		= trim($_POST['product_category_js']);
@@ -202,7 +180,7 @@ CREATE TABLE "geb_product" (
 					// show an error if the query has an error
 					else
 					{
-						print_message(2, 'error' . ": x10002");
+						print_message(2, "Error" . ": x10002");
 					}
 
 				}
@@ -217,17 +195,11 @@ CREATE TABLE "geb_product" (
 
 
 
-
 		}	// END OF user priv check
 		else
 		{
 			print_message(23, 'issue with user permissions');
 		}
-
-
-
-
-
 
 
 

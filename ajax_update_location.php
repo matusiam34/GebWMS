@@ -3,13 +3,6 @@
 
 // Ugly fix but I am not going to get hung up on things like these... In the future a better solution can be found if needed!
 
-
-// checking for minimum PHP version
-if (version_compare(PHP_VERSION, '5.3.7', '<') ) {    
-  exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");  
-}
-
-
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once("lib_passwd.php");
@@ -20,12 +13,8 @@ require_once("lib_db.php");
 // load the login class
 require_once("lib_login.php");
 
-// load the supporting functions....
-require_once("lib_functions.php");
-
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
-// so this single line handles the entire login process.
 $login = new Login();
 
 
@@ -39,8 +28,9 @@ if ($login->isUserLoggedIn() == true) {
 	{
 
 
-		include("lib_db_conn.php");
-
+		// load the supporting functions....
+		require_once("lib_functions.php");
+		require_once("lib_db_conn.php");
 
 
 		// allow to execute script only if the requirements are met !
@@ -110,7 +100,6 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':uloc_type',		$type,			PDO::PARAM_INT);
 					$stmt->bindValue(':uloc_blocked',	$blocked,		PDO::PARAM_INT);
 					$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
-
 					$stmt->bindValue(':sloc_pkey',		$loc_uid,		PDO::PARAM_INT);
 					$stmt->execute();
 
