@@ -1,6 +1,8 @@
 <?php
 
 
+// Tells you what stock in held in the location of choice.
+
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once("lib_passwd.php");
@@ -31,11 +33,11 @@ if ($login->isUserLoggedIn() == true)
 		// needs a db connection...
 		require_once("lib_db_conn.php");
 
-		$product_or_barcode		=	"";
+		$location_code		=	"";
 		
-		if (isset($_GET["product"]))
+		if (isset($_GET["location"]))
 		{
-			$product_or_barcode		=	trim($_GET["product"]);
+			$location_code		=	trim($_GET["location"]);
 		}
 
 ?>
@@ -47,7 +49,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Product Search</title>
+	<title>Location details</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -111,12 +113,12 @@ if ($login->isUserLoggedIn() == true)
 
 	$page_form	=	'';
 
-	$page_form	.=	'<form action="gv_product_search.php" method="get">';
+	$page_form	.=	'<form action="gv_location_search.php" method="get">';
 
 		$page_form	.=	'<div class="field has-addons">';
 
 			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="Product code" value="' . $product_or_barcode . '">';
+			$page_form	.=		'<input class="input" type="text" id="location" name="location" placeholder="Location code" value="' . $location_code . '">';
 			$page_form	.=	'</p>';
 
 			$page_form	.=	'<p class="control">';
@@ -165,203 +167,13 @@ if ($login->isUserLoggedIn() == true)
 		// Figure out is the $product variable is numeric only (barcode) or alphanumeric aka Product!
 		$is_barcode	=	false;
 
-		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
+		if (is_numeric($location_code))	{	$is_barcode	=	true;	}
 
-		$sql	=	"
-
-			SELECT
-
-			*
-
-			FROM 
-
-			geb_product
-
-			WHERE
-
-		";
-
-
-		if ($is_barcode)
-		{
-			// Search by barcode: Fixed 13 Oct 2022
-			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
-		}
-		else
-		{
-			// Search for a product by name
-			$sql	.=	" prod_code = :iprod_code ";
-			
-		}
-		
-		
 		$columns_html	=	"";
 		$details_html	=	"";
 
 		$backclrA	=	'#d6bfa9';
 		$backclrB	=	'#f7f2ee';
-
-
-
-		if ($stmt = $db->prepare($sql))
-		{
-
-			if ($is_barcode)
-			{
-				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
-			}
-			else
-			{
-				$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
-			}
-
-
-
-			$stmt->execute();
-
-			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-			{
-
-
-				$product_id		=	trim($row['prod_pkey']);	// critical for further queries!
-
-				$columns_html	.=	'<div class="columns">';
-
-
-				// General info "Page" of product
-				$columns_html	.=	'<div class="column is-6">';
-
-
-					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Description:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_desc']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Category:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_category']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						// Convert the product status into meaninful text.
-						$prod_status_id		=	leave_numbers_only($row['prod_disabled']);
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Status:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_status_arr[$prod_status_id] . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Physical Qty:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_phy_qty']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Allocated Qty:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_alloc_qty']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Free Qty:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_free_qty']) . '</td>';
-						$details_html	.=	'</tr>';
-
-
-
-					$details_html	.=	'</table>';
-
-
-
-					$columns_html	.=	$details_html;	// place the table in the column...
-					$details_html	=	"";				// empty for the next run!
-					$columns_html	.=	'</div>';
-
-
-
-
-					// Prepare the technical "Page" of product details
-					$columns_html	.=	'<div class="column is-6">';
-
-
-					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
-
-
-
-					$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">EACH Barcode:</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_each_barcode']) . '</td>';
-					$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">EACH Weight:</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_each_weight']) . '</td>';
-					$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">CASE Barcode:</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_case_barcode']) . '</td>';
-					$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">CASE Qty:</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_case_qty']) . '</td>';
-					$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">PALLET Qty:</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_pall_qty']) . '</td>';
-					$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'</table>';
-
-					$columns_html	.=	$details_html;	// place the table in the column...
-					$details_html	=	"";				// empty for the next run!
-
-
-
-				$columns_html	.=	'</div>';
-
-
-
-			// End of columns div!
-			$columns_html	.=	'</div>';
-
-
-
-			// Show the product technical stuff!
-			echo	$columns_html;
-
-
-
-			}		// First query while row bracket...
-
-
-		}
-		// show an error if the query has an error
-		else
-		{
-			echo "Details Query Failed!";
-		}
-
-
 
 
 		// Get the current stock of product in the warehouse
@@ -375,9 +187,9 @@ if ($login->isUserLoggedIn() == true)
 
 			wh_code,
 			loc_code,
-			loc_barcode,
 			loc_type,
 			stk_unit,
+			prod_code,
 			prod_case_qty,
 			prod_pall_qty,
 			SUM(stk_qty) as all_stk_qty
@@ -401,12 +213,12 @@ if ($login->isUserLoggedIn() == true)
 
 			AND
 
-			prod_pkey = :iprod_pkey
+			loc_barcode = :ilocation_barcode
 
 
-			GROUP BY wh_code, loc_code, loc_barcode, loc_type, stk_unit, prod_case_qty, prod_pall_qty
+			GROUP BY wh_code, loc_code, loc_type, stk_unit, prod_code, prod_case_qty, prod_pall_qty
 
-			ORDER BY wh_code, loc_code
+			ORDER BY prod_code, wh_code, loc_code
 
 		";
 
@@ -414,7 +226,7 @@ if ($login->isUserLoggedIn() == true)
 		if ($stmt = $db->prepare($sql))
 		{
 
-			$stmt->bindValue(':iprod_pkey',	$product_id,	PDO::PARAM_INT);
+			$stmt->bindValue(':ilocation_barcode',		$location_code,		PDO::PARAM_STR);
 			$stmt->execute();
 
 
@@ -426,6 +238,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 			$details_html	.=	'<tr>';
+			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Product</th>';
 			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Warehouse</th>';
 			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Location</th>';
 			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Qty</th>';
@@ -435,7 +248,6 @@ if ($login->isUserLoggedIn() == true)
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
-
 
 				$location_stock_qty		=	trim($row['all_stk_qty']);
 
@@ -463,12 +275,13 @@ if ($login->isUserLoggedIn() == true)
 				}
 
 
-				// Create a clickable link so that the operator can investigate the location in more detail (if required)
-				$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+				$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+
 
 				$details_html	.=	'<tr>';
+				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
-				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . ' (' . $loc_status_code_str . ')</td>';
+				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
 				$details_html	.=	'</tr>';
 
@@ -481,6 +294,7 @@ if ($login->isUserLoggedIn() == true)
 			// Provide a total eaches for this product in the last row
 
 			$details_html	.=	'<tr>';
+			$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">Total EACHES</td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
@@ -507,7 +321,7 @@ if ($login->isUserLoggedIn() == true)
 		// show an error if the query has an error
 		else
 		{
-			echo "Stock Query failed!";
+			echo "Location Query failed!";
 		}
 
 

@@ -45,6 +45,18 @@ $stock_unit_type_arr	=	array(
 
 );
 
+// I would like to control most of the WMS "settings" like unit types from arrays or other constants 
+// that can be set in one location. Maybe an ugly hack but will work for now.
+$stock_unit_type_reverse_arr	=	array(
+
+	"E"	=>	3,	//"EACH",
+	"C"	=>	5,	//"CASE",
+	"P"	=>	7	//"PALLET"
+
+);
+
+
+
 
 
 
