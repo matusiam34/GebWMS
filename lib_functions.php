@@ -13,7 +13,7 @@
 //	There are only 3 types of locations in GebWMS
 //	10 aka Single: Only one item can be stored in such location
 //	20 aka Multi: Many identical items can be stored in this location. Imagine a box that holds pencils when they are sold as EACHES.
-//	30 aka Multi Mixed: You can throw anything you like into such location. Cases and eaches of different products and it will be happy.
+//	30 aka Multi Mixed: You can throw anything you like into such location. Cases, pallets and eaches of different products and it will be happy.
 
 $loc_types_arr	=	array(
 
@@ -22,6 +22,29 @@ $loc_types_arr	=	array(
 	"30"	=>	"Multi Mixed"
 
 );
+
+
+// Holds the short one character code for each location type. Used typically as additional info for the operator in places
+// like the product search page.
+$loc_types_codes_arr	=	array(
+
+	"10"	=>	"S",	//"Single",
+	"20"	=>	"M",	//"Multi",
+	"30"	=>	"X"		//"Multi Mixed"
+
+);
+
+
+
+// Since I can accept EACH, CASE and PALLET I need to figure out how to mark it.
+$stock_unit_type_arr	=	array(
+
+	"3"	=>	"EACH",
+	"5"	=>	"CASE",
+	"7"	=>	"PALLET"
+
+);
+
 
 
 

@@ -451,6 +451,9 @@ if ($login->isUserLoggedIn() == true)
 							  <div class="control">
 								<div class="select is-fullwidth">
 								  <select id="id_item_type" name="id_item_type" >
+
+									<!--	Populate this so that it uses the array from lib_functions			-->
+
 									<option value="10">Single</option>
 									<option value="20">Multi</option>
 									<option value="30">Multi Mixed</option>

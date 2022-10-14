@@ -184,9 +184,8 @@ if ($login->isUserLoggedIn() == true)
 
 		if ($is_barcode)
 		{
-			// Needs fixing
-			$sql	.=	" product_master.product_master_barcode_inner = :innerbar OR product_master.product_master_barcode_outer = :outerbar ";
-			
+			// Search by barcode: Fixed 13 Oct 2022
+			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
 		}
 		else
 		{
@@ -209,13 +208,12 @@ if ($login->isUserLoggedIn() == true)
 
 			if ($is_barcode)
 			{
-				// Needs fixing
-				$stmt->bindValue(':innerbar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':outerbar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
-				$stmt->bindValue(':iprod_code',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
 			}
 
 
@@ -365,7 +363,10 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Get the stock of product!
+
+		// Get the current stock of product in the warehouse
+
+		$total_product_eaches	=	0;		// shown in the last line of the table!
 
 		$sql	=	"
 
@@ -374,7 +375,9 @@ if ($login->isUserLoggedIn() == true)
 
 			wh_code,
 			loc_code,
-			stk_qty
+			loc_type,
+			stk_unit,
+			SUM(stk_qty) as all_stk_qty
 
 			FROM 
 
@@ -397,6 +400,8 @@ if ($login->isUserLoggedIn() == true)
 
 			prod_pkey = :iprod_pkey
 
+
+			GROUP BY wh_code, loc_code, loc_type, stk_unit
 
 			ORDER BY wh_code, loc_code
 
@@ -428,13 +433,43 @@ if ($login->isUserLoggedIn() == true)
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
 
+/*
+	"loc_pkey"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"loc_wh_pkey"	INTEGER DEFAULT 0,
+	"loc_code"	TEXT,
+	"loc_barcode"	TEXT,
+	"loc_type"	INTEGER DEFAULT 0,
+	"loc_blocked"	INTEGER DEFAULT 0,
+	"loc_note"	TEXT,
+	"loc_disabled"	INTEGER DEFAULT 0
+*/
+
+
+
+				$loc_status_code	=	"";		// a small code that explains what the location "does" / "is"
+
+				$loc_status_code	=	$loc_types_codes_arr[trim($row['loc_type'])];
+
 				$details_html	.=	'<tr>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
-				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . '</td>';
-				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['stk_qty']) . '</td>';
+				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . ' (' . $loc_status_code . ')</td>';
+				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['all_stk_qty']) . ' (' . trim($row['stk_unit']) .   ')</td>';
 				$details_html	.=	'</tr>';
 
+				$total_product_eaches	=	$total_product_eaches + trim($row['all_stk_qty']);
+
+
 			}		// First query while row bracket...
+
+
+			// Provide a total eaches for this product in the last row
+
+			$details_html	.=	'<tr>';
+			$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
+			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">Total EACHES</td>';
+			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
+			$details_html	.=	'</tr>';
+
 
 
 

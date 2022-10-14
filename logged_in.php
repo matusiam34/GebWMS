@@ -90,6 +90,21 @@ echo	'<div class="container box has-background-light">';
 
 
 		echo '<div class="column is-3">';
+
+
+			if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+			{
+
+				$bookin_prod2loc_link		=	"location.href='gv_bookin_prod2loc.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $bookin_prod2loc_link . '">Product2Location</a>
+							</div>
+						</div>';
+
+			}
+
 		echo '</div>';
 
 

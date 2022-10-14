@@ -282,9 +282,8 @@ if ($login->isUserLoggedIn() == true)
 
 		if ($is_barcode)
 		{
-			// Need to fix this!
-			$sql	.=	" product_master.product_master_barcode_inner = :innerbar OR product_master.product_master_barcode_outer = :outerbar ";
-			
+			// Search by barcode: Fixed 13 Oct 2022
+			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
 		}
 		else
 		{
@@ -321,9 +320,8 @@ if ($login->isUserLoggedIn() == true)
 
 			if ($is_barcode)
 			{
-				// Need to fix this!
-				$stmt->bindValue(':innerbar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':outerbar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
