@@ -17,9 +17,9 @@
 
 $loc_types_arr	=	array(
 
-	"10"	=>	"Single",
-	"20"	=>	"Multi",
-	"30"	=>	"Multi Mixed"
+	'10'	=>	'Single',
+	'20'	=>	'Multi',
+	'30'	=>	'Multi Mixed'
 
 );
 
@@ -28,44 +28,49 @@ $loc_types_arr	=	array(
 // like the product search page.
 $loc_types_codes_arr	=	array(
 
-	"10"	=>	"S",	//"Single",
-	"20"	=>	"M",	//"Multi",
-	"30"	=>	"X"		//"Multi Mixed"
+	'10'	=>	'S',	//"Single",
+	'20'	=>	'M',	//"Multi",
+	'30'	=>	'X'		//"Multi Mixed"
 
 );
 
+
+$loc_types_codes_reverse_arr	=	array(
+
+	'S'		=>	10,	//"Single",
+	'M'		=>	20,	//"Multi",
+	'X'		=>	30	//"Multi Mixed"
+
+);
 
 
 // Since I can accept EACH, CASE and PALLET I need to figure out how to mark it.
 $stock_unit_type_arr	=	array(
 
-	"3"	=>	"EACH",
-	"5"	=>	"CASE",
-	"7"	=>	"PALLET"
+	'3'	=>	'EACH',
+	'5'	=>	'CASE',
+	'7'	=>	'PALLET'
 
 );
+
 
 // I would like to control most of the WMS "settings" like unit types from arrays or other constants 
 // that can be set in one location. Maybe an ugly hack but will work for now.
 $stock_unit_type_reverse_arr	=	array(
 
-	"E"	=>	3,	//"EACH",
-	"C"	=>	5,	//"CASE",
-	"P"	=>	7	//"PALLET"
+	'E'	=>	3,	//"EACH",
+	'C'	=>	5,	//"CASE",
+	'P'	=>	7	//"PALLET"
 
 );
-
-
-
-
 
 
 
 // two status code so far for products...
 $product_status_arr	=	array(
 
-	"0"	=>	"Active",
-	"1"	=>	"Disabled"
+	'0'	=>	'Active',
+	'1'	=>	'Disabled'
 
 );
 
@@ -73,7 +78,14 @@ $product_status_arr	=	array(
 
 
 // To have same size gaps between input and select 
-$box_size_str	=	"height:64px;";
+$box_size_str	=	'height:64px;';
+
+
+
+// Color code scheme foe tables... Left and right side.
+$backclrA	=	'#d6bfa9';
+$backclrB	=	'#f7f2ee';
+
 
 
 
@@ -86,6 +98,30 @@ function print_message($control, $msg)
 	$result['msg'] = $msg;
 	echo json_encode($result);
 }
+
+
+// define the print message function with a payload in form of HTML or Array with DATA
+
+function print_message_data_payload($control, $msg, $data_arr)
+{
+	$result = array();
+	$result['control'] = $control;
+	$result['msg'] = $msg;
+	$result['data'] = $data_arr;
+	echo json_encode($result);
+}
+
+
+function print_message_html_payload($control, $msg, $html_str)
+{
+	$result = array();
+	$result['control'] = $control;
+	$result['msg'] = $msg;
+	$result['html'] = $html_str;
+	echo json_encode($result);
+}
+
+
 
 
 // Removes everything apart from numbers = Security reasons !
@@ -114,7 +150,7 @@ function convert_dec_to_bin_with_padding($dec_value)
 function convert_dec_to_bin_with_padding($dec_value)
 {
         $x = decbin($dec_value);
-        return str_pad($x, 16, "0", STR_PAD_LEFT);
+        return str_pad($x, 16, '0', STR_PAD_LEFT);
 }
 
 

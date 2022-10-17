@@ -5,7 +5,9 @@
 // Also the location should also be something you can type in and it should work as long as it 
 // has been setup on the system before.
 
-
+// NOTE: VERY important to implement a check that tell the operator that there have been two entries found
+// with the same barcode. If that happens the system CAN'T forward with the booking and it needs to be 
+// reported to a supervisor / manager as it will need to be fixed URGENTLY!
 
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
@@ -38,11 +40,13 @@ if ($login->isUserLoggedIn() == true)
 		// needs a db connection...
 		require_once("lib_db_conn.php");
 
-		$product_or_barcode		=	"";
-		
-		if (isset($_GET["product"]))
+		// Supporting barcode here only to keep things simple.
+		// If there is an issue on the shop floor I am sure it can be solved in a different way.
+		$product_barcode		=	"";
+
+		if (isset($_GET["barcode"]))
 		{
-			$product_or_barcode		=	trim($_GET["product"]);
+			$product_barcode		=	trim($_GET["barcode"]);
 		}
 
 ?>
@@ -93,10 +97,48 @@ if ($login->isUserLoggedIn() == true)
 			// Focus on the barcode input field...
 			//set_Focus_On_Element_By_ID('product');
 
-
-
 		});
 
+
+
+
+
+		// Grab selected location details...
+		function get_location_details()
+		{
+
+			$.post('ajax_validate_location.php', { 
+
+				prod_barcode_js		:	get_Element_Value_By_ID('barcode'),
+				prod_qty_js			:	get_Element_Value_By_ID('product_qty'),
+				loc_barcode_js		:	get_Element_Value_By_ID('location_code'),
+				prod_id_js			:	get_Element_Value_By_ID('hidden_product_id')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					$('#loc_data_table').empty();
+					$('#loc_data_table').append(obje.html);
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert("server problem");
+					});
+
+		}
 
 
 
@@ -132,7 +174,7 @@ if ($login->isUserLoggedIn() == true)
 		$page_form	.=	'<div class="field has-addons">';
 
 			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="Product code / barcode" value="' . $product_or_barcode . '">';
+			$page_form	.=		'<input class="input" type="text" id="barcode" name="barcode" placeholder="Product barcode" value="' . $product_barcode . '">';
 			$page_form	.=	'</p>';
 
 			$page_form	.=	'<p class="control">';
@@ -179,10 +221,6 @@ if ($login->isUserLoggedIn() == true)
 
 		$product_id	=	0;	// for the stock update / insert. Whatever it will be.
 
-		// Figure out is the $product variable is numeric only (barcode) or alphanumeric aka Product!
-		$is_barcode	=	false;
-
-		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
 
 		$sql	=	"
 
@@ -196,45 +234,22 @@ if ($login->isUserLoggedIn() == true)
 
 			WHERE
 
+			prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar
+
 		";
 
 
-		if ($is_barcode)
-		{
-			// Search by barcode: Fixed 13 Oct 2022
-			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
-		}
-		else
-		{
-			// Search for a product by name
-			$sql	.=	" prod_code = :iprod_code ";
-			
-		}
-		
-		
 		$columns_html	=	"";
 		$details_html	=	"";
 
-		$backclrA	=	'#d6bfa9';
-		$backclrB	=	'#f7f2ee';
 
 
 
 		if ($stmt = $db->prepare($sql))
 		{
 
-			if ($is_barcode)
-			{
-				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
-			}
-			else
-			{
-				$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
-			}
-
-
-
+			$stmt->bindValue(':iprod_each_bar',	$product_barcode,	PDO::PARAM_STR);
+			$stmt->bindValue(':iprod_case_bar',	$product_barcode,	PDO::PARAM_STR);
 			$stmt->execute();
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -257,39 +272,42 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
 						$details_html	.=	'</tr>';
 
+/*
+	Probably do not need this much information do I? Create a product enquiry for this if you need tons of data!
 
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Description:</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_desc']) . '</td>';
 						$details_html	.=	'</tr>';
-
+*/
 
 						// Figure out the QTY scanned based on the barcode... Will have to do something with just a product code being typed in!
 						$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
+						$input_disabled	=	"";	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
 
-						if ($is_barcode)
+						if (strcmp(trim($row['prod_each_barcode']), $product_barcode) === 0)
 						{
-							if (strcmp(trim($row['prod_each_barcode']), $product_or_barcode) === 0)
-							{
-								// No need for this is there? Assume each one more time?
-							}
-
-							if (strcmp(trim($row['prod_case_barcode']), $product_or_barcode) === 0)
-							{
-								// A case has been scanned so assign the proper Qty.
-								$scanned_qty	=	trim($row['prod_case_qty']);
-							}
-
+							// No need for this is there? Assume EACH one more time?
 						}
-						else
+
+						if (strcmp(trim($row['prod_case_barcode']), $product_barcode) === 0)
 						{
-							// Assume it is a product typed in and do nothing? Each is assumed after all.
+							// CASE has been scanned so assign the proper Qty.
+							$scanned_qty	=	trim($row['prod_case_qty']);
+							$input_disabled	=	' readonly ';
 						}
+
 
 
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $scanned_qty . '</td>';
+
+							$qty_input_field	=	'<input class="input" type="text" id="product_qty" name="product_qty" placeholder="Product barcode" value="' . $scanned_qty .'" ' . $input_disabled . '>';
+
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $qty_input_field . '</td>';
+
+
+//							$details_html	.=	'<td style="background-color: ' . $backclrB . ';" id="product_qty" name="product_qty" >' . $scanned_qty . '</td>';
 						$details_html	.=	'</tr>';
 
 					$details_html	.=	'</table>';
@@ -305,12 +323,19 @@ if ($login->isUserLoggedIn() == true)
 											</div>
 										</div>
 
-
 										<div class="field" style="' . $box_size_str . '">
-											<div class="control">
-												<input id="hidden_product_code" class="input is-normal" type="text" value="' . $product_id . '">
+											<div class="control" id="loc_data_table">
 											</div>
 										</div>
+
+
+										<div class="field">
+											<div class="control">
+												<input id="hidden_product_id" class="input is-normal" type="hidden" value="' . $product_id . '">
+											</div>
+										</div>
+
+
 
 
 										<script>
@@ -321,13 +346,16 @@ if ($login->isUserLoggedIn() == true)
 												var key = e.which;
 												if(key == 13)  // the enter key code
 												{
-													alert("test");
+
+													get_location_details();
+													//alert(get_Element_Value_By_ID("product_qty"));
+													//alert("test");
 												}
 											});
 
 											// Focus on the location input field...
 											// Need to rethink this totally!
-											set_Focus_On_Element_By_ID("location_code");
+											//set_Focus_On_Element_By_ID("location_code");
 
 										</script>
 										';
@@ -341,10 +369,8 @@ if ($login->isUserLoggedIn() == true)
 					$columns_html	.=	'</div>';		// close the first column...
 
 
-
 				// End of columns div!
 				$columns_html	.=	'</div>';
-
 
 				// Show what has been found
 				echo	$columns_html;

@@ -1,7 +1,11 @@
 <?php
 
+// TO DO: check if certain mandatory inputs are provided!
+
 
 // Ugly fix but I am not going to get hung up on things like these... In the future a better solution can be found if needed!
+
+
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
