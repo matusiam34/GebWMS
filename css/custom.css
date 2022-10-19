@@ -18,14 +18,29 @@
  */
 
 
+/*	red		*/
 .admin_class {
 	background-color: #ef5350; /*#f44336;*/
 	color: white;
 }
 
 
+/*	blue	*/
 .manager_class {
 	background-color: #42A5F5; /*#2196F3;*/
+	color: white;
+}
+
+
+/*	green:	confirm buttons etc	*/
+.green_class {
+	background-color: #66BB6A;
+	color: white;
+}
+
+/*	red: same as admin_class; abort and cancel buttons etc	*/
+.red_class {
+	background-color: #ef5350;
 	color: white;
 }
 
@@ -33,6 +48,15 @@
 
 
 
+
+
+/*
+
+
+	Stuff from previous project. Need to see what I need or could use for GebWMS
+
+
+*/
 
 
 .welcome_image {
@@ -57,12 +81,6 @@
 	color: white;
 }
 
-
-/*				*/
-.green_class {
-	background-color: #66BB6A; /*#4CAF50;*/
-	color: white;
-}
 
 
 

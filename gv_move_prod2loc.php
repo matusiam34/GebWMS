@@ -103,16 +103,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Grab selected location details...
-		function get_location_details()
+		//	Grab selected location details... and also update the location (depending on option)
+		//	validorwrite: 
+		//	0	:	check if the product will fit into the location,
+		//	1	:	same as 0 + it will place the product into the location
+		function get_location_details(validorwrite)
 		{
 
-			$.post('ajax_validate_location.php', { 
+			$.post('ajax_prod2loc_validorwrite.php', { 
 
 				prod_barcode_js		:	get_Element_Value_By_ID('barcode'),
 				prod_qty_js			:	get_Element_Value_By_ID('product_qty'),
 				loc_barcode_js		:	get_Element_Value_By_ID('location_code'),
-				prod_id_js			:	get_Element_Value_By_ID('hidden_product_id')
+				prod_id_js			:	get_Element_Value_By_ID('hidden_product_id'),
+				validorwrite_js		:	validorwrite
 
 			},
 
@@ -125,8 +129,20 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					$('#loc_data_table').empty();
-					$('#loc_data_table').append(obje.html);
+
+					if (validorwrite == 0)
+					{
+						$('#loc_data_table').empty();
+						$('#loc_data_table').append(obje.html);
+					}
+
+					if (validorwrite == 1)
+					{
+						// If things go well... Why bother?
+						//alert(obje.msg);
+						// Need to visit the page again to start another prod2loc activity!
+					}
+
 				}
 				else
 				{
@@ -273,7 +289,7 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'</tr>';
 
 /*
-	Probably do not need this much information do I? Create a product enquiry for this if you need tons of data!
+	//	Probably do not need this much information do I? Create a product enquiry for this if you need tons of data!
 
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Description:</td>';
@@ -300,7 +316,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold; vertical-align: middle;">Qty:</td>';
 
 							$qty_input_field	=	'<input class="input" type="text" id="product_qty" name="product_qty" placeholder="Product barcode" value="' . $scanned_qty .'" ' . $input_disabled . '>';
 
@@ -317,13 +333,13 @@ if ($login->isUserLoggedIn() == true)
 					// Note: what if there are identical location names in different warehouses?!
 
 
-					$details_html	.=	'<div class="field" style="' . $box_size_str . '">
+					$details_html	.=	'<div class="field" style="">
 											<div class="control">
 												<input id="location_code" class="input is-normal" type="text" placeholder="location code">
 											</div>
 										</div>
 
-										<div class="field" style="' . $box_size_str . '">
+										<div class="field" style="">
 											<div class="control" id="loc_data_table">
 											</div>
 										</div>
@@ -347,7 +363,7 @@ if ($login->isUserLoggedIn() == true)
 												if(key == 13)  // the enter key code
 												{
 
-													get_location_details();
+													get_location_details(0);
 													//alert(get_Element_Value_By_ID("product_qty"));
 													//alert("test");
 												}
@@ -406,7 +422,7 @@ if ($login->isUserLoggedIn() == true)
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -415,7 +431,7 @@ else
 {
 
     // the user is not logged in.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 

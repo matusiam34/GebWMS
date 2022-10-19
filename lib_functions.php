@@ -19,7 +19,7 @@ $loc_types_arr	=	array(
 
 	'10'	=>	'Single',
 	'20'	=>	'Multi',
-	'30'	=>	'Multi Mixed'
+	'30'	=>	'Mixed'
 
 );
 
