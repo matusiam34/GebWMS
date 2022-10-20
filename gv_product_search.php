@@ -3,13 +3,13 @@
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
-require_once("lib_passwd.php");
+require_once('lib_passwd.php');
 
 // include the configs / constants for the database connection
-require_once("lib_db.php");
+require_once('lib_db.php');
 
 // load the login class
-require_once("lib_login.php");
+require_once('lib_login.php');
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
@@ -21,7 +21,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once("lib_functions.php");
+	require_once('lib_functions.php');
 
 
 	// Certain access rights checks should be executed here...
@@ -29,13 +29,13 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 		// needs a db connection...
-		require_once("lib_db_conn.php");
+		require_once('lib_db_conn.php');
 
-		$product_or_barcode		=	"";
+		$product_or_barcode		=	'';
 		
-		if (isset($_GET["product"]))
+		if (isset($_GET['product']))
 		{
-			$product_or_barcode		=	trim($_GET["product"]);
+			$product_or_barcode		=	trim($_GET['product']);
 		}
 
 ?>
@@ -167,7 +167,7 @@ if ($login->isUserLoggedIn() == true)
 
 		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
 
-		$sql	=	"
+		$sql	=	'
 
 			SELECT
 
@@ -179,27 +179,24 @@ if ($login->isUserLoggedIn() == true)
 
 			WHERE
 
-		";
+		';
 
 
 		if ($is_barcode)
 		{
 			// Search by barcode: Fixed 13 Oct 2022
-			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
+			$sql	.=	' prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar ';
 		}
 		else
 		{
 			// Search for a product by name
-			$sql	.=	" prod_code = :iprod_code ";
+			$sql	.=	' prod_code = :iprod_code ';
 			
 		}
 		
 		
-		$columns_html	=	"";
-		$details_html	=	"";
-
-		$backclrA	=	'#d6bfa9';
-		$backclrB	=	'#f7f2ee';
+		$columns_html	=	'';
+		$details_html	=	'';
 
 
 
@@ -358,7 +355,7 @@ if ($login->isUserLoggedIn() == true)
 		// show an error if the query has an error
 		else
 		{
-			echo "Details Query Failed!";
+			echo 'Details Query Failed!';
 		}
 
 
@@ -368,7 +365,7 @@ if ($login->isUserLoggedIn() == true)
 
 		$total_product_eaches	=	0;		// shown in the last line of the table!
 
-		$sql	=	"
+		$sql	=	'
 
 
 			SELECT
@@ -401,6 +398,10 @@ if ($login->isUserLoggedIn() == true)
 
 			AND
 
+			prod_disabled = 0
+
+			AND
+
 			prod_pkey = :iprod_pkey
 
 
@@ -408,7 +409,7 @@ if ($login->isUserLoggedIn() == true)
 
 			ORDER BY wh_code, loc_code
 
-		";
+		';
 
 
 		if ($stmt = $db->prepare($sql))
@@ -441,7 +442,7 @@ if ($login->isUserLoggedIn() == true)
 
 				// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
 				$loc_type				=	trim($row['loc_type']);
-				$loc_status_code_str	=	"";		// a small code that explains what the location "does" / "is"
+				$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
 				$loc_status_code_str	=	$loc_types_codes_arr[$loc_type];
 
 
@@ -451,15 +452,15 @@ if ($login->isUserLoggedIn() == true)
 
 				if ($stock_unit == $stock_unit_type_reverse_arr['C'])
 				{
-					$location_stock_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
-					
-					if (is_float($location_stock_qty))
+					$location_case_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
+
+					if (is_float($location_case_qty))
 					{
 						// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
 						// entry like 4.6666666666666666666667 or something to that tune.
-						$location_stock_qty		=	number_format($location_stock_qty, 2);
+						$location_case_qty		=	number_format($location_case_qty, 2);
 					}
-					$stock_unit_str			=	'C';
+					$stock_unit_str			=	$location_case_qty . ' C';
 				}
 
 
@@ -470,6 +471,8 @@ if ($login->isUserLoggedIn() == true)
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . ' (' . $loc_status_code_str . ')</td>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
+
+
 				$details_html	.=	'</tr>';
 
 				$total_product_eaches	=	$total_product_eaches + trim($row['all_stk_qty']);
@@ -507,7 +510,7 @@ if ($login->isUserLoggedIn() == true)
 		// show an error if the query has an error
 		else
 		{
-			echo "Stock Query failed!";
+			echo 'Stock Query failed!';
 		}
 
 
@@ -532,7 +535,7 @@ if ($login->isUserLoggedIn() == true)
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -541,7 +544,7 @@ else
 {
 
     // the user is not logged in.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 

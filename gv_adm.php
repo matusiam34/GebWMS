@@ -3,13 +3,13 @@
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
-require_once("lib_passwd.php");
+require_once('lib_passwd.php');
 
 // include the configs / constants for the database connection
-require_once("lib_db.php");
+require_once('lib_db.php');
 
 // load the login class
-require_once("lib_login.php");
+require_once('lib_login.php');
 
 
 
@@ -23,7 +23,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// load the supporting functions....
-	require_once("lib_functions.php");
+	require_once('lib_functions.php');
 
 
 	//	Certain access right checks should be executed here...
@@ -165,7 +165,7 @@ if ($login->isUserLoggedIn() == true)
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -174,7 +174,7 @@ else
 {
 
     // the user is not logged in. you can do whatever you want here.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 

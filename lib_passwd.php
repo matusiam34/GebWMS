@@ -24,15 +24,15 @@ if (!defined('PASSWORD_DEFAULT'))
 	 */
 	function password_hash($password, $algo, array $options = array()) {
 		if (!function_exists('crypt')) {
-			trigger_error("Crypt must be loaded for password_hash to function", E_USER_WARNING);
+			trigger_error('Crypt must be loaded for password_hash to function', E_USER_WARNING);
 			return null;
 		}
 		if (!is_string($password)) {
-			trigger_error("password_hash(): Password must be a string", E_USER_WARNING);
+			trigger_error('password_hash(): Password must be a string', E_USER_WARNING);
 			return null;
 		}
 		if (!is_int($algo)) {
-			trigger_error("password_hash() expects parameter 2 to be long, " . gettype($algo) . " given", E_USER_WARNING);
+			trigger_error('password_hash() expects parameter 2 to be long, ' . gettype($algo) . ' given', E_USER_WARNING);
 			return null;
 		}
 		switch ($algo) {
@@ -42,7 +42,7 @@ if (!defined('PASSWORD_DEFAULT'))
 				if (isset($options['cost'])) {
 					$cost = $options['cost'];
 					if ($cost < 4 || $cost > 31) {
-						trigger_error(sprintf("password_hash(): Invalid bcrypt cost parameter specified: %d", $cost), E_USER_WARNING);
+						trigger_error(sprintf('password_hash(): Invalid bcrypt cost parameter specified: %d', $cost), E_USER_WARNING);
 						return null;
 					}
 				}
@@ -50,10 +50,10 @@ if (!defined('PASSWORD_DEFAULT'))
 				$raw_salt_len = 16;
 				// The length required in the final serialization
 				$required_salt_len = 22;
-				$hash_format = sprintf("$2y$%02d$", $cost);
+				$hash_format = sprintf('$2y$%02d$', $cost);
 				break;
 			default:
-				trigger_error(sprintf("password_hash(): Unknown password hashing algorithm: %s", $algo), E_USER_WARNING);
+				trigger_error(sprintf('password_hash(): Unknown password hashing algorithm: %s', $algo), E_USER_WARNING);
 				return null;
 		}
 		if (isset($options['salt'])) {
@@ -77,7 +77,7 @@ if (!defined('PASSWORD_DEFAULT'))
 					return null;
 			}
 			if (strlen($salt) < $required_salt_len) {
-				trigger_error(sprintf("password_hash(): Provided salt is too short: %d expecting %d", strlen($salt), $required_salt_len), E_USER_WARNING);
+				trigger_error(sprintf('password_hash(): Provided salt is too short: %d expecting %d', strlen($salt), $required_salt_len), E_USER_WARNING);
 				return null;
 			} elseif (0 == preg_match('#^[a-zA-Z0-9./]+$#D', $salt)) {
 				$salt = str_replace('+', '.', base64_encode($salt));
@@ -159,7 +159,7 @@ if (!defined('PASSWORD_DEFAULT'))
 		if (substr($hash, 0, 4) == '$2y$' && strlen($hash) == 60) {
 			$return['algo'] = PASSWORD_BCRYPT;
 			$return['algoName'] = 'bcrypt';
-			list($cost) = sscanf($hash, "$2y$%d$");
+			list($cost) = sscanf($hash, '$2y$%d$');
 			$return['options']['cost'] = $cost;
 		}
 		return $return;
@@ -202,7 +202,7 @@ if (!defined('PASSWORD_DEFAULT'))
 	 */
 	function password_verify($password, $hash) {
 		if (!function_exists('crypt')) {
-			trigger_error("Crypt must be loaded for password_verify to function", E_USER_WARNING);
+			trigger_error('Crypt must be loaded for password_verify to function', E_USER_WARNING);
 			return false;
 		}
 		$ret = crypt($password, $hash);

@@ -3,13 +3,13 @@
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
-require_once("lib_passwd.php");
+require_once('lib_passwd.php');
 
 // include the configs / constants for the database connection
-require_once("lib_db.php");
+require_once('lib_db.php');
 
 // load the login class
-require_once("lib_login.php");
+require_once('lib_login.php');
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
 $login = new Login();
@@ -26,8 +26,8 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		// load the supporting functions....
-		require_once("lib_functions.php");
-		require_once("lib_db_conn.php");
+		require_once('lib_functions.php');
+		require_once('lib_db_conn.php');
 
 
 
@@ -51,7 +51,7 @@ if ($login->isUserLoggedIn() == true) {
 		{
 
 
-				if ($stmt = $db->prepare("
+				if ($stmt = $db->prepare('
 
 				SELECT
 
@@ -66,7 +66,7 @@ if ($login->isUserLoggedIn() == true) {
 
 				ORDER BY wh_code ASC
 
-				"))
+				'))
 				{
 
 

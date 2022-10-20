@@ -14,6 +14,8 @@
 	104:	INSERT of the stock into location failed BAD!
 	105:	stock UPDATE of the location failed BAD!
 
+	108:	Location blocked (or just not found?)
+
 */
 
 
@@ -177,8 +179,6 @@ if ($login->isUserLoggedIn() == true)
 						geb_location.loc_blocked,
 						geb_location.loc_note,
 
-
-
 						geb_stock.stk_loc_pkey,
 						geb_stock.stk_pkey,
 						geb_stock.stk_prod_pkey,
@@ -188,7 +188,9 @@ if ($login->isUserLoggedIn() == true)
 
 						FROM geb_location
 
+
 						LEFT JOIN geb_stock ON geb_location.loc_pkey = geb_stock.stk_loc_pkey AND geb_location.loc_disabled = geb_stock.stk_disabled
+
 
 						WHERE
 
@@ -229,6 +231,11 @@ if ($login->isUserLoggedIn() == true)
 						$loc_blocked	=	1;	// by default it is blocked!
 						$loc_type		=	$loc_types_codes_reverse_arr['S'];	// single by default!
 
+
+// Ugly hack for now.
+// count($loc_data_arr) == 0 means nothing was returned from the query = no location at ALL!
+if (count($loc_data_arr) > 0)
+{
 
 						// Get the location data from the array. Keep in mind that this is a LEFT JOIN so even if there is
 						// no product in the specified location you will still get the location config.
@@ -326,7 +333,8 @@ if ($login->isUserLoggedIn() == true)
 						}
 						else
 						{
-							$error_msg	=	'Location blocked';		// can probably do this a different way. Good enough for now
+							$error_msg	=	'Location blocked';		// can probably do this a different way. Good enough for now!
+							$message_id		=	100108;
 						}
 
 
@@ -360,12 +368,14 @@ if ($login->isUserLoggedIn() == true)
 								{
 									// Seems like an entry exists. This means an UPDATE will be served
 									$found_row	=	true;
-									$row_uid	=	$item['stk_pkey'];
+									$row_uid	=	leave_numbers_only($item['stk_pkey']);
 								}
 							}
 
 							if ($found_row)
 							{
+
+
 								// Perform the UPDATE
 								if ($stmt = $db->prepare('
 
@@ -389,25 +399,62 @@ if ($login->isUserLoggedIn() == true)
 
 									$stmt->bindValue(':istk_qty',	$prod_qty,		PDO::PARAM_INT);
 									$stmt->bindValue(':istk_pkey',	$row_uid,		PDO::PARAM_INT);
-
-
-				//					$stmt->bindValue(':istock_history_user_id',			$user_id,				PDO::PARAM_INT);
-				//					$stmt->bindValue(':istock_history_date_of_action',	date('Y-m-d H:i:s'),	PDO::PARAM_STR);
 									$stmt->execute();
 
-									// make sure to commit all of the changes to the DATABASE !
-									// Run this after everything has been applied!
-									$db->commit();
 
-									$message2op	=	'';	// When everything runs smooth there is no need for an error msg!
-									$message_id	=	0;	// Seems like everything went well!
+									//
+									//	All of this below could be potentially fixed with a function that can be just
+									//	called on request. Something to think about in the future.
+									//
+									//	If you are here means that everything has been doing well and now it is time to
+									//	adjust the prod_phy_qty field in geb_product table
+									//
+
+									// Perform the Physical Qty field UPDATE in geb_product table
+									if ($stmt = $db->prepare('
+
+									UPDATE
+
+									geb_product
+
+									SET
+
+									prod_phy_qty		=	prod_phy_qty + :iphy_qty
+
+									WHERE
+
+									prod_pkey	 =	:iprod_id
+
+
+									'))
+
+									{
+
+										$stmt->bindValue(':iphy_qty',	$prod_qty,		PDO::PARAM_INT);
+										$stmt->bindValue(':iprod_id',	$prod_id,		PDO::PARAM_INT);
+										$stmt->execute();
+
+										// make sure to commit all of the changes to the DATABASE !
+										// Run this after everything has been applied!
+										$db->commit();
+
+										$message2op	=	'';	// When everything runs smooth there is no need for an error msg!
+										$message_id	=	0;	// Seems like everything went well!
+
+									}
+									else
+									{
+										// it went south...
+										$message2op		=	'Product Physical Qty UPDATE Failed';
+										$message_id		=	100106;
+									}
 
 
 								}
 								else
 								{
 									// it went south...
-									$message2op		=	'UPDATE Failed';
+									$message2op		=	'Stock UPDATE Failed';
 									$message_id		=	100105;
 								}
 
@@ -453,25 +500,62 @@ if ($login->isUserLoggedIn() == true)
 									$stmt->bindValue(':istk_prod_pkey',		$prod_id,				PDO::PARAM_INT);
 									$stmt->bindValue(':istk_unit',			$prod_stock_unit,		PDO::PARAM_INT);
 									$stmt->bindValue(':istk_qty',			$prod_qty,				PDO::PARAM_INT);
-
-
-				//					$stmt->bindValue(':istock_history_user_id',			$user_id,				PDO::PARAM_INT);
-				//					$stmt->bindValue(':istock_history_date_of_action',	date('Y-m-d H:i:s'),	PDO::PARAM_STR);
 									$stmt->execute();
 
-									// make sure to commit all of the changes to the DATABASE !
-									// Run this after everything has been applied!
-									$db->commit();
 
-									$message2op	=	'';	// When everything runs smooth there is no need for an error msg!
-									$message_id	=	0;	// Seems like everything went well!
+									//
+									//	All of this below could be potentially fixed with a function that can be just
+									//	called on request. Something to think about in the future.
+									//
+									//	If you are here means that everything has been doing well and now it is time to
+									//	adjust the prod_phy_qty field in geb_product table
+									//
+
+									// Perform the Physical Qty field UPDATE in geb_product table
+									if ($stmt = $db->prepare('
+
+									UPDATE
+
+									geb_product
+
+									SET
+
+									prod_phy_qty		=	prod_phy_qty + :iphy_qty
+
+									WHERE
+
+									prod_pkey	 =	:iprod_id
+
+
+									'))
+
+									{
+
+										$stmt->bindValue(':iphy_qty',	$prod_qty,		PDO::PARAM_INT);
+										$stmt->bindValue(':iprod_id',	$prod_id,		PDO::PARAM_INT);
+										$stmt->execute();
+
+										// make sure to commit all of the changes to the DATABASE !
+										// Run this after everything has been applied!
+										$db->commit();
+
+										$message2op	=	'';	// When everything runs smooth there is no need for an error msg!
+										$message_id	=	0;	// Seems like everything went well!
+
+									}
+									else
+									{
+										// it went south...
+										$message2op		=	'Product Physical Qty UPDATE Failed';
+										$message_id		=	100107;
+									}
 
 
 								}
 								else
 								{
 									// it went south...
-									$message2op		=	'INSERT Failed';
+									$message2op		=	'Stock INSERT Failed';
 									$message_id		=	100104;
 								}
 
@@ -540,13 +624,20 @@ if ($login->isUserLoggedIn() == true)
 						}
 
 
+
+					}	// no location found...
+					else
+					{
+						$message2op		=	'Location does not exist';
+						$message_id		=	100109;
 					}
 
 
+					}
 					// show an error if the query has an error
 					else
 					{
-						$message2op		=	'Could not get data';
+						$message2op		=	'Could not get location data';
 						$message_id		=	100101;
 					}
 

@@ -99,7 +99,7 @@ echo	'<div class="container box has-background-light">';
 					<div class="field has-addons" >
 
 						<p class="control is-expanded">
-							<input class="input" type="text" id="location" name="location" placeholder="Location code">
+							<input class="input" type="text" id="location" name="location" placeholder="Location barcode">
 						</p>
 
 						<p class="control">

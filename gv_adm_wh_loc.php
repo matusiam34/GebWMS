@@ -1,15 +1,18 @@
 <?php
 
 
+//	TODO:	The location type should be populated from the variable from the lib_functions.php
+
+
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
-require_once("lib_passwd.php");
+require_once('lib_passwd.php');
 
 // include the configs / constants for the database connection
-require_once("lib_db.php");
+require_once('lib_db.php');
 
 // load the login class
-require_once("lib_login.php");
+require_once('lib_login.php');
 
 
 
@@ -21,7 +24,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once("lib_functions.php");
+	require_once('lib_functions.php');
 
 
 	//	Certain access right checks should be executed here...
@@ -123,7 +126,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -165,7 +168,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -209,7 +212,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -250,7 +253,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -312,7 +315,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -353,7 +356,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad="get_all_locations(); get_all_warehouses();">
+<body onLoad='get_all_locations(); get_all_warehouses();'>
 
 
 
@@ -456,7 +459,7 @@ if ($login->isUserLoggedIn() == true)
 
 									<option value="10">Single</option>
 									<option value="20">Multi</option>
-									<option value="30">Multi Mixed</option>
+									<option value="30">Mixed</option>
 								  </select>
 								</div>
 							  </div>
@@ -529,7 +532,7 @@ if ($login->isUserLoggedIn() == true)
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -538,7 +541,7 @@ else
 {
 
     // the user is not logged in.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 

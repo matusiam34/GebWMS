@@ -7,6 +7,7 @@
  */
 
 
+
 // Some GebWMS constants...
 
 
@@ -37,9 +38,9 @@ $loc_types_codes_arr	=	array(
 
 $loc_types_codes_reverse_arr	=	array(
 
-	'S'		=>	10,	//"Single",
-	'M'		=>	20,	//"Multi",
-	'X'		=>	30	//"Multi Mixed"
+	'S'		=>	10,		//"Single",
+	'M'		=>	20,		//"Multi",
+	'X'		=>	30		//"Multi Mixed"
 
 );
 
@@ -172,4 +173,5 @@ function can_user_access($cookie)
 	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[0]);	// Check the first bit -> located at location: 1 !
 }
+
 

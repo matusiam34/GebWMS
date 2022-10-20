@@ -12,13 +12,13 @@
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
-require_once("lib_passwd.php");
+require_once('lib_passwd.php');
 
 // include the configs / constants for the database connection
-require_once("lib_db.php");
+require_once('lib_db.php');
 
 // load the login class
-require_once("lib_login.php");
+require_once('lib_login.php');
 
 
 // create a login object. when this object is created, it will do all login/logout stuff automatically
@@ -30,7 +30,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once("lib_functions.php");
+	require_once('lib_functions.php');
 
 
 	// Certain access rights checks should be executed here...
@@ -38,15 +38,15 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 		// needs a db connection...
-		require_once("lib_db_conn.php");
+		require_once('lib_db_conn.php');
 
 		// Supporting barcode here only to keep things simple.
 		// If there is an issue on the shop floor I am sure it can be solved in a different way.
-		$product_barcode		=	"";
+		$product_barcode		=	'';
 
-		if (isset($_GET["barcode"]))
+		if (isset($_GET['barcode']))
 		{
-			$product_barcode		=	trim($_GET["barcode"]);
+			$product_barcode		=	trim($_GET['barcode']);
 		}
 
 ?>
@@ -141,6 +141,9 @@ if ($login->isUserLoggedIn() == true)
 						// If things go well... Why bother?
 						//alert(obje.msg);
 						// Need to visit the page again to start another prod2loc activity!
+
+						// Reload the page for the next product move...
+						window.location.href = 'gv_move_prod2loc.php';
 					}
 
 				}
@@ -151,7 +154,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -238,7 +241,7 @@ if ($login->isUserLoggedIn() == true)
 		$product_id	=	0;	// for the stock update / insert. Whatever it will be.
 
 
-		$sql	=	"
+		$sql	=	'
 
 			SELECT
 
@@ -252,11 +255,11 @@ if ($login->isUserLoggedIn() == true)
 
 			prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar
 
-		";
+		';
 
 
-		$columns_html	=	"";
-		$details_html	=	"";
+		$columns_html	=	'';
+		$details_html	=	'';
 
 
 
@@ -299,7 +302,7 @@ if ($login->isUserLoggedIn() == true)
 
 						// Figure out the QTY scanned based on the barcode... Will have to do something with just a product code being typed in!
 						$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
-						$input_disabled	=	"";	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
+						$input_disabled	=	'';	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
 
 						if (strcmp(trim($row['prod_each_barcode']), $product_barcode) === 0)
 						{
@@ -399,7 +402,7 @@ if ($login->isUserLoggedIn() == true)
 		// show an error if the query has an error
 		else
 		{
-			echo "Product Query Failed!";
+			echo 'Product Query Failed!';
 		}
 
 

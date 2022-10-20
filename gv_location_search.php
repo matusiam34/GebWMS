@@ -1,6 +1,13 @@
 <?php
 
 
+//	TODO:	Add the ability to search by location name. This will mean that if location exists in two different warehouse than
+//			they will need to be split and showed on this page. Extra Quality of Life thing me thinks.
+
+//			Also the table does not need a location name (the oeprator knows what it is). Maybe just place it above the table once
+//			so that the operator knows what it is if a barcode has been used to search.
+
+
 // Tells you what stock in held in the location of choice.
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
@@ -172,13 +179,12 @@ if ($login->isUserLoggedIn() == true)
 		$columns_html	=	"";
 		$details_html	=	"";
 
-		$backclrA	=	'#d6bfa9';
-		$backclrB	=	'#f7f2ee';
-
 
 		// Get the current stock of product in the warehouse
 
 		$total_product_eaches	=	0;		// shown in the last line of the table!
+
+
 
 		$sql	=	'
 
@@ -188,6 +194,7 @@ if ($login->isUserLoggedIn() == true)
 			wh_code,
 			loc_code,
 			loc_type,
+			loc_note,
 			stk_unit,
 			prod_code,
 			prod_case_qty,
@@ -216,11 +223,14 @@ if ($login->isUserLoggedIn() == true)
 			loc_barcode = :ilocation_barcode
 
 
-			GROUP BY wh_code, loc_code, loc_type, stk_unit, prod_code, prod_case_qty, prod_pall_qty
+			GROUP BY wh_code, loc_code, loc_type, loc_note, stk_unit, prod_code, prod_case_qty, prod_pall_qty
 
 			ORDER BY prod_code, wh_code, loc_code
 
 		';
+
+
+
 
 
 		if ($stmt = $db->prepare($sql))
@@ -233,29 +243,59 @@ if ($login->isUserLoggedIn() == true)
 			// Reset the entire columns html thing...
 			$columns_html	=	'<div class="columns">';
 			$columns_html	.=	'<div class="column is-6">';
+
+
+			// Table that stores product codes and Qty in them locations
 			$details_html	.=	'<table class="is-fullwidth table is-bordered">';
-
-
-
 			$details_html	.=	'<tr>';
 			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Product</th>';
-			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Warehouse</th>';
-			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Location</th>';
 			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Qty</th>';
 			$details_html	.=	'</tr>';
 
 
+			// Use $i once only to get the warehouse code, locaction name and note associated with it. Ugly but works for now. Got other things to focus on.
+			$i	=	0;
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
 
+				if ($i == 0)
+				{
+
+					// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
+					$loc_type				=	trim($row['loc_type']);
+					$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
+					$loc_status_code_str	=	$loc_types_codes_arr[$loc_type];
+
+
+					// A details table with Location name, Warehouse and note (for things like DAMAGES, Returns or whatever it could be)
+					$location_details	=	'<table class="is-fullwidth table is-bordered">';
+
+						$location_details	.=	'<tr>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Warehouse:</td>';
+							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
+						$location_details	.=	'</tr>';
+
+						$location_details	.=	'<tr>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Location:</td>';
+							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
+						$location_details	.=	'</tr>';
+
+						$location_details	.=	'<tr>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Note:</td>';
+							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_note']) . '</td>';
+						$location_details	.=	'</tr>';
+
+					$location_details	.=	'</table>';
+					$columns_html	.=	$location_details;
+
+					$i++;
+				}
+
+
+
+
 				$location_stock_qty		=	trim($row['all_stk_qty']);
-
-				// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-				$loc_type				=	trim($row['loc_type']);
-				$loc_status_code_str	=	"";		// a small code that explains what the location "does" / "is"
-				$loc_status_code_str	=	$loc_types_codes_arr[$loc_type];
-
 
 				// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
 				$stock_unit				=	trim($row['stk_unit']);
@@ -263,25 +303,24 @@ if ($login->isUserLoggedIn() == true)
 
 				if ($stock_unit == $stock_unit_type_reverse_arr['C'])
 				{
-					$location_stock_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
-					
-					if (is_float($location_stock_qty))
+					$location_case_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
+
+					if (is_float($location_case_qty))
 					{
 						// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
 						// entry like 4.6666666666666666666667 or something to that tune.
-						$location_stock_qty		=	number_format($location_stock_qty, 2);
+						$location_case_qty		=	number_format($location_case_qty, 2);
 					}
-					$stock_unit_str			=	'C';
+					$stock_unit_str			=	$location_case_qty . ' C';
 				}
 
 
 				$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
 
 
+
 				$details_html	.=	'<tr>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
-				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
-				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
 				$details_html	.=	'</tr>';
 
@@ -291,11 +330,11 @@ if ($login->isUserLoggedIn() == true)
 			}		// First query while row bracket...
 
 
+
+
 			// Provide a total eaches for this product in the last row
 
 			$details_html	.=	'<tr>';
-			$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
-			$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">Total EACHES</td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
 			$details_html	.=	'</tr>';
@@ -306,7 +345,7 @@ if ($login->isUserLoggedIn() == true)
 			$details_html	.=	'</table>';
 			$columns_html	.=	$details_html;	// place the table in the column...
 			$columns_html	.=	'</div>';
-			$details_html	=	"";				// empty for the next run!
+			$details_html	=	'';				// empty for the next run!
 
 
 			// End of columns div!
