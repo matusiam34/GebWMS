@@ -6,7 +6,7 @@
 // has been setup on the system before.
 
 // NOTE: VERY important to implement a check that tell the operator that there have been two entries found
-// with the same barcode. If that happens the system CAN'T forward with the booking and it needs to be 
+// with the same barcode. If that happens the system CAN'T go forward with the booking and it needs to be 
 // reported to a supervisor / manager as it will need to be fixed URGENTLY!
 
 
@@ -42,11 +42,13 @@ if ($login->isUserLoggedIn() == true)
 
 		// Supporting barcode here only to keep things simple.
 		// If there is an issue on the shop floor I am sure it can be solved in a different way.
-		$product_barcode		=	'';
+		$product_barcode				=	'';
+		$product_barcode_given			=	false;
 
 		if (isset($_GET['barcode']))
 		{
-			$product_barcode		=	trim($_GET['barcode']);
+			$product_barcode			=	trim($_GET['barcode']);
+			$product_barcode_given		=	true;
 		}
 
 ?>
@@ -94,8 +96,24 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-			// Focus on the barcode input field...
-			//set_Focus_On_Element_By_ID('product');
+<?php
+
+			// Ugly... should work? Maybe needs a second look at in the future...
+			// I am sure better solutions exist.
+
+			if ($product_barcode_given)
+			{
+				// Focus on the location input field...
+				echo 'set_Focus_On_Element_By_ID("location_code");';
+			}
+			else
+			{
+				// Empty page has been loaded and the operator has not done anything yet!
+				// Focus on the barcode input field... 
+				echo 'set_Focus_On_Element_By_ID("barcode");';
+			}
+
+?>
 
 		});
 
@@ -138,10 +156,8 @@ if ($login->isUserLoggedIn() == true)
 
 					if (validorwrite == 1)
 					{
-						// If things go well... Why bother?
-						//alert(obje.msg);
+						// If things go well... Why bother with any message?
 						// Need to visit the page again to start another prod2loc activity!
-
 						// Reload the page for the next product move...
 						window.location.href = 'gv_move_prod2loc.php';
 					}
@@ -159,6 +175,45 @@ if ($login->isUserLoggedIn() == true)
 
 		}
 
+
+
+
+		// Two simple functions to manipulate the product_qty input field. This is done because with a USB scanner on an
+		// android device acts like a keyboard and the soft keyboard is not showing when using it (I am sure it can configured but...).
+		// So it is easier to have little functions that inc and dec the value and once they are done they point back at the location_code field
+		// for the scanner to input that barcode.
+		//	Line below maybe something cleaner? Will look into this at a later stage! For now the code below does the job.
+		//	$(this).html( parseInt( $(this).html() ) + 1 );
+
+
+		// These two are basic as I am not checking if it is a number or if it is < 1
+		// I will do that in the backend but still need to figure out something for the Front End.
+		function decrease_value()
+		{
+			var qty_value = parseInt(get_Element_Value_By_ID('product_qty')) - 1;
+			// Do not allow a QTY of 0
+			if (qty_value >= 1)
+			{
+				set_Element_Value_By_ID('product_qty', qty_value);
+			}
+			set_Focus_On_Element_By_ID('location_code');
+		}
+
+		function increase_value()
+		{
+			var qty_value = parseInt(get_Element_Value_By_ID('product_qty')) + 1;
+			set_Element_Value_By_ID('product_qty', qty_value);
+			set_Focus_On_Element_By_ID('location_code');
+		}
+
+		// A litte quality of live thing? 1 click = 10 qty!
+		// Looks good on the desktop version but not so good on my xiaomi... The input space is taken a bit much... Layout redesign?
+		function increase_value_by_10()
+		{
+			var qty_value = parseInt(get_Element_Value_By_ID('product_qty')) + 10;
+			set_Element_Value_By_ID('product_qty', qty_value);
+			set_Focus_On_Element_By_ID('location_code');
+		}
 
 
 
@@ -209,8 +264,9 @@ if ($login->isUserLoggedIn() == true)
 	$page_form	.=		'<button class="button inventory_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
 	$page_form	.=	'</p>';
 
+	// Not sure if the escape \ is the perfect match... Works tho.
 	$page_form	.=	'<p class="control">';
-	$page_form	.=		'<button class="button inventory_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
+	$page_form	.=		'<button class="button inventory_class iconRefresh" style="width:50px;" onClick="window.location.href = \'gv_move_prod2loc.php\';"></button>';
 	$page_form	.=	'</p>';
 
 
@@ -302,7 +358,10 @@ if ($login->isUserLoggedIn() == true)
 
 						// Figure out the QTY scanned based on the barcode... Will have to do something with just a product code being typed in!
 						$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
-						$input_disabled	=	'';	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
+//						$input_disabled	=	'';	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
+
+						$input_disabled	=	' readonly ';	// for kicks lets make the product_qty read only! this could change after some revision
+
 
 						if (strcmp(trim($row['prod_each_barcode']), $product_barcode) === 0)
 						{
@@ -313,7 +372,6 @@ if ($login->isUserLoggedIn() == true)
 						{
 							// CASE has been scanned so assign the proper Qty.
 							$scanned_qty	=	trim($row['prod_case_qty']);
-							$input_disabled	=	' readonly ';
 						}
 
 
@@ -321,11 +379,37 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold; vertical-align: middle;">Qty:</td>';
 
-							$qty_input_field	=	'<input class="input" type="text" id="product_qty" name="product_qty" placeholder="Product barcode" value="' . $scanned_qty .'" ' . $input_disabled . '>';
+
+
+		$qty_input_field	=	'<div class="field has-addons">';
+
+			$qty_input_field	.=	'<p class="control">';
+			$qty_input_field	.=	'<input class="input" type="text" id="product_qty" name="product_qty" value="' . $scanned_qty .'" ' . $input_disabled . '>';
+			$qty_input_field	.=	'</p>';
+
+			$qty_input_field	.=	'<p class="control">';
+			$qty_input_field	.=		'<button class="button inventory_class iconMinus" onClick="decrease_value();" style="width:50px;"></button>';
+			$qty_input_field	.=	'</p>';
+
+			$qty_input_field	.=	'<p class="control">';
+			$qty_input_field	.=		'<button class="button inventory_class iconAdd" onClick="increase_value();" style="width:50px;"></button>';
+			$qty_input_field	.=	'</p>';
+
+/*
+			// Hmmmm...
+
+			$qty_input_field	.=	'<p class="control">';
+			$qty_input_field	.=		'<button class="button inventory_class iconAdd10" onClick="increase_value_by_10();" style="width:50px;"></button>';
+			$qty_input_field	.=	'</p>';
+*/
+
+
+
+
+		$qty_input_field	.=	'</div>';
+
 
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $qty_input_field . '</td>';
-
-
 //							$details_html	.=	'<td style="background-color: ' . $backclrB . ';" id="product_qty" name="product_qty" >' . $scanned_qty . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -336,13 +420,13 @@ if ($login->isUserLoggedIn() == true)
 					// Note: what if there are identical location names in different warehouses?!
 
 
-					$details_html	.=	'<div class="field" style="">
+					$details_html	.=	'<div class="field">
 											<div class="control">
 												<input id="location_code" class="input is-normal" type="text" placeholder="location code">
 											</div>
 										</div>
 
-										<div class="field" style="">
+										<div class="field">
 											<div class="control" id="loc_data_table">
 											</div>
 										</div>
@@ -368,13 +452,8 @@ if ($login->isUserLoggedIn() == true)
 
 													get_location_details(0);
 													//alert(get_Element_Value_By_ID("product_qty"));
-													//alert("test");
 												}
 											});
-
-											// Focus on the location input field...
-											// Need to rethink this totally!
-											//set_Focus_On_Element_By_ID("location_code");
 
 										</script>
 										';

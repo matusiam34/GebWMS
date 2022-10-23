@@ -57,7 +57,6 @@ if ($login->isUserLoggedIn() == true)
 		require_once('lib_functions.php');
 		require_once('lib_db_conn.php');
 
-		$db->beginTransaction();
 
 
 		// allow to execute script only if the requirements are met !
@@ -107,6 +106,28 @@ if ($login->isUserLoggedIn() == true)
 			// Grab product details based on the UID and barcode.
 			$prod_stock_unit		=	$stock_unit_type_reverse_arr['E'];	// by default assume EACH!
 			$loc_data_arr			=	array();	// every entry from the location will be stored here
+
+
+			// THese two are like more serious error and they will show up as an alert (the ugly one)
+			// In the future I might change it to some kind of <div> or <p> element style notification. Not priority since
+			// these errors will most likely occur because of some tempering.
+			if ($prod_qty < 1)
+			{
+				$message2op		=	'Product Qty <= 0';
+				$message_id		=	100110;
+			}
+			else if ($prod_id < 1)
+			{
+				$message2op		=	'Product ID <= 0';
+				$message_id		=	100111;
+			}
+			else
+			{
+
+
+
+			// Just before the first query?
+			$db->beginTransaction();
 
 
 
@@ -659,6 +680,11 @@ if (count($loc_data_arr) > 0)
 				$message2op		=	'Product query failed';
 				$message_id		=	100102;
 			}
+
+
+
+
+		}	// check if Qty is not <= 0, if the prod_id is also not 0 etc etc Basic checks about the variables passed down to be processed. 
 
 
 

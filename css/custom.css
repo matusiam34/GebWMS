@@ -120,15 +120,16 @@
 
     .iconBackArrow
     {
-		background-image: url(../../images/icon_back.png);
+		background-image: url(../images/icon_back.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
 	}
 
+
     .iconBackArrow:hover
     {
-		background-image: url(../../images/icon_back_hover.png);
+		background-image: url(../images/icon_back_hover.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
@@ -137,15 +138,16 @@
 
     .iconHome
     {
-		background-image: url(../../images/icon_home.png);
+		background-image: url(../images/icon_home.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
 	}
 
+
     .iconHome:hover
     {
-		background-image: url(../../images/icon_home_hover.png);
+		background-image: url(../images/icon_home_hover.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
@@ -154,19 +156,95 @@
 
     .iconSearch
     {
-		background-image: url(../../images/icon_search.png);
+		background-image: url(../images/icon_search.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
 	}
 
+
     .iconSearch:hover
     {
-		background-image: url(../../images/icon_search_hover.png);
+		background-image: url(../images/icon_search_hover.png);
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
      }
+
+
+
+    .iconAdd10
+    {
+		background-image: url(../images/icon_add10.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconAdd10:hover
+    {
+		background-image: url(../images/icon_add10_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconAdd
+    {
+		background-image: url(../images/icon_add.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconAdd:hover
+    {
+		background-image: url(../images/icon_add_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+
+    .iconMinus
+    {
+		background-image: url(../images/icon_minus.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconMinus:hover
+    {
+		background-image: url(../images/icon_minus_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconRefresh
+    {
+		background-image: url(../images/icon_refresh.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconRefresh:hover
+    {
+		background-image: url(../images/icon_refresh_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
 
 
 
