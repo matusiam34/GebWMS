@@ -128,6 +128,16 @@ echo	'<div class="container box has-background-light">';
 							</div>
 						</div>';
 
+
+				$recent_activity_link		=	"location.href='gv_recent_activity.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $recent_activity_link . '">Recent Activity</a>
+							</div>
+						</div>';
+
+
 			}
 
 		echo '</div>';

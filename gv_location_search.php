@@ -298,7 +298,7 @@ if ($login->isUserLoggedIn() == true)
 				$location_stock_qty		=	trim($row['all_stk_qty']);
 
 				// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
-				$stock_unit				=	trim($row['stk_unit']);
+				$stock_unit				=	leave_numbers_only($row['stk_unit']);
 				$stock_unit_str			=	'E';	// default lets go with EACHES
 
 				if ($stock_unit == $stock_unit_type_reverse_arr['C'])

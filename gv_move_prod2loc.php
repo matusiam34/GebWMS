@@ -347,6 +347,8 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
 						$details_html	.=	'</tr>';
 
+
+
 /*
 	//	Probably do not need this much information do I? Create a product enquiry for this if you need tons of data!
 
@@ -357,10 +359,9 @@ if ($login->isUserLoggedIn() == true)
 */
 
 						// Figure out the QTY scanned based on the barcode... Will have to do something with just a product code being typed in!
-						$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
-//						$input_disabled	=	'';	// if EACH leave it open for editing, if CASE == disable it. Should do the job.
-
-						$input_disabled	=	' readonly ';	// for kicks lets make the product_qty read only! this could change after some revision
+						//$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
+						$stock_unit		=	'EACH';		// by default let me assume that everything is EACH until proven guilty.
+						$input_disabled	=	' readonly ';	// for kicks lets make the product_qty read only! this could change after revision.
 
 
 						if (strcmp(trim($row['prod_each_barcode']), $product_barcode) === 0)
@@ -370,9 +371,44 @@ if ($login->isUserLoggedIn() == true)
 
 						if (strcmp(trim($row['prod_case_barcode']), $product_barcode) === 0)
 						{
-							// CASE has been scanned so assign the proper Qty.
-							$scanned_qty	=	trim($row['prod_case_qty']);
+							// CASE has been scanned so provide a basic breakdown to the operator.
+							$case_qty		=	leave_numbers_only($row['prod_case_qty']);
+							$stock_unit		=	'1 CASE = ' . $case_qty . ' EACHES';
 						}
+
+
+/*
+				// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
+				$stock_unit				=	trim($row['stk_unit']);
+				$stock_unit_str			=	'E';	// default lets go with EACHES
+
+				if ($stock_unit == $stock_unit_type_reverse_arr['C'])
+				{
+					$location_case_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
+
+					if (is_float($location_case_qty))
+					{
+						// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
+						// entry like 4.6666666666666666666667 or something to that tune.
+						$location_case_qty		=	number_format($location_case_qty, 2);
+					}
+					$stock_unit_str			=	$location_case_qty . ' C';
+				}
+*/
+
+
+
+
+
+
+
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Unit:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $stock_unit . '</td>';
+						$details_html	.=	'</tr>';
+
+
 
 
 
@@ -384,7 +420,7 @@ if ($login->isUserLoggedIn() == true)
 		$qty_input_field	=	'<div class="field has-addons">';
 
 			$qty_input_field	.=	'<p class="control">';
-			$qty_input_field	.=	'<input class="input" type="text" id="product_qty" name="product_qty" value="' . $scanned_qty .'" ' . $input_disabled . '>';
+			$qty_input_field	.=	'<input class="input" type="text" id="product_qty" name="product_qty" value="1"' . $input_disabled . '>';
 			$qty_input_field	.=	'</p>';
 
 			$qty_input_field	.=	'<p class="control">';
