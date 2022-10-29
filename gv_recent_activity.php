@@ -141,18 +141,6 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
-/*
-CREATE TABLE "geb_stock_history" (
-	"stk_hst_pkey"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"stk_hst_op_type"	INTEGER,
-	"stk_hst_prod_pkey"	INTEGER,
-	"stk_hst_from_loc"	INTEGER DEFAULT 0,
-	"stk_hst_to_loc"	INTEGER,
-	"stk_hst_qty"	INTEGER,
-	"stk_hst_operator"	INTEGER,
-	"stk_hst_date"	TEXT,
-	"stk_hst_disabled"	INTEGER
-*/
 
 		$sql	=	'
 
@@ -162,6 +150,7 @@ CREATE TABLE "geb_stock_history" (
 			geb_product.prod_code,
 			geb_product.prod_case_qty,
 			geb_location.loc_code,
+			geb_stock_history.stk_hst_op_type,
 			geb_stock_history.stk_hst_unit,
 			geb_stock_history.stk_hst_qty,
 			geb_stock_history.stk_hst_date
@@ -174,10 +163,6 @@ CREATE TABLE "geb_stock_history" (
 
 
 			WHERE
-
-			stk_hst_op_type = 10
-			
-			AND
 
 			geb_stock_history.stk_hst_disabled = 0 AND geb_product.prod_disabled = 0 AND geb_location.loc_disabled = 0
 
@@ -218,54 +203,68 @@ CREATE TABLE "geb_stock_history" (
 					$details_html	=	'<table class="is-fullwidth table is-bordered">';
 
 
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
-						$details_html	.=	'</tr>';
-
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">To location:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . '</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Type:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $activity_type_arr[leave_numbers_only($row['stk_hst_op_type'])] . '</td>';
 						$details_html	.=	'</tr>';
 
 
 
-						$qty			=	leave_numbers_only($row['stk_hst_qty']);
-						$entry_qty		=	$qty;
-						$unit_id		=	leave_numbers_only($row['stk_hst_unit']);
-						$unit_type_str	=	$stock_unit_type_arr[$unit_id];
-
-
-						if ($unit_id == $stock_unit_type_reverse_arr['C'])
+						if (leave_numbers_only($row['stk_hst_op_type']) == $activity_type_reverse_arr['Prod2Loc'])
 						{
-							$entry_qty		=	$qty / leave_numbers_only($row['prod_case_qty']);
-							if (is_float($entry_qty))
+							
+							// We are dealing with a product 2 location!
+							// Set everything up accordingly.
+
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
+							$details_html	.=	'</tr>';
+
+
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">To location:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . '</td>';
+							$details_html	.=	'</tr>';
+
+
+
+							$qty			=	leave_numbers_only($row['stk_hst_qty']);
+							$entry_qty		=	$qty;
+							$unit_id		=	leave_numbers_only($row['stk_hst_unit']);
+							$unit_type_str	=	$stock_unit_type_arr[$unit_id];
+
+
+							if ($unit_id == $stock_unit_type_reverse_arr['C'])
 							{
-								// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
-								// entry like 4.6666666666666666666667 or something to that tune.
-								$entry_qty		=	number_format($entry_qty, 2);
+								$entry_qty		=	$qty / leave_numbers_only($row['prod_case_qty']);
+								if (is_float($entry_qty))
+								{
+									// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
+									// entry like 4.6666666666666666666667 or something to that tune.
+									$entry_qty		=	number_format($entry_qty, 2);
+								}
 							}
+
+
+
+
+
+							// Based on the unit I will have to do some maths to show what exactly it is (CASES, EACHES... maybe PALLETS...)
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $entry_qty . ' ' . $unit_type_str . '(s)</td>';
+							$details_html	.=	'</tr>';
+
+
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">When:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['stk_hst_date']) . '</td>';
+							$details_html	.=	'</tr>';
+
 						}
 
-
-
-
-
-						// Based on the unit I will have to do some maths to show what exactly it is (CASES, EACHES... maybe PALLETS...)
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $entry_qty . ' ' . $unit_type_str . '(s)</td>';
-						$details_html	.=	'</tr>';
-
-
-
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">When:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['stk_hst_date']) . '</td>';
-						$details_html	.=	'</tr>';
 
 
 					$details_html	.=	'</table>';

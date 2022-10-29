@@ -77,13 +77,41 @@ $product_status_arr	=	array(
 
 
 
+// Activity types. This is going to be used for recent acftivity page to map what code means what.
+// Product2Location
+// Location 2 Location
+// etc etc
+// Table:	geb_stock_history
+// Column:	stk_hst_op_type
+
+
+$activity_type_arr	=	array(
+
+	'10'	=>	'Product2Location'
+
+);
+
+// The reverse of the above for some functions... blah blah!
+$activity_type_reverse_arr	=	array(
+
+	'Prod2Loc'	=>	10
+
+);
+
+
+
+
+
+
+
 
 // To have same size gaps between input and select 
 $box_size_str	=	'height:64px;';
 
 
 
-// Color code scheme foe tables... Left and right side.
+// Color code scheme for tables... Left and right side.
+// This is for the 1 row and two column setup mainly...
 $backclrA	=	'#d6bfa9';
 $backclrB	=	'#f7f2ee';
 
