@@ -2,7 +2,7 @@
 
 /**
 
-		A bunch of support functions to aid the framework !
+		A bunch of support functions to aid the "framework" !
 
  */
 

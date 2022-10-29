@@ -483,19 +483,6 @@ if ($login->isUserLoggedIn() == true)
 											$stmt->bindValue(':iprod_id',	$prod_id,		PDO::PARAM_INT);
 											$stmt->execute();
 
-/*
-CREATE TABLE "geb_stock_history" (
-	"stk_hst_pkey"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"stk_hst_op_type"	INTEGER,
-	"stk_hst_prod_pkey"	INTEGER,
-	"stk_hst_from_loc"	INTEGER DEFAULT 0,
-	"stk_hst_to_loc"	INTEGER,
-	"stk_hst_qty"	INTEGER,
-	"stk_hst_operator"	INTEGER,
-	"stk_hst_date"	TEXT,
-	"stk_hst_disabled"	INTEGER
-*/
-
 
 											// Do the stock history table insert... for future reference I guess.
 											// When this step is complete I can assume that all went well...
@@ -702,8 +689,11 @@ CREATE TABLE "geb_stock_history" (
 
 											{
 
-												//$date_now_str	=	date('Y-m-d H:i:s'); // Merica format
-												$date_now_str	=	date('H:i:s d/m/Y'); // Brit format
+												//	Do not save this in the UK format!
+												//	$date_now_str	=	date('H:i:s d/m/Y'); // Brit format
+
+												$date_now_str	=	date('Y-m-d H:i:s');	// Merica format
+
 
 												$stmt->bindValue(':istk_hst_op_type',		10,						PDO::PARAM_INT);	// operation 10 is prod2loc.. more to come!
 												$stmt->bindValue(':istk_hst_prod_pkey',		$prod_id,				PDO::PARAM_INT);

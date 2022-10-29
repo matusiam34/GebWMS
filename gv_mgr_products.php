@@ -296,9 +296,6 @@ if ($login->isUserLoggedIn() == true)
 		$columns_html	=	"";
 		$details_html	=	"";
 
-		$backclrA	=	'#d6bfa9';
-		$backclrB	=	'#f7f2ee';
-
 
 		// A fix for now... Look at it at a later stage for a better solution...
 		$prod_pkey			=	0;

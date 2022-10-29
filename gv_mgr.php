@@ -162,7 +162,7 @@ if ($login->isUserLoggedIn() == true)
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -171,7 +171,7 @@ else
 {
 
     // the user is not logged in. you can do whatever you want here.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 

@@ -150,6 +150,7 @@ if ($login->isUserLoggedIn() == true)
 			geb_product.prod_code,
 			geb_product.prod_case_qty,
 			geb_location.loc_code,
+			geb_location.loc_barcode,
 			geb_stock_history.stk_hst_op_type,
 			geb_stock_history.stk_hst_unit,
 			geb_stock_history.stk_hst_qty,
@@ -217,15 +218,22 @@ if ($login->isUserLoggedIn() == true)
 							// We are dealing with a product 2 location!
 							// Set everything up accordingly.
 
+
+							// These could become the norm for any activity type
+							$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
 							$details_html	.=	'</tr>';
 
 
+							// These could become the norm for any activity type
+							$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">To location:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . '</td>';
 							$details_html	.=	'</tr>';
 
 
@@ -249,8 +257,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
 							// Based on the unit I will have to do some maths to show what exactly it is (CASES, EACHES... maybe PALLETS...)
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
@@ -258,9 +264,15 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'</tr>';
 
 
+							$activity_date	=	trim($row['stk_hst_date']);
+
+							$act_date		=		date('d/m/Y', strtotime($activity_date));
+							$act_time		=		date('H:i:s', strtotime($activity_date));
+
+
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">When:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['stk_hst_date']) . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
 							$details_html	.=	'</tr>';
 
 						}
