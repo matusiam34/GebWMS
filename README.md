@@ -13,6 +13,6 @@ GebWMS will never compete with the established big boy enterprise systems that a
 
 I am not using any MVC framework here as I am not sure if it is worth adding such a massive overhead for a tiny system like this. Unless you have some kind of lightweight recommendation. For my CSS needs I am using Bulma since it is easy to use and tiny.
 
-I keep a register of all the changes and added features here:
+I keep a register of all the changes and added features here (including screen grabs for your amusement):
 
 http://db4you.co.uk/gebwms
