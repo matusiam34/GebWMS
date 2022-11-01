@@ -2,6 +2,10 @@
 
 /*
 
+
+	enabled + add AC required
+
+
 	All of this needs more work...
 
 	Error code explained:
@@ -59,20 +63,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// allow to execute script only if the requirements are met !
-		// min_priv : variable that holds the lowest level user that can access and execute this script
+		//	Check if user has the right access level
 		if 
 		(
 
-			(
-
-				(can_user_access($_SESSION['user_inventory']))
-
-			)
+			(can_user_access($_SESSION['menu_prod2loc']))
 
 			AND
 
-			(leave_numbers_only($_SESSION['user_priv']) >=	min_priv)
+			(can_user_add($_SESSION['menu_prod2loc']))
 
 		)
 		{

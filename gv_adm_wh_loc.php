@@ -28,7 +28,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	//	Certain access right checks should be executed here...
-	if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+	if (can_user_access($_SESSION['menu_adm_warehouse_loc']))
 	{
 
 

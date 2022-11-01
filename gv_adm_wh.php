@@ -25,7 +25,7 @@ if ($login->isUserLoggedIn() == true)
 	require_once('lib_functions.php');
 
 	//	Certain access right checks should be executed here...
-	if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+	if (can_user_access($_SESSION['menu_adm_warehouse']))
 	{
 
 

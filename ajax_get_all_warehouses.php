@@ -1,6 +1,9 @@
 <?php
 
 
+//	This could potentially end up in a category of generic files that will run regardless who you are
+//	as long as you could login into the system.
+
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once('lib_passwd.php');
@@ -31,23 +34,17 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		// allow to execute script only if the requirements are met !
-		// min_priv : variable that holds the lowest level user that can access and execute this script
+		//	Check if user has the right access level
 		if 
 		(
 
-			(
+			(is_it_enabled($_SESSION['menu_adm_warehouse']))
 
-				(can_user_access($_SESSION['user_inventory']))
+			OR
 
-			)
-
-			AND
-
-			(leave_numbers_only($_SESSION['user_priv']) >=	min_priv)
+			(is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 
 		)
-
 		{
 
 

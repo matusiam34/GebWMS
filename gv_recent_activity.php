@@ -28,8 +28,8 @@ if ($login->isUserLoggedIn() == true)
 	require_once('lib_functions.php');
 
 
-	// Certain access rights checks should be executed here...
-	if ( (can_user_access($_SESSION['user_inventory']))  AND  (leave_numbers_only($_SESSION['user_priv']) >=	min_priv))
+	//	Allow the operator to see it is enough.
+	if (can_user_access($_SESSION['menu_recent_activity']))
 	{
 
 		// needs a db connection...

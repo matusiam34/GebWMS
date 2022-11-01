@@ -37,20 +37,16 @@ if ($login->isUserLoggedIn() == true) {
 		require_once('lib_db_conn.php');
 
 
-		// allow to execute script only if the requirements are met !
-		// min_priv : variable that holds the lowest level user that can access and execute this script
+
+		//	Check if user has the right access level
 		if 
 		(
-		
-			(
 
-				(can_user_access($_SESSION['user_inventory']))
-
-			)
+			(can_user_access($_SESSION['menu_adm_warehouse_loc']))
 
 			AND
 
-			(leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+			(can_user_update($_SESSION['menu_adm_warehouse_loc']))
 
 		)
 

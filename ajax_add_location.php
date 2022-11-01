@@ -33,22 +33,18 @@ if ($login->isUserLoggedIn() == true) {
 
 		// load the supporting functions....
 		require_once('lib_functions.php');
-		include('lib_db_conn.php');
+		require_once('lib_db_conn.php');
 
 
-		// Need to figure out some admin editing access control thing for this.....
+		//	Check if user has the right access level
 		if 
 		(
 
-			(
-
-				(can_user_access($_SESSION['user_inventory']))
-
-			)
+			(is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 
 			AND
 
-			(leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+			(can_user_add($_SESSION['menu_adm_warehouse_loc']))
 
 		)
 		{

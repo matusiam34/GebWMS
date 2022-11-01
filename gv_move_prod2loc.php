@@ -34,7 +34,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if ( (can_user_access($_SESSION['user_inventory']))  AND  (leave_numbers_only($_SESSION['user_priv']) >=	min_priv))
+	if ( (is_it_enabled($_SESSION['menu_prod2loc']))  AND  (can_user_add($_SESSION['menu_prod2loc'])) )
 	{
 
 		// needs a db connection...

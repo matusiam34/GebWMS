@@ -25,7 +25,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if ( (can_user_access($_SESSION['user_inventory']))  AND  (leave_numbers_only($_SESSION['user_priv']) >=	min_priv))
+	if (can_user_access($_SESSION['menu_mgr_prod_add_update']))
 	{
 
 		// needs a db connection...
@@ -485,39 +485,47 @@ if ($login->isUserLoggedIn() == true)
 
 			// The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...
 
-			// More technical column
-			$details_html	=	'
+
+// Allow an Add button only if the operator can Add.
+// The same for Update :)
 
 
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">&nbsp;</p>
-	<div class="control">
-		<button class="button manager_class is-fullwidth"  onclick="add_item();">Add</button>
-	</div>
-</div>
+if (can_user_add($_SESSION['menu_mgr_prod_add_update']))
+{
+	$details_html	.=	'
+
+	<div class="field" style="'. $box_size_str .'">
+		<p class="help">&nbsp;</p>
+		<div class="control">
+			<button class="button manager_class is-fullwidth"  onclick="add_item();">Add</button>
+		</div>
+	</div>';
+}
+
+
+if (can_user_update($_SESSION['menu_mgr_prod_add_update']))
+{
+	$details_html	.=	'
+
+	<div class="field" style="'. $box_size_str .'">
+		<p class="help">&nbsp;</p>
+		<div class="control">
+			<button class="button manager_class is-fullwidth"  onclick="update_item();">Update</button>
+		</div>
+	</div>';
+}
 
 
 
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">&nbsp;</p>
-	<div class="control">
-		<button class="button manager_class is-fullwidth"  onclick="update_item();">Update</button>
-	</div>
-</div>
-
-
+// Hidden field is on by default!
+$details_html	.=	'
 
 <div class="field" style="'. $box_size_str .'">
 	<p class="help">&nbsp;</p>
 	<div class="control">
 		<input id="id_hidden" class="input is-normal" type="hidden" value="' . $prod_pkey . '">
 	</div>
-</div>
-
-
-
-
-';
+</div>';
 
 
 

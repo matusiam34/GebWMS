@@ -56,6 +56,21 @@
 <?php
 
 
+//
+//	Red		:	Admin type of functionality
+//	Blue	:	Manager type of functionality
+//	Green	:	Sales / Reports functionality
+//	Brown	:	Warehouse operator stuff?!
+//
+//
+
+
+
+
+
+	// load the supporting functions....
+	require_once('lib_functions.php');
+
 
 // A little gap at the top to make it look better a notch.
 echo '<div style="height:12px"></div>';
@@ -114,12 +129,15 @@ echo	'<div class="container box has-background-light">';
 		echo '</div>';
 
 
+
+
+
 		echo '<div class="column is-3">';
 
 
-			if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
+			// Display menu items that are granted
+			if (is_it_enabled($_SESSION['menu_prod2loc']))
 			{
-
 				$bookin_prod2loc_link		=	"location.href='gv_move_prod2loc.php'";
 
 				echo	'<div class="field">
@@ -127,8 +145,11 @@ echo	'<div class="container box has-background-light">';
 								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $bookin_prod2loc_link . '">Product2Location</a>
 							</div>
 						</div>';
+			}
 
-
+			// Display menu items that are granted
+			if (is_it_enabled($_SESSION['menu_recent_activity']))
+			{
 				$recent_activity_link		=	"location.href='gv_recent_activity.php'";
 
 				echo	'<div class="field">
@@ -136,52 +157,72 @@ echo	'<div class="container box has-background-light">';
 								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $recent_activity_link . '">Recent Activity</a>
 							</div>
 						</div>';
+			}
 
 
+		echo '</div>';
+
+
+
+
+		// Manager type of stuff here?!?! Still under construction!
+		echo '<div class="column is-3">';
+
+
+			if (is_it_enabled($_SESSION['menu_mgr_prod_add_update']))
+			{
+				$products_link		=	"location.href='gv_mgr_products.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $products_link . '">Products</a>
+							</div>
+						</div>';
 			}
 
 		echo '</div>';
 
 
-		echo '<div class="column is-3">';
-		echo '</div>';
 
 
 		// More power section?
 		echo '<div class="column is-3">';
 
 
-			if (leave_numbers_only($_SESSION['user_priv']) ==	admin_priv)
-			{
 
-				$admin_link		=	"location.href='gv_adm.php'";
+			if (is_it_enabled($_SESSION['menu_adm_warehouse']))
+			{
+				$warehouses_link		=	"location.href='gv_adm_wh.php'";
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $admin_link . '">Admin</a>
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouses_link . '">Warehouses</a>
 							</div>
 						</div>';
-
 			}
 
-			if (leave_numbers_only($_SESSION['user_priv']) >=	manager_priv)
+			if (is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 			{
-
-				$manager_link		=	"location.href='gv_mgr.php'";
+				$warehouse_locations_link		=	"location.href='gv_adm_wh_loc.php'";
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $manager_link . '">Manager</a>
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouse_locations_link . '">Warehouse Locations</a>
 							</div>
 						</div>';
-
 			}
 
 
+
+
+			//	Everyone deserves to leave!
 			$logout_link		=	"location.href='index.php?logout'";
-			echo '<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $logout_link . '">Logout</a>';
+			echo '<a class="button is-normal is-fullwidth yellow_class is-bold" onclick="' . $logout_link . '">Logout</a>';
 
 		echo '</div>';
+
+
+
 
 
 	echo '</div>';

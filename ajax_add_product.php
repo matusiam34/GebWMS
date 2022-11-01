@@ -31,19 +31,19 @@ if ($login->isUserLoggedIn() == true) {
 		require_once('lib_db_conn.php');
 
 
-		// Need to figure out some admin editing access control thing for this.....
+		//	Check if user has the right access level
 		if 
 		(
 
 			(
-
-				(can_user_access($_SESSION['user_inventory']))
-
+				is_it_enabled($_SESSION['menu_mgr_prod_add_update'])
 			)
 
 			AND
 
-			(leave_numbers_only($_SESSION['user_priv']) >=	manager_priv)
+			(
+				can_user_add($_SESSION['menu_mgr_prod_add_update'])
+			)
 
 		)
 		{

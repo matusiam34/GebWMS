@@ -34,7 +34,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if ( (can_user_access($_SESSION['user_inventory']))  AND  (leave_numbers_only($_SESSION['user_priv']) >=	min_priv))
+	if (can_user_access($_SESSION['menu_location_search']))
 	{
 
 		// needs a db connection...

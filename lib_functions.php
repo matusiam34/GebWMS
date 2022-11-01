@@ -8,7 +8,7 @@
 
 
 
-// Some GebWMS constants...
+//	Some GebWMS constants...
 
 
 //	There are only 3 types of locations in GebWMS
@@ -103,11 +103,8 @@ $activity_type_reverse_arr	=	array(
 
 
 
-
-
 // To have same size gaps between input and select 
 $box_size_str	=	'height:64px;';
-
 
 
 // Color code scheme for tables... Left and right side.
@@ -173,12 +170,14 @@ function convert_dec_to_bin_with_padding($dec_value)
 */
 
 
+
+
 // New Version of that thing as it does not work on PHP 7.x
 // Convert a dec value to binary. Add 0s to match the lenght of 16 - we can expand this later if needed !!
 // Returns an array bit values
 function convert_dec_to_bin_with_padding($dec_value)
 {
-        $x = decbin($dec_value);
+        $x	=	decbin($dec_value);
         return str_pad($x, 16, '0', STR_PAD_LEFT);
 }
 
@@ -188,9 +187,9 @@ function convert_dec_to_bin_with_padding($dec_value)
 // core function that checks for cookie bit - Returns if cookie : 0 -> false, if 1 -> true !
 function core_acl_cookie_check($cookie_value)
 {
-	$outcome = false;	//	 by default don't allow !
-	$cookie_value	=	leave_numbers_only($cookie_value);	// remove anything apart from numbers !
-	if ($cookie_value == 1)	{	$outcome = true;	}	
+	$outcome		=	false;								//	by default don't allow !
+	$cookie_value	=	leave_numbers_only($cookie_value);	//	remove anything apart from numbers !
+	if ($cookie_value == 1)	{	$outcome = true;	}
 	return $outcome;
 }
 
@@ -201,5 +200,85 @@ function can_user_access($cookie)
 	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[0]);	// Check the first bit -> located at location: 1 !
 }
+
+
+//
+//
+//	GebWMS Access Control
+//
+//	The structure of the Access Control will be super simple
+//
+//	Access is going to be determined by setting proper bits in a 65k integer value. However the first bit is always going to be 1
+//	which means that I got only about 15 options left to explore. Probably will never happen but it is there.
+//
+//	Baseline decimal value 32768 represented below in binary = NO RIGHTS!
+//	1000000000000000
+//
+//	2nd location	:	Feature Enabled		:	0: Disabled;	1: Enabled;		This determines if the option / menu is even avaiable to the operator,
+//	3rd location	:	Add Allowed			:	0: Nope;		1: Allow;		Operator can Add items/warehouses/locations to the system,
+//	4th location	:	Update Allowed		:	0: Nope;		1: Allow;		Operator can update entries in the system,
+//	5th location	:	Delete Allowed		:	0: Nope;		1: Allow;		Operator can delete entries from the system.
+//
+//
+//	ACL value = 55296:
+//	1101100000000000
+//
+//	In short translates to:
+//	Feature is enabled, The operator can't Add anything to the system but he can Update and Delete entries.
+//
+//	Details:
+//
+//
+//	1	1	0	1	1	00000000000
+//	|	|	|	|	|
+//	|	|	|	|	|
+//	|	|	|	|	Deleting items has been allowed
+//	|	|	|	|
+//	|	|	|	Updating items like warehouse location or products allowed
+//	|	|	|
+//	|	|	Adding items is disabled
+//	|	|
+//	|	Feature is Enabled = operator can see / access it (think of a menu option for example)
+//	|
+//	This means nothing and can be ignored
+//
+//
+//
+
+
+function is_it_enabled($cookie)
+{
+	$cookie_array	=	array();
+	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
+	return core_acl_cookie_check($cookie_array[1]);		//	Check the second bit
+}
+
+
+function can_user_add($cookie)
+{
+	$cookie_array	=	array();
+	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
+	return core_acl_cookie_check($cookie_array[2]);		//	Check the third bit
+}
+
+
+function can_user_update($cookie)
+{
+	$cookie_array	=	array();
+	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
+	return core_acl_cookie_check($cookie_array[3]);		//	Check the forth bit
+}
+
+
+function can_user_delete($cookie)
+{
+	$cookie_array	=	array();
+	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
+	return core_acl_cookie_check($cookie_array[4]);		//	Check the fifth bit
+}
+
+
+
+
 
 

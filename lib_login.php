@@ -190,13 +190,13 @@ class Login
 
 
 				SELECT
-				
+
 				*
 
 				FROM users  
-				
+
 				WHERE
-				
+
 				users.user_name	=	:iuser_name
 
 
@@ -256,7 +256,7 @@ class Login
 
 
 			// if this user not exists
-			if (! isset($result_row->user_id)) 
+			if (!isset($result_row->user_id)) 
 			{
 				$this->login_status = $this->lang['User not exist'];
 			}
@@ -283,11 +283,31 @@ class Login
 				// write user data into PHP SESSION [a file on your server]
 				$_SESSION['user_id']				=	$result_row->user_id;
 				$_SESSION['user_name']				=	$result_row->user_name;
+
+				// GebWMS menu ACL is placed. Seems like a column per menu item?!?!
+				// Or do I create a seperate table with all of the menu items?!
+				// Hmmmm...
+
 				$_SESSION['user_inventory']			=	$result_row->user_inventory;
 				$_SESSION['user_priv']				=	$result_row->user_priv;
 				$_SESSION['user_logged_in']			=	1;
 
+
+				// The actual ACL lives here! It will be a mess for now but I need something flexible fast!
+				$_SESSION['menu_adm_warehouse']				=	$result_row->menu_adm_warehouse;
+				$_SESSION['menu_adm_warehouse_loc']			=	$result_row->menu_adm_warehouse_loc;
+				$_SESSION['menu_prod_search']				=	$result_row->menu_prod_search;
+				$_SESSION['menu_location_search']			=	$result_row->menu_location_search;
+				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
+				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
+				$_SESSION['menu_mgr_prod_add_update']		=	$result_row->menu_mgr_prod_add_update;
+
+
+
+
 				// Declare user id, set the login status to true
+				// Have no idea if I need these as they are the relic of the previous system.
+				// Potentially the user_is_logged_in matters... Will have to play with it one day to see!
 				$this->user_id				=	$result_row->user_id;
 				$this->user_name			=	$result_row->user_name;
 				$this->user_is_logged_in	=	true;
