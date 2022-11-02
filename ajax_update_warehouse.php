@@ -34,7 +34,7 @@ if ($login->isUserLoggedIn() == true) {
 		if 
 		(
 
-			(can_user_access($_SESSION['menu_adm_warehouse']))
+			(is_it_enabled($_SESSION['menu_adm_warehouse']))
 
 			AND
 

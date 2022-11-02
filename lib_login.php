@@ -296,6 +296,7 @@ class Login
 				// The actual ACL lives here! It will be a mess for now but I need something flexible fast!
 				$_SESSION['menu_adm_warehouse']				=	$result_row->menu_adm_warehouse;
 				$_SESSION['menu_adm_warehouse_loc']			=	$result_row->menu_adm_warehouse_loc;
+				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;
 				$_SESSION['menu_prod_search']				=	$result_row->menu_prod_search;
 				$_SESSION['menu_location_search']			=	$result_row->menu_location_search;
 				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;

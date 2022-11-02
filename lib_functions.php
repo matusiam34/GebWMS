@@ -177,8 +177,8 @@ function convert_dec_to_bin_with_padding($dec_value)
 // Returns an array bit values
 function convert_dec_to_bin_with_padding($dec_value)
 {
-        $x	=	decbin($dec_value);
-        return str_pad($x, 16, '0', STR_PAD_LEFT);
+	$x	=	decbin($dec_value);
+	return str_pad($x, 16, '0', STR_PAD_LEFT);
 }
 
 
@@ -193,13 +193,15 @@ function core_acl_cookie_check($cookie_value)
 	return $outcome;
 }
 
-
+/*
 function can_user_access($cookie)
 {
 	$cookie_array	=	array();
 	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[0]);	// Check the first bit -> located at location: 1 !
 }
+*/
+
 
 
 //

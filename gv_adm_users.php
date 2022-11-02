@@ -1,6 +1,44 @@
 <?php
 
 
+//
+//
+//	How can I make it easy for the Admin to manage access?
+//
+//	I got so far:
+//
+//	E:	Enabled
+//	A:	Add
+//	U:	Update
+//	D:	Delete
+//
+//	E
+//	EU
+//	ED
+//	EA
+//	EUD
+//	EAU
+//	EAD
+//	EAUD
+//
+//
+//
+//
+//
+//
+
+/*
+	"menu_adm_warehouse"	INTEGER DEFAULT 0,
+	"menu_adm_warehouse_loc"	INTEGER DEFAULT 0,
+	"menu_adm_users"	INTEGER DEFAULT 0,
+	"menu_prod_search"	INTEGER DEFAULT 0,
+	"menu_location_search"	INTEGER DEFAULT 0,
+	"menu_prod2loc"	INTEGER DEFAULT 0,
+	"menu_recent_activity"	INTEGER DEFAULT 0,
+	"menu_mgr_prod_add_update"	INTEGER DEFAULT 0,
+*/
+
+
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once('lib_passwd.php');
@@ -25,7 +63,7 @@ if ($login->isUserLoggedIn() == true)
 	require_once('lib_functions.php');
 
 	//	Certain access right checks should be executed here...
-	if (is_it_enabled($_SESSION['menu_adm_warehouse']))
+	if (is_it_enabled($_SESSION['menu_adm_users']))
 	{
 
 
@@ -40,7 +78,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Warehouses</title>
+	<title>Users</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -84,9 +122,7 @@ if ($login->isUserLoggedIn() == true)
 					$(this).addClass('highlighted');
 
 					// 1 = ID
-					// 2 = Category Name
 					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
-					$('#id_item_name').val($(this).find('td:nth-child(2)').text()); 
 
 
 			});
@@ -96,11 +132,11 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Grab all current warehouse names !
+		// Grab all users
 		function get_all_items()
 		{
 
-			$.post('ajax_get_all_warehouses.php', { 
+			$.post('ajax_get_all_users.php', { 
 
 			},
 
@@ -298,13 +334,13 @@ if ($login->isUserLoggedIn() == true)
 
 				<div class="columns">
 
-					<div class="column is-4">
+					<div class="column is-3">
 						<div class="tableAttr">
-							<table class="table is-fullwidth is-hoverable is-scrollable " id="curr_table">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
 							<thead>
 								<tr>
 									<th>ID</th>
-									<th>Warehouse Name</th>
+									<th>Username</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -314,24 +350,101 @@ if ($login->isUserLoggedIn() == true)
 
 					</div>
 
+
+
+
 					<div class="column is-3">
 
-						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Warehouse Name:</p>
-							<div class="control">
-								<input id="id_item_name" class="input is-normal" type="text" placeholder="COV">
-							</div>
-						</div>
-
-
-
 						<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
+
+						<input id="id_hidden" class="input is-normal" type="text">
+
+					</div>
 
 
 <?php
 
 
+//	Configure the AC for each menu as a drop down. This should make it a bit easier.
+//	The trick will be to figure out which page has what options and provide them to the Administrator
+//	as an option. Do this once and all will be good! That is as long as the page that is configured does not
+//	expand in functionality... Keep that in mind!
 
+/*
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Status:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_disabled" name="id_disabled">' . $status_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+*/
+
+
+	$columns_html	=	'';
+
+	$columns_html	.=	'<div class="column is-3">';
+
+
+	$columns_html	.=	'
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Product Search:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_product_search" name="id_product_search">
+				<option value="32768">Disabled</option>
+				<option value="49152">E</option>
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Location Search:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_product_search" name="id_product_search">
+				<option value="32768">Disabled</option>
+				<option value="49152">E</option>
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+
+
+
+';
+
+
+
+
+
+	$columns_html	.=	'</div>';
+
+
+
+
+
+echo	$columns_html;
+
+/*
 	// If the operator has the ability to add...
 	if (can_user_add($_SESSION['menu_adm_warehouse']))
 	{
@@ -359,16 +472,13 @@ if ($login->isUserLoggedIn() == true)
 		</div>';
 	}
 
+*/
+
+
+
 
 
 ?>
-
-
-
-
-						<input id="id_hidden" class="input is-normal" type="hidden">
-
-					</div>
 
 
 

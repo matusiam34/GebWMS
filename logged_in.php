@@ -107,23 +107,31 @@ echo	'<div class="container box has-background-light">';
 
 
 			// Probably I need to rethink the way I generate and display elements... for another day tho!
-			echo	'
 
-				<div class="field">
-				<form action="gv_location_search.php" method="get">
-					<div class="field has-addons" >
+			if (is_it_enabled($_SESSION['menu_location_search']))
+			{
 
-						<p class="control is-expanded">
-							<input class="input" type="text" id="location" name="location" placeholder="Location barcode">
-						</p>
+				echo	'
 
-						<p class="control">
-							<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
-						</p>
+					<div class="field">
+					<form action="gv_location_search.php" method="get">
+						<div class="field has-addons" >
 
-					</div>
-				</form>
-				</div>';
+							<p class="control is-expanded">
+								<input class="input" type="text" id="location" name="location" placeholder="Location barcode">
+							</p>
+
+							<p class="control">
+								<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
+							</p>
+
+						</div>
+					</form>
+					</div>';
+
+			}
+
+
 
 
 		echo '</div>';
@@ -188,6 +196,18 @@ echo	'<div class="container box has-background-light">';
 		// More power section?
 		echo '<div class="column is-3">';
 
+
+			// Basic user management + Access Control tool
+			if (is_it_enabled($_SESSION['menu_adm_users']))
+			{
+				$users_link		=	"location.href='gv_adm_users.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $users_link . '">Users</a>
+							</div>
+						</div>';
+			}
 
 
 			if (is_it_enabled($_SESSION['menu_adm_warehouse']))

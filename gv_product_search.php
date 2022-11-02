@@ -25,7 +25,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if (can_user_access($_SESSION['menu_prod_search']))
+	if (is_it_enabled($_SESSION['menu_prod_search']))
 	{
 
 		// needs a db connection...
@@ -464,8 +464,18 @@ if ($login->isUserLoggedIn() == true)
 				}
 
 
-				// Create a clickable link so that the operator can investigate the location in more detail (if required)
-				$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+				//	Important feature right here!
+				//	If the user does not have access to the location search than do not
+				//	provide the links to it here! Logic! :)
+				//	By default just provide with the location code.
+
+				$loc_details_lnk	=	trim($row['loc_code']);
+
+				if (is_it_enabled($_SESSION['menu_location_search']))
+				{
+					// Create a clickable link so that the operator can investigate the location in more detail (if required & allowed)
+					$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+				}
 
 				$details_html	.=	'<tr>';
 				$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';

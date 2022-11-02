@@ -36,7 +36,7 @@ if ($login->isUserLoggedIn() == true) {
 		if 
 		(
 
-			(can_user_access($_SESSION['menu_mgr_prod_add_update']))
+			(is_it_enabled($_SESSION['menu_mgr_prod_add_update']))
 
 			AND
 

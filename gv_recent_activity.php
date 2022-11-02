@@ -29,7 +29,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	//	Allow the operator to see it is enough.
-	if (can_user_access($_SESSION['menu_recent_activity']))
+	if (is_it_enabled($_SESSION['menu_recent_activity']))
 	{
 
 		// needs a db connection...
@@ -219,8 +219,17 @@ if ($login->isUserLoggedIn() == true)
 							// Set everything up accordingly.
 
 
-							// These could become the norm for any activity type
-							$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+
+							//	Important feature right here!
+							//	If the user does not have access to the product search than do not
+							// provide the links for it here! Logic! :P
+							$product_details_lnk	=	trim($row['prod_code']);
+
+							if (is_it_enabled($_SESSION['menu_prod_search']))
+							{
+								// Create a clickable link so that the operator can investigate the product in more detail (if required & allowed)
+								$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+							}
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
@@ -228,8 +237,19 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'</tr>';
 
 
-							// These could become the norm for any activity type
-							$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+
+
+							//	Important feature right here!
+							//	If the user does not have access to the location search than do not
+							//	provide the links to it here! Logic! :)
+							//	By default just provide with the location code.
+							$loc_details_lnk	=	trim($row['loc_code']);
+
+							if (is_it_enabled($_SESSION['menu_location_search']))
+							{
+								// Create a clickable link so that the operator can investigate the location in more detail (if required & allowed)
+								$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+							}
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">To location:</td>';

@@ -67,7 +67,7 @@ if ($login->isUserLoggedIn() == true)
 		if 
 		(
 
-			(can_user_access($_SESSION['menu_prod2loc']))
+			(is_it_enabled($_SESSION['menu_prod2loc']))
 
 			AND
 

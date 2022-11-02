@@ -28,7 +28,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	//	Certain access right checks should be executed here...
-	if (can_user_access($_SESSION['menu_adm_warehouse_loc']))
+	if (is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 	{
 
 
@@ -492,19 +492,43 @@ if ($login->isUserLoggedIn() == true)
 
 						<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
 
-						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
-							</div>
-						</div>
 
-						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button admin_class is-fullwidth"  onclick="update_item();">Update</button>
-							</div>
-						</div>
+
+<?php
+
+
+
+	// If the operator has the ability to add...
+	if (can_user_add($_SESSION['menu_adm_warehouse_loc']))
+	{
+		echo	'
+
+		<div class="field" style="'. $box_size_str .'">
+			<p class="help">&nbsp;</p>
+			<div class="control">
+				<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
+			</div>
+		</div>';
+	}
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_warehouse_loc']))
+	{
+		echo	'
+
+		<div class="field" style="'. $box_size_str .'">
+			<p class="help">&nbsp;</p>
+			<div class="control">
+				<button class="button admin_class is-fullwidth"  onclick="update_item();">Update</button>
+			</div>
+		</div>';
+	}
+
+
+
+?>
+
 
 
 

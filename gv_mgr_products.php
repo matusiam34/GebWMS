@@ -25,7 +25,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if (can_user_access($_SESSION['menu_mgr_prod_add_update']))
+	if (is_it_enabled($_SESSION['menu_mgr_prod_add_update']))
 	{
 
 		// needs a db connection...
@@ -265,7 +265,7 @@ if ($login->isUserLoggedIn() == true)
 		
 		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
 
-		$sql	=	"
+		$sql	=	'
 
 			SELECT
 
@@ -277,24 +277,24 @@ if ($login->isUserLoggedIn() == true)
 
 			WHERE
 
-		";
+		';
 
 
 		if ($is_barcode)
 		{
 			// Search by barcode: Fixed 13 Oct 2022
-			$sql	.=	" prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar";
+			$sql	.=	' prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar';
 		}
 		else
 		{
 			// Search for a product by name
-			$sql	.=	" prod_code = :iprod_code ";
+			$sql	.=	' prod_code = :iprod_code ';
 			
 		}
 		
 		
-		$columns_html	=	"";
-		$details_html	=	"";
+		$columns_html	=	'';
+		$details_html	=	'';
 
 
 		// A fix for now... Look at it at a later stage for a better solution...
@@ -334,16 +334,16 @@ if ($login->isUserLoggedIn() == true)
 
 				// Grab product info... if there is anything!
 
-				$prod_pkey				=	trim($row['prod_pkey']);
+				$prod_pkey				=	leave_numbers_only($row['prod_pkey']);
 				$prod_code				=	trim($row['prod_code']);
 				$prod_desc				=	trim($row['prod_desc']);
 				$prod_category			=	trim($row['prod_category']);
-				$prod_each_barcode		=	trim($row['prod_each_barcode']);
+				$prod_each_barcode		=	trim($row['prod_each_barcode']);	// barcodes could contain letters?!?!?!
 				$prod_each_weight		=	trim($row['prod_each_weight']);
-				$prod_case_barcode		=	trim($row['prod_case_barcode']);
-				$prod_case_qty			=	trim($row['prod_case_qty']);
-				$prod_pall_qty			=	trim($row['prod_pall_qty']);
-				$prod_disabled			=	trim($row['prod_disabled']);
+				$prod_case_barcode		=	trim($row['prod_case_barcode']);	// barcodes could contain letters?!?!?!
+				$prod_case_qty			=	leave_numbers_only($row['prod_case_qty']);
+				$prod_pall_qty			=	leave_numbers_only($row['prod_pall_qty']);
+				$prod_disabled			=	leave_numbers_only($row['prod_disabled']);
 
 
 			}
@@ -354,15 +354,15 @@ if ($login->isUserLoggedIn() == true)
 
 			$columns_html	.=	'<div class="column is-3">';
 
-			// do a little check for the Status selectbox...
-			// Note: ugly but works for now.
-			$status_html	=	'<option value="0"';
-			if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
-			$status_html	.=	'>Active</option>';
+				// do a little check for the Status selectbox...
+				// Note: ugly but works for now.
+				$status_html	=	'<option value="0"';
+				if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
+				$status_html	.=	'>Active</option>';
 
-			$status_html	.=	'<option value="1"';
-			if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
-			$status_html	.=	'>Disabled</option>';
+				$status_html	.=	'<option value="1"';
+				if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
+				$status_html	.=	'>Disabled</option>';
 
 
 			// General product info
@@ -553,7 +553,7 @@ $details_html	.=	'
 		// show an error if the query has an error
 		else
 		{
-			echo "Details Query Failed!";
+			echo 'Details Query Failed!';
 		}
 
 
@@ -579,7 +579,7 @@ echo '</section>';
 	else
 	{
 		// User has logged in but does not have the rights to access this page !
-		include("not_logged_in.php");
+		include('not_logged_in.php');
 	}
 
 
@@ -588,7 +588,7 @@ else
 {
 
     // the user is not logged in.
-    include("not_logged_in.php");
+    include('not_logged_in.php');
 
 }
 
