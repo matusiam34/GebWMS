@@ -113,6 +113,10 @@ $backclrA	=	'#d6bfa9';
 $backclrB	=	'#f7f2ee';
 
 
+$color_admin	=	'background-color: #ef5350; color: white;';
+$color_manager	=	'background-color: #42A5F5; color: white;';
+$color_general	=	'background-color: #8D6E63; color: white;';
+
 
 
 

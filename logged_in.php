@@ -79,35 +79,38 @@ echo '<section class="section is-paddingless">';
 echo	'<div class="container box has-background-light">';
 
 
-	$page_form	=	'<div class="field"><form action="gv_product_search.php" method="get">';
-
-		$page_form	.=	'<div class="field has-addons">';
-
-			$page_form	.=	'<p class="control is-expanded">';
-			$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="Product code">';
-			$page_form	.=	'</p>';
-
-			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>';
-			$page_form	.=	'</p>';
-
-		$page_form	.=	'</div>';
-
-	$page_form	.=	'</form></div>';
-
 
 	echo '<div class="columns">';
 
 
 		echo '<div class="column is-3">';
-			echo $page_form;
 
-			// Keeping this just in case... DELETE if not needed anymore
-			//echo '<div style="height:16px;"></div>';
+			// Probably I need to rethink the way I generate and display elements... for another day tho!
+			if (is_it_enabled($_SESSION['menu_prod_search']))
+			{
+
+				echo	'<div class="field">
+						<form action="gv_product_search.php" method="get">
+
+							<div class="field has-addons">
+
+								<p class="control is-expanded">
+									<input class="input" type="text" id="product" name="product" placeholder="Product code">
+								</p>
+
+								<p class="control">
+									<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
+								</p>
+
+							</div>
+
+						</form>
+						</div>';
+
+			}
 
 
 			// Probably I need to rethink the way I generate and display elements... for another day tho!
-
 			if (is_it_enabled($_SESSION['menu_location_search']))
 			{
 

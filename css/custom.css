@@ -9,6 +9,18 @@
 }
 
 
+/*	The standard brown. Need to clean up this color code mess some time soon			*/
+.general_class {
+	background-color: #8D6E63; /*#795548;*/
+	color: white;
+}
+
+
+/*	A hack for the select dropdown to change the color of the arrow thingo. Yellow seems to work fine me thinks!	*/
+.select.is-yellow:after {
+  border-color: #FFDD57 !important;
+}
+
 /*
  
  
@@ -95,6 +107,12 @@
 
 
 .table-has-border {
+	border:1px solid;
+}
+
+
+/*	Has border?			*/
+.it-has-border {
 	border:1px solid;
 }
 

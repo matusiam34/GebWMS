@@ -64,16 +64,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Check if user has the right access level
-		if 
-		(
-
-			(is_it_enabled($_SESSION['menu_prod2loc']))
-
-			AND
-
-			(can_user_add($_SESSION['menu_prod2loc']))
-
-		)
+		if (is_it_enabled($_SESSION['menu_prod2loc']))
 		{
 
 

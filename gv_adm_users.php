@@ -5,38 +5,53 @@
 //
 //	How can I make it easy for the Admin to manage access?
 //
-//	I got so far:
+//	I got this so far:
 //
+//	X:	Always a 1 at the beginning to make it work.
 //	E:	Enabled
 //	A:	Add
 //	U:	Update
 //	D:	Delete
 //
-//	E
-//	EU
-//	ED
-//	EA
-//	EUD
-//	EAU
-//	EAD
-//	EAUD
+//
+//	1	1	1	1	1	00000000000
+//
+//	X	E	A	U	D
+//
+//
+//	Disabled	:	32768	1000000000000000
+//	E			:	49152	1100000000000000
+//	EU			:	53248	1101000000000000
+//	ED			:	51200	1100100000000000
+//	EA			:	57344	1110000000000000
+//	EUD			:	55296	1101100000000000
+//	EAU			:	61440	1111000000000000
+//	EAD			:	59392	1110100000000000
+//	EAUD		:	63488	1111100000000000
 //
 //
 //
 //
 //
 //
-
 /*
-	"menu_adm_warehouse"	INTEGER DEFAULT 0,
-	"menu_adm_warehouse_loc"	INTEGER DEFAULT 0,
-	"menu_adm_users"	INTEGER DEFAULT 0,
-	"menu_prod_search"	INTEGER DEFAULT 0,
-	"menu_location_search"	INTEGER DEFAULT 0,
-	"menu_prod2loc"	INTEGER DEFAULT 0,
-	"menu_recent_activity"	INTEGER DEFAULT 0,
-	"menu_mgr_prod_add_update"	INTEGER DEFAULT 0,
+
+	All select options 
+
+	<option value="32768">X</option>
+	<option value="49152">E</option>
+	<option value="57344">EA</option>
+	<option value="61440">EAU</option>
+	<option value="59392">EAD</option>
+	<option value="63488">EAUD</option>
+	<option value="53248">EU</option>
+	<option value="51200">ED</option>
+	<option value="55296">EUD</option>
+
+
 */
+
+
 
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
@@ -124,6 +139,8 @@ if ($login->isUserLoggedIn() == true)
 					// 1 = ID
 					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
 
+					// Get all the details from the table...
+					get_one_user_data();
 
 			});
 
@@ -133,7 +150,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		// Grab all users
-		function get_all_items()
+		function get_all_users()
 		{
 
 			$.post('ajax_get_all_users.php', { 
@@ -168,16 +185,14 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Add an item to the database
-		function add_item()
+
+		// Grab one user data
+		function get_one_user_data()
 		{
 
-			var item_name_str	=	get_Element_Value_By_ID('id_item_name');
+			$.post('ajax_get_one_user_data.php', { 
 
-
-			$.post('ajax_add_warehouse.php', { 
-
-				new_item_name_js	:	item_name_str
+				user_uid_js	:	get_Element_Value_By_ID('id_hidden')
 
 			},
 
@@ -191,8 +206,26 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					set_Element_Value_By_ID('id_item_name', '');
-					get_all_items();	// repopulate the table !
+					//	User details
+					set_Element_Value_By_ID('id_user_name',				obje.data.username);
+					set_Element_Value_By_ID('id_user_firstname',		obje.data.firstname);
+					set_Element_Value_By_ID('id_user_lastname',			obje.data.surname);
+
+					set_Element_Value_By_ID('id_user_desc',				obje.data.description);
+					set_Element_Value_By_ID('id_user_email',			obje.data.email);
+					set_Element_Value_By_ID('id_user_active',			obje.data.active);
+
+					//	ACL
+					set_Element_Value_By_ID('id_product_search',		obje.data.menu_prod_search);
+					set_Element_Value_By_ID('id_location_search',		obje.data.menu_location_search);
+					set_Element_Value_By_ID('id_prod2location',			obje.data.menu_prod2loc);
+					set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
+					set_Element_Value_By_ID('id_mgr_products',			obje.data.menu_mgr_prod_add_update);
+					set_Element_Value_By_ID('id_adm_users',				obje.data.menu_adm_users);
+					set_Element_Value_By_ID('id_adm_warehouses',		obje.data.menu_adm_warehouse);
+					set_Element_Value_By_ID('id_adm_wh_locations',		obje.data.menu_adm_warehouse_loc);
+
+
 				}
 				else
 				{
@@ -208,18 +241,22 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// UPDATE item 
-		function update_item()
+
+
+		// UPDATE user details only!
+		function update_user_details()
 		{
 
-			var item_name_str	=	get_Element_Value_By_ID('id_item_name');
-			var item_id_str		=	get_Element_Value_By_ID('id_hidden');
+			$.post('ajax_update_user_details.php', { 
 
+				user_uid_js				:	get_Element_Value_By_ID('id_hidden'),
 
-			$.post('ajax_update_warehouse.php', { 
-
-				item_name_js	:	item_name_str,
-				item_id_js		:	item_id_str
+				user_username_js	:	get_Element_Value_By_ID('id_user_name'),
+				user_firstname_js	:	get_Element_Value_By_ID('id_user_firstname'),
+				user_lastname_js	:	get_Element_Value_By_ID('id_user_lastname'),
+				user_desc_js		:	get_Element_Value_By_ID('id_user_desc'),
+				user_email_js		:	get_Element_Value_By_ID('id_user_email'),
+				user_active_js		:	get_Element_Value_By_ID('id_user_active')
 
 			},
 
@@ -232,9 +269,7 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-
-					set_Element_Value_By_ID('id_item_name', '');
-					get_all_items();	// repopulate the table !
+					//get_all_users();	// repopulate the table?!
 				}
 				else
 				{
@@ -247,6 +282,53 @@ if ($login->isUserLoggedIn() == true)
 					});
 
 		}
+
+
+
+
+		// UPDATE access control only!
+		function update_user_acl()
+		{
+
+			$.post('ajax_update_user_acl.php', { 
+
+				user_uid_js				:	get_Element_Value_By_ID('id_hidden'),
+
+				id_product_search_js	:	get_Element_Value_By_ID('id_product_search'),
+				id_location_search_js	:	get_Element_Value_By_ID('id_location_search'),
+				id_prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
+				id_recent_activity_js	:	get_Element_Value_By_ID('id_recent_activity'),
+				id_mgr_products_js		:	get_Element_Value_By_ID('id_mgr_products'),
+				id_adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
+				id_adm_warehouses_js	:	get_Element_Value_By_ID('id_adm_warehouses'),
+				id_adm_wh_locations_js	:	get_Element_Value_By_ID('id_adm_wh_locations')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					//	Some info to let the user know that changes have been applied?
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert('server problem');
+					});
+
+		}
+
+
 
 
 
@@ -262,7 +344,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-	.tableAttr { height: 360px; overflow-y: scroll;}
+	.tableAttr { height: 224px; overflow-y: scroll;}
 
 
 
@@ -289,7 +371,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_items();'>
+<body onLoad='get_all_users();'>
 
 
 <?php
@@ -299,7 +381,6 @@ if ($login->isUserLoggedIn() == true)
 
 		echo '<section class="section is-paddingless">';
 		echo	'<div class="container box has-background-light">';
-
 
 
 				$page_form	=	'<p class="control">';
@@ -329,40 +410,142 @@ if ($login->isUserLoggedIn() == true)
 				</nav>';
 
 
-?>
 
 
-				<div class="columns">
+	//	The user table + details + update button?
+	$user_details_html	=	'';
 
-					<div class="column is-3">
-						<div class="tableAttr">
+	$user_details_html	.=	'<div class="columns">';
+
+
+
+	// User table
+	$user_details_html	.=	'
+
+					<div class="column is-4">
+
+						<div class="tableAttr it-has-border">
 							<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
 							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Username</th>
-								</tr>
 							</thead>
 							<tbody>
 							</tbody>
+
 							</table>
+						</div>
+
+					</div>';
+
+
+
+	// User details
+	$user_details_html	.=	'
+
+
+					<div class="column is-2">
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">User name:</p>
+							<div class="control">
+								<input id="id_user_name" class="input is-normal" type="text" placeholder="toms">
+							</div>
+						</div>
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">First name:</p>
+							<div class="control">
+								<input id="id_user_firstname" class="input is-normal" type="text" placeholder="Tom">
+							</div>
+						</div>
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">Last name:</p>
+							<div class="control">
+								<input id="id_user_lastname" class="input is-normal" type="text" placeholder="Smith">
+							</div>
+						</div>
+
+
+					</div>
+
+
+					<div class="column is-4">
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">Description:</p>
+							<div class="control">
+								<input id="id_user_desc" class="input is-normal" type="text" placeholder="Operations Manager">
+							</div>
+						</div>
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">Email:</p>
+							<div class="control">
+								<input id="id_user_email" class="input is-normal" type="text" placeholder="tom.smith@jacknhide.co.uk">
+							</div>
 						</div>
 
 					</div>
 
 
 
+					<div class="column is-2">
 
-					<div class="column is-3">
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">Status:</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_user_active">
 
-						<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
+										<option value="0">Active</option>
+										<option value="1">Disabled</option>
+										<option value="2">Suspended</option>
 
-						<input id="id_hidden" class="input is-normal" type="text">
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button admin_class is-fullwidth"  onclick="update_user_details();">Update Details</button>
+							</div>
+						</div>
+
+
+
 
 					</div>
 
 
-<?php
+					';
+
+
+
+
+
+
+	$user_details_html	.=	'
+
+
+				</div>';
+
+
+echo	$user_details_html;
+
+
+
+
+
+
+//	<!--		The ACL section here		-->
 
 
 //	Configure the AC for each menu as a drop down. This should make it a bit easier.
@@ -370,39 +553,24 @@ if ($login->isUserLoggedIn() == true)
 //	as an option. Do this once and all will be good! That is as long as the page that is configured does not
 //	expand in functionality... Keep that in mind!
 
-/*
 
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">Status:</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-fullwidth">
-			<select id="id_disabled" name="id_disabled">' . $status_html . '
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
+	$user_acl_html	=	'<div class="columns">';
 
-*/
+	$user_acl_html	.=	'<div class="column is-2">';
 
-
-	$columns_html	=	'';
-
-	$columns_html	.=	'<div class="column is-3">';
-
-
-	$columns_html	.=	'
+	$user_acl_html	.=	'
 
 
 <div class="field" style="'. $box_size_str .'">
 	<p class="help">Product Search:</p>
 	<div class="field is-narrow">
 	  <div class="control">
-		<div class="select is-fullwidth">
-			<select id="id_product_search" name="id_product_search">
-				<option value="32768">Disabled</option>
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_product_search">
+
+				<option value="32768">X</option>
 				<option value="49152">E</option>
+
 			</select>
 		</div>
 	  </div>
@@ -415,10 +583,40 @@ if ($login->isUserLoggedIn() == true)
 	<p class="help">Location Search:</p>
 	<div class="field is-narrow">
 	  <div class="control">
-		<div class="select is-fullwidth">
-			<select id="id_product_search" name="id_product_search">
-				<option value="32768">Disabled</option>
+		<div class="select is-yellow is-fullwidth">
+			<select  style="' . $color_general . '" id="id_location_search">
+
+				<option value="32768">X</option>
 				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>';
+
+
+	$user_acl_html	.=	'</div>';
+
+
+
+
+
+	$user_acl_html	.=	'<div class="column is-2">';
+
+	$user_acl_html	.=	'
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Product2Location:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_prod2location">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
 			</select>
 		</div>
 	  </div>
@@ -427,66 +625,193 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Recent Activity:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_recent_activity">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>';
 
 
 
-';
+
+
+	$user_acl_html	.=	'</div>';
 
 
 
 
 
-	$columns_html	.=	'</div>';
+	$user_acl_html	.=	'<div class="column is-2">';
+
+	$user_acl_html	.=	'
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Products:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_manager . '" id="id_mgr_products">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="57344">EA</option>
+				<option value="61440">EAU</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>';
+
+
+
+	$user_acl_html	.=	'</div>';
+
+
+
+	$user_acl_html	.=	'<div class="column is-2">';
+
+	$user_acl_html	.=	'
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Users:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_admin . '" id="id_adm_users">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="57344">EA</option>
+				<option value="61440">EAU</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Warehouses:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_admin . '" id="id_adm_warehouses">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="57344">EA</option>
+				<option value="61440">EAU</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Warehouse Locations:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_admin . '" id="id_adm_wh_locations">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="57344">EA</option>
+				<option value="61440">EAU</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>';
 
 
 
 
 
-echo	$columns_html;
+	$user_acl_html	.=	'</div>';
 
-/*
-	// If the operator has the ability to add...
-	if (can_user_add($_SESSION['menu_adm_warehouse']))
-	{
-		echo	'
+
+
+	//	Save / Update button section?!
+	$user_acl_html	.=	'<div class="column is-2">';
+
+	$user_acl_html	.=	'
 
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
+				<button class="button admin_class is-fullwidth" onclick="update_user_acl();">Update ACL</button>
 			</div>
 		</div>';
-	}
+
+	$user_acl_html	.=	'</div>';
 
 
-	// If the operator has the ability to update...
-	if (can_user_update($_SESSION['menu_adm_warehouse']))
-	{
-		echo	'
+
+	//	Add user input + button
+	$user_acl_html	.=	'<div class="column is-2">';
+
+	$user_acl_html	.=	'
+
+
+		<div class="field" style="'. $box_size_str .'">
+			<p class="help">New Username:</p>
+			<div class="control">
+				<input id="id_new_user_name" class="input is-normal" type="text" placeholder="andreat">
+			</div>
+		</div>
+
 
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="update_item();">Update</button>
+				<button class="button admin_class is-fullwidth" onclick="add_user();">Add user</button>
 			</div>
 		</div>';
-	}
 
-*/
-
+	$user_acl_html	.=	'</div>';
 
 
 
 
-?>
+	$user_acl_html	.=	'</div>';	//	close the ACL "row"
 
 
 
-				</div>
+
+
+echo	$user_acl_html;
 
 
 
-<?php
+
+//	Place it in a better space maybe? Not urgent.
+echo	'<input id="id_hidden" class="input is-normal" type="hidden">';
+
+
 
 
 		echo '</div>';

@@ -282,12 +282,12 @@ if ($login->isUserLoggedIn() == true)
 					var len = obje.data.length;
 
 					// jQuery - remove all entries
-					$("#id_warehouse").empty();
+					$('#id_warehouse').empty();
 
 
 					// The first entry
-					var opt = document.createElement("Option");
-					document.getElementById("id_warehouse").options.add(opt);
+					var opt = document.createElement('Option');
+					document.getElementById('id_warehouse').options.add(opt);
 					opt.value = 0;
 					opt.text = '-----';
 
@@ -298,8 +298,8 @@ if ($login->isUserLoggedIn() == true)
 						for (var i = 0; i < len; i++)
 						{
 
-							var opt = document.createElement("Option");
-							document.getElementById("id_warehouse").options.add(opt);
+							var opt = document.createElement('Option');
+							document.getElementById('id_warehouse').options.add(opt);
 							opt.value = obje.data[i].warehouse_id;
 							opt.text = obje.data[i].warehouse_name;
 

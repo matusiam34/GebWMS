@@ -265,7 +265,7 @@ class Login
 			{
 				$this->login_status = $this->lang['Wrong password'];
 			}
-			else if ($result_row->user_active == 0)
+			else if ($result_row->user_active == 1)
 			{
 				$this->login_status = $this->lang['Account not activated'];
 			}
@@ -288,7 +288,6 @@ class Login
 				// Or do I create a seperate table with all of the menu items?!
 				// Hmmmm...
 
-				$_SESSION['user_inventory']			=	$result_row->user_inventory;
 				$_SESSION['user_priv']				=	$result_row->user_priv;
 				$_SESSION['user_logged_in']			=	1;
 
