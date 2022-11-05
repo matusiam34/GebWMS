@@ -315,8 +315,14 @@ if ($login->isUserLoggedIn() == true)
 				}
 
 
-				$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+				$product_details_lnk	=	trim($row['prod_code']);
 
+				//	Only show the link to the product search page if the operator has the product search tab enabled!
+				//	Otherwise just show the product code.
+				if (is_it_enabled($_SESSION['menu_prod_search']))
+				{
+					$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+				}
 
 
 				$details_html	.=	'<tr>';

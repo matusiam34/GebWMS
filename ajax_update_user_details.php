@@ -41,11 +41,11 @@ if ($login->isUserLoggedIn() == true) {
 		if 
 		(
 
-			(is_it_enabled($_SESSION['menu_mgr_prod_add_update']))
+			(is_it_enabled($_SESSION['menu_adm_users']))
 
 			AND
 
-			(can_user_update($_SESSION['menu_mgr_prod_add_update']))
+			(can_user_update($_SESSION['menu_adm_users']))
 
 		)
 
@@ -58,6 +58,8 @@ if ($login->isUserLoggedIn() == true) {
 			// make sure that the user id is provided. 
 			if ($user_uid > 0)
 			{
+
+				$db->beginTransaction();
 
 
 				// Data from the user to process...
@@ -105,6 +107,9 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':suser_id',				$user_uid,			PDO::PARAM_INT);
 					$stmt->execute();
 
+					// make sure to commit all of the changes to the DATABASE !
+					$db->commit();
+
 					// dummy message... Just to keep the script happy ? Do not show anything to the use tho !
 					print_message(0, 'a-OK');
 
@@ -143,6 +148,7 @@ if ($login->isUserLoggedIn() == true) {
 	}		// Establishing the database connection - end bracket !
 	catch(PDOException $e)
 	{
+		$db->rollBack();
 		print_message(1, $e->getMessage());
 	}
 

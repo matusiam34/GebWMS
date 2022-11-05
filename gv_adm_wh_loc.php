@@ -497,7 +497,6 @@ if ($login->isUserLoggedIn() == true)
 <?php
 
 
-
 	// If the operator has the ability to add...
 	if (can_user_add($_SESSION['menu_adm_warehouse_loc']))
 	{

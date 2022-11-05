@@ -54,8 +54,10 @@ if ($login->isUserLoggedIn() == true) {
 		{
 
 
+
 			// remove anything that is not a number?!
 			$loc_uid	=	leave_numbers_only($_POST['loc_uid_js']);
+
 
 			if ($loc_uid > 0)
 			{
@@ -68,6 +70,10 @@ if ($login->isUserLoggedIn() == true) {
 				$type			=	trim($_POST['type_js']);
 				$blocked		=	trim($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
+
+
+				$db->beginTransaction();
+
 
 
 
@@ -102,6 +108,9 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
 					$stmt->bindValue(':sloc_pkey',		$loc_uid,		PDO::PARAM_INT);
 					$stmt->execute();
+
+					// make sure to commit all of the changes to the DATABASE !
+					$db->commit();
 
 					// dummy message... Just to keep the script happy ? Do not show anything to the use tho !
 					print_message(0, 'a-OK');
@@ -141,6 +150,7 @@ if ($login->isUserLoggedIn() == true) {
 	}		// Establishing the database connection - end bracket !
 	catch(PDOException $e)
 	{
+		$db->rollBack();
 		print_message(1, $e->getMessage());
 	}
 

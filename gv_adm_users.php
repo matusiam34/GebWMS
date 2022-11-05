@@ -167,7 +167,8 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					$('#curr_table').find('tr:gt(0)').remove();
+					$('#curr_table > tbody').empty();
+					//$('#curr_table').find('tr:gt(0)').remove();
 					$('#curr_table > tbody').append(obje.html);
 
 				}
@@ -294,14 +295,14 @@ if ($login->isUserLoggedIn() == true)
 
 				user_uid_js				:	get_Element_Value_By_ID('id_hidden'),
 
-				id_product_search_js	:	get_Element_Value_By_ID('id_product_search'),
-				id_location_search_js	:	get_Element_Value_By_ID('id_location_search'),
-				id_prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
-				id_recent_activity_js	:	get_Element_Value_By_ID('id_recent_activity'),
-				id_mgr_products_js		:	get_Element_Value_By_ID('id_mgr_products'),
-				id_adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
-				id_adm_warehouses_js	:	get_Element_Value_By_ID('id_adm_warehouses'),
-				id_adm_wh_locations_js	:	get_Element_Value_By_ID('id_adm_wh_locations')
+				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
+				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
+				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
+				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
+				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
+				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
+				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
+				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
 
 			},
 
@@ -315,6 +316,58 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 					//	Some info to let the user know that changes have been applied?
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert('server problem');
+					});
+
+		}
+
+
+
+
+		//	ADD a new user to the system!
+		function add_new_user()
+		{
+
+			$.post('ajax_add_user.php', { 
+
+				user_name_js			:	get_Element_Value_By_ID('id_user_name'),
+				user_firstname_js		:	get_Element_Value_By_ID('id_user_firstname'),
+				user_lastname_js		:	get_Element_Value_By_ID('id_user_lastname'),
+				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
+				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
+				user_active_js			:	get_Element_Value_By_ID('id_user_active'),
+
+				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
+				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
+				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
+				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
+				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
+				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
+				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
+				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					//	Some info to let the user know that changes have been applied?
+					get_all_users();	// repopulate the table
+
 				}
 				else
 				{
@@ -508,25 +561,26 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>
+						</div>';
 
 
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_users']))
+	{
+
+		//	Update button section?!
+		$user_details_html	.=	'
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
 								<button class="button admin_class is-fullwidth"  onclick="update_user_details();">Update Details</button>
 							</div>
-						</div>
+						</div>';
 
-
-
-
-					</div>
-
-
-					';
-
+	}
 
 
 
@@ -534,6 +588,12 @@ if ($login->isUserLoggedIn() == true)
 
 	$user_details_html	.=	'
 
+					</div>';
+
+
+
+
+	$user_details_html	.=	'
 
 				</div>';
 
@@ -754,47 +814,50 @@ echo	$user_details_html;
 	$user_acl_html	.=	'</div>';
 
 
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_users']))
+	{
 
-	//	Save / Update button section?!
-	$user_acl_html	.=	'<div class="column is-2">';
+		//	Update button section?!
+		$user_acl_html	.=	'<div class="column is-2">';
 
-	$user_acl_html	.=	'
+		$user_acl_html	.=	'
 
-		<div class="field" style="'. $box_size_str .'">
-			<p class="help">&nbsp;</p>
-			<div class="control">
-				<button class="button admin_class is-fullwidth" onclick="update_user_acl();">Update ACL</button>
-			</div>
-		</div>';
+			<div class="field" style="'. $box_size_str .'">
+				<p class="help">&nbsp;</p>
+				<div class="control">
+					<button class="button admin_class is-fullwidth" onclick="update_user_acl();">Update ACL</button>
+				</div>
+			</div>';
 
-	$user_acl_html	.=	'</div>';
+		$user_acl_html	.=	'</div>';
 
-
-
-	//	Add user input + button
-	$user_acl_html	.=	'<div class="column is-2">';
-
-	$user_acl_html	.=	'
+	}
 
 
-		<div class="field" style="'. $box_size_str .'">
-			<p class="help">New Username:</p>
-			<div class="control">
-				<input id="id_new_user_name" class="input is-normal" type="text" placeholder="andreat">
-			</div>
-		</div>
 
 
-		<div class="field" style="'. $box_size_str .'">
-			<p class="help">&nbsp;</p>
-			<div class="control">
-				<button class="button admin_class is-fullwidth" onclick="add_user();">Add user</button>
-			</div>
-		</div>';
-
-	$user_acl_html	.=	'</div>';
 
 
+	// If the operator has the ability to add...
+	if (can_user_add($_SESSION['menu_adm_users']))
+	{
+
+		//	Add user input + button
+		$user_acl_html	.=	'<div class="column is-2">';
+
+		$user_acl_html	.=	'
+
+			<div class="field" style="'. $box_size_str .'">
+				<p class="help">&nbsp;</p>
+				<div class="control">
+					<button class="button admin_class is-fullwidth" onclick="add_new_user();">Add user</button>
+				</div>
+			</div>';
+
+		$user_acl_html	.=	'</div>';
+
+	}
 
 
 	$user_acl_html	.=	'</div>';	//	close the ACL "row"
