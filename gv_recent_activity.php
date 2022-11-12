@@ -222,13 +222,13 @@ if ($login->isUserLoggedIn() == true)
 
 							//	Important feature right here!
 							//	If the user does not have access to the product search than do not
-							// provide the links for it here! Logic! :P
+							//	provide the links for it here! Logic! :P
 							$product_details_lnk	=	trim($row['prod_code']);
 
 							if (is_it_enabled($_SESSION['menu_prod_search']))
 							{
 								// Create a clickable link so that the operator can investigate the product in more detail (if required & allowed)
-								$product_details_lnk	=	'<a href="gv_product_search.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
+								$product_details_lnk	=	'<a href="gv_search_product.php?product=' . trim($row['prod_code']) . '">' . trim($row['prod_code']) . '</a>';
 							}
 
 							$details_html	.=	'<tr>';
@@ -248,7 +248,7 @@ if ($login->isUserLoggedIn() == true)
 							if (is_it_enabled($_SESSION['menu_location_search']))
 							{
 								// Create a clickable link so that the operator can investigate the location in more detail (if required & allowed)
-								$loc_details_lnk	=	'<a href="gv_location_search.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+								$loc_details_lnk	=	'<a href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
 							}
 
 							$details_html	.=	'<tr>';
@@ -284,7 +284,8 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'</tr>';
 
 
-							$activity_date	=	trim($row['stk_hst_date']);
+							//	mateusz
+							$activity_date	=		trim($row['stk_hst_date']);
 
 							$act_date		=		date('d/m/Y', strtotime($activity_date));
 							$act_time		=		date('H:i:s', strtotime($activity_date));

@@ -298,6 +298,7 @@ class Login
 				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;
 				$_SESSION['menu_prod_search']				=	$result_row->menu_prod_search;
 				$_SESSION['menu_location_search']			=	$result_row->menu_location_search;
+				$_SESSION['menu_order_search']				=	$result_row->menu_order_search;
 				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_mgr_prod_add_update']		=	$result_row->menu_mgr_prod_add_update;

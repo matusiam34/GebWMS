@@ -59,6 +59,7 @@ if ($login->isUserLoggedIn() == true) {
 				// Data from the user to process...
 				$product_search			=	leave_numbers_only($_POST['product_search_js']);
 				$location_search		=	leave_numbers_only($_POST['location_search_js']);
+				$order_search			=	leave_numbers_only($_POST['order_search_js']);
 				$prod2location			=	leave_numbers_only($_POST['prod2location_js']);
 				$recent_activity		=	leave_numbers_only($_POST['recent_activity_js']);
 				$mgr_products			=	leave_numbers_only($_POST['mgr_products_js']);
@@ -83,6 +84,7 @@ if ($login->isUserLoggedIn() == true) {
 					menu_adm_users				=		:umenu_adm_users,
 					menu_prod_search			=		:umenu_prod_search,
 					menu_location_search		=		:umenu_location_search,
+					menu_order_search			=		:umenu_order_search,
 					menu_prod2loc				=		:umenu_prod2loc,
 					menu_recent_activity		=		:umenu_recent_activity,
 					menu_mgr_prod_add_update	=		:umenu_mgr_prod_add_update
@@ -94,11 +96,14 @@ if ($login->isUserLoggedIn() == true) {
 				'))
 				{
 
+
+
 					$stmt->bindValue(':umenu_adm_warehouse',			$adm_warehouses,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_adm_warehouse_loc',		$adm_wh_locations,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_adm_users',				$adm_users,				PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_prod_search',				$product_search,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_location_search',			$location_search,		PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_order_search',				$order_search,			PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_prod2loc',					$prod2location,			PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_mgr_prod_add_update',		$mgr_products,			PDO::PARAM_INT);

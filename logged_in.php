@@ -85,12 +85,12 @@ echo	'<div class="container box has-background-light">';
 
 		echo '<div class="column is-3">';
 
-			// Probably I need to rethink the way I generate and display elements... for another day tho!
+			//	Show the product search if the user has that feature enabled
 			if (is_it_enabled($_SESSION['menu_prod_search']))
 			{
 
 				echo	'<div class="field">
-						<form action="gv_product_search.php" method="get">
+						<form action="gv_search_product.php" method="get">
 
 							<div class="field has-addons">
 
@@ -110,14 +110,14 @@ echo	'<div class="container box has-background-light">';
 			}
 
 
-			// Probably I need to rethink the way I generate and display elements... for another day tho!
+			//	Show the location search if the user has that feature enabled
 			if (is_it_enabled($_SESSION['menu_location_search']))
 			{
 
 				echo	'
 
 					<div class="field">
-					<form action="gv_location_search.php" method="get">
+					<form action="gv_search_location.php" method="get">
 						<div class="field has-addons" >
 
 							<p class="control is-expanded">
@@ -134,6 +134,30 @@ echo	'<div class="container box has-background-light">';
 
 			}
 
+
+			//	Show the order search if the user has that feature enabled
+			if (is_it_enabled($_SESSION['menu_order_search']))
+			{
+
+				echo	'
+
+					<div class="field">
+					<form action="gv_search_order.php" method="get">
+						<div class="field has-addons" >
+
+							<p class="control is-expanded">
+								<input class="input" type="text" id="ordnum" name="ordnum" placeholder="Order number">
+							</p>
+
+							<p class="control">
+								<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
+							</p>
+
+						</div>
+					</form>
+					</div>';
+
+			}
 
 
 

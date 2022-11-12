@@ -94,6 +94,7 @@ if ($login->isUserLoggedIn() == true) {
 								'menu_adm_users'				=> leave_numbers_only($row['menu_adm_users']),
 								'menu_prod_search'				=> leave_numbers_only($row['menu_prod_search']),
 								'menu_location_search'			=> leave_numbers_only($row['menu_location_search']),
+								'menu_order_search'				=> leave_numbers_only($row['menu_order_search']),
 								'menu_prod2loc'					=> leave_numbers_only($row['menu_prod2loc']),
 								'menu_recent_activity'			=> leave_numbers_only($row['menu_recent_activity']),
 								'menu_mgr_prod_add_update'		=> leave_numbers_only($row['menu_mgr_prod_add_update'])
@@ -102,19 +103,10 @@ if ($login->isUserLoggedIn() == true) {
 						);
 
 
-/*
-						$table_text		.=		'<tr>';
-						$table_text		.=			'<td>'	.	trim($row['user_id'])	.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['user_name'])	.	'</td>';
-						$table_text		.=		'</tr>';
-*/
-
 					}
 
 
 					$result['data'] = $data_results;
-//					$result['html'] = $table_text;
-
 
 					echo json_encode($result);
 
