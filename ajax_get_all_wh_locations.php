@@ -51,6 +51,7 @@ if ($login->isUserLoggedIn() == true) {
 
 					geb_location.loc_barcode,
 					geb_location.loc_type,
+					geb_location.loc_pickface,
 					geb_location.loc_blocked,
 					geb_location.loc_note
 
@@ -104,7 +105,16 @@ if ($login->isUserLoggedIn() == true) {
 						$table_text		.=		'<tr>';
 						$table_text		.=			'<td>'	.	trim($row['loc_pkey'])		.	'</td>';
 						$table_text		.=			'<td>'	.	trim($row['wh_code'])		.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['loc_code'])	.	'</td>';
+
+						$pickface_cde		=	leave_numbers_only($row['loc_pickface']);
+						$pickface_style		=	'';		//	by default do nothing! Only bold it up when location is a pickface!
+
+						if ($pickface_cde == 1)
+						{
+							$pickface_style		=	' style="font-weight: bold;" ';
+						}
+
+						$table_text		.=			'<td ' . $pickface_style . '>'	.	trim($row['loc_code'])	.	'</td>';
 						$table_text		.=			'<td>'	.	trim($row['loc_barcode'])	.	'</td>';
 
 

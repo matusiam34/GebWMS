@@ -158,6 +158,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_location_name', obje.data.loc_code);
 					set_Element_Value_By_ID('id_barcode', obje.data.loc_barcode);
 					set_Element_Value_By_ID('id_item_type', obje.data.loc_type);
+					set_Element_Value_By_ID('id_pickface', obje.data.loc_pickface);
 					set_Element_Value_By_ID('id_blocked', obje.data.loc_blocked);
 					set_Element_Value_By_ID('id_desc', obje.data.loc_note);
 				}
@@ -187,6 +188,7 @@ if ($login->isUserLoggedIn() == true)
 				location_js		:	get_Element_Value_By_ID('id_location_name'),
 				barcode_js		:	get_Element_Value_By_ID('id_barcode'),
 				type_js			:	get_Element_Value_By_ID('id_item_type'),
+				pickface_js		:	get_Element_Value_By_ID('id_pickface'),
 				blocked_js		:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js		:	get_Element_Value_By_ID('id_desc')
 
@@ -230,6 +232,7 @@ if ($login->isUserLoggedIn() == true)
 				location_js		:	get_Element_Value_By_ID('id_location_name'),
 				barcode_js		:	get_Element_Value_By_ID('id_barcode'),
 				type_js			:	get_Element_Value_By_ID('id_item_type'),
+				pickface_js		:	get_Element_Value_By_ID('id_pickface'),
 				blocked_js		:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js		:	get_Element_Value_By_ID('id_desc')
 
@@ -332,7 +335,7 @@ if ($login->isUserLoggedIn() == true)
 <style>
 
 
-	.tableAttr { height: 460px; overflow-y: scroll;}
+	.tableAttr { height: 300px; overflow-y: scroll;}
 
 
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
@@ -405,7 +408,7 @@ if ($login->isUserLoggedIn() == true)
 
 				<div class="columns">
 
-					<div class="column is-9">
+					<div class="column is-12">
 						<div class="tableAttr">
 							<table class="table is-fullwidth is-hoverable is-scrollable " id="curr_table">
 								<tbody>
@@ -414,7 +417,11 @@ if ($login->isUserLoggedIn() == true)
 						</div>
 					</div>
 
+				</div>
 
+
+
+				<div class="columns">
 
 
 					<div class="column is-3">
@@ -447,24 +454,47 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
+				</div>
+
+
+
+				<div class="column is-3">
+
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
 							<p class="help">Type:</p>
 							<div class="field is-narrow">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select id="id_item_type" name="id_item_type" >
+
+											<!--	Populate this so that it uses the array from lib_functions			-->
+
+											<option value="10">Single</option>
+											<option value="20">Multi</option>
+											<option value="30">Mixed</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help">Pickface:</p>
+							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-								  <select id="id_item_type" name="id_item_type" >
-
-									<!--	Populate this so that it uses the array from lib_functions			-->
-
-									<option value="10">Single</option>
-									<option value="20">Multi</option>
-									<option value="30">Mixed</option>
+								  <select id="id_pickface" name="id_pickface" >
+									<option value="0">No</option>
+									<option value="1">Yes</option>
 								  </select>
 								</div>
 							  </div>
 							</div>
 						</div>
+
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
@@ -481,16 +511,26 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
+				</div>
 
-						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Note:</p>
-							<div class="control">
-								<input id="id_desc" class="input is-normal" type="text" placeholder="do not use">
-							</div>
+
+
+				<div class="column is-3">
+
+					<div class="field" style="<?php echo $box_size_str; ?>">
+						<p class="help">Note:</p>
+						<div class="control">
+							<input id="id_desc" class="input is-normal" type="text" placeholder="do not use">
 						</div>
+					</div>
+
+				</div>
 
 
-						<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
+				<!--	The &nbsp; in the <p class="help"></p> is just a "fix" so that everything aligns otherwise it looks odd...		-->
+
+
+				<div class="column is-3">
 
 
 
@@ -528,16 +568,19 @@ if ($login->isUserLoggedIn() == true)
 
 ?>
 
-
-
-
-						<input id="id_hidden" class="input is-normal" type="hidden" value="0">
-
-					</div>
-
-
-
 				</div>
+
+
+
+
+
+
+				<input id="id_hidden" class="input is-normal" type="hidden" value="0">
+
+			</div>
+
+
+
 
 
 

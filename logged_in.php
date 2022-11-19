@@ -59,17 +59,14 @@
 //
 //	Red		:	Admin type of functionality
 //	Blue	:	Manager type of functionality
-//	Green	:	Sales / Reports functionality
+//	Green	:	Sales / Reporting functionality
 //	Brown	:	Warehouse operator stuff?!
 //
 //
 
 
-
-
-
 	// load the supporting functions....
-	require_once('lib_functions.php');
+//	require_once('lib_functions.php');
 
 
 // A little gap at the top to make it look better a notch.
@@ -95,7 +92,7 @@ echo	'<div class="container box has-background-light">';
 							<div class="field has-addons">
 
 								<p class="control is-expanded">
-									<input class="input" type="text" id="product" name="product" placeholder="Product code">
+									<input class="input" type="text" id="product" name="product" placeholder="' . $mylang['product_code'] . '">
 								</p>
 
 								<p class="control">
@@ -121,7 +118,7 @@ echo	'<div class="container box has-background-light">';
 						<div class="field has-addons" >
 
 							<p class="control is-expanded">
-								<input class="input" type="text" id="location" name="location" placeholder="Location barcode">
+								<input class="input" type="text" id="location" name="location" placeholder="' . $mylang['location_barcode'] . '">
 							</p>
 
 							<p class="control">
@@ -146,7 +143,7 @@ echo	'<div class="container box has-background-light">';
 						<div class="field has-addons" >
 
 							<p class="control is-expanded">
-								<input class="input" type="text" id="ordnum" name="ordnum" placeholder="Order number">
+								<input class="input" type="text" id="ordnum" name="ordnum" placeholder="' . $mylang['order_number'] . '">
 							</p>
 
 							<p class="control">
@@ -177,7 +174,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $bookin_prod2loc_link . '">Product2Location</a>
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $bookin_prod2loc_link . '">' . $mylang['prod2location'] . '</a>
 							</div>
 						</div>';
 			}
@@ -189,7 +186,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $recent_activity_link . '">Recent Activity</a>
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $recent_activity_link . '">' . $mylang['recent_activity'] . '</a>
 							</div>
 						</div>';
 			}
@@ -210,7 +207,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $products_link . '">Products</a>
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $products_link . '">' . $mylang['products'] . '</a>
 							</div>
 						</div>';
 			}
@@ -231,7 +228,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $users_link . '">Users</a>
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $users_link . '">' . $mylang['users'] . '</a>
 							</div>
 						</div>';
 			}
@@ -243,7 +240,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouses_link . '">Warehouses</a>
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouses_link . '">' . $mylang['warehouses'] . '</a>
 							</div>
 						</div>';
 			}
@@ -254,7 +251,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouse_locations_link . '">Warehouse Locations</a>
+								<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouse_locations_link . '">' . $mylang['warehouse_locations'] . '</a>
 							</div>
 						</div>';
 			}
@@ -264,7 +261,7 @@ echo	'<div class="container box has-background-light">';
 
 			//	Everyone deserves to leave!
 			$logout_link		=	"location.href='index.php?logout'";
-			echo '<a class="button is-normal is-fullwidth yellow_class is-bold" onclick="' . $logout_link . '">Logout</a>';
+			echo '<a class="button is-normal is-fullwidth yellow_class is-bold" onclick="' . $logout_link . '">' . $mylang['logout'] . '</a>';
 
 		echo '</div>';
 

@@ -1,5 +1,11 @@
 <?php
 
+
+//	Improve some of the product criteria...
+//	A good example would be: if you provide a case barcode you better also provide the case QTY as otherwise
+//	the system will be very confused with picking, moving stuff around and case2each etc etc
+
+
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once('lib_passwd.php');
@@ -62,8 +68,15 @@ if ($login->isUserLoggedIn() == true) {
 
 
 			if (strlen($product_code)	<	2)	{
-				print_message(3, 'Product name is short');
+				print_message(3, 'Product name is too short');
 			}
+			elseif (	(strlen($case_barcode)	>	0) AND 	(strlen($case_barcode)	<	4)	)	//	case barcode at least 4 characters please!
+			{
+				print_message(3, 'Case barcode needs to be at least 4 char long');
+			}
+
+
+
 			else
 			{
 

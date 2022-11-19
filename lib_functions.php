@@ -1,10 +1,20 @@
 <?php
 
-/**
+/*
 
 		A bunch of support functions to aid the "framework" !
 
  */
+
+
+//	Set the language here. Change the name of the variable to the corresponding
+//	"language pack" php file in your lang folder. Nice and easy!
+//	To add your own language just copy one of the existing php file and start translating.
+//	To make it easy I would go with English. Unless you can translate from other languages better. Your pick!
+
+//$set_language	=	'Polski';
+$set_language	=	'English';
+include('lang/' . $set_language . '.php');
 
 
 
@@ -12,9 +22,9 @@
 
 
 //	There are only 3 types of locations in GebWMS
-//	10 aka Single: Only one item can be stored in such location
-//	20 aka Multi: Many identical items can be stored in this location. Imagine a box that holds pencils when they are sold as EACHES.
-//	30 aka Multi Mixed: You can throw anything you like into such location. Cases, pallets and eaches of different products and it will be happy.
+//	10 aka Single		:	Only one item can be stored in such location
+//	20 aka Multi		:	Many identical items can be stored in this location. Imagine a box that holds pencils when they are sold as EACHES.
+//	30 aka Multi Mixed	:	You can throw anything you like into such location. Cases, pallets and eaches of different products and it will be happy.
 
 $loc_types_arr	=	array(
 
@@ -25,22 +35,22 @@ $loc_types_arr	=	array(
 );
 
 
-// Holds the short one character code for each location type. Used typically as additional info for the operator in places
+// Holds the short 1 character code for each location type. Used typically as additional info for the operator in places
 // like the product search page.
 $loc_types_codes_arr	=	array(
 
-	'10'	=>	'S',	//"Single",
-	'20'	=>	'M',	//"Multi",
-	'30'	=>	'X'		//"Multi Mixed"
+	'10'	=>	'S',	//	"Single"
+	'20'	=>	'M',	//	"Multi"
+	'30'	=>	'X'		//	"Multi Mixed"
 
 );
 
 
 $loc_types_codes_reverse_arr	=	array(
 
-	'S'		=>	10,		//"Single",
-	'M'		=>	20,		//"Multi",
-	'X'		=>	30		//"Multi Mixed"
+	'S'		=>	10,		//	"Single"
+	'M'		=>	20,		//	"Multi"
+	'X'		=>	30		//	"Multi Mixed"
 
 );
 
@@ -59,15 +69,15 @@ $stock_unit_type_arr	=	array(
 // that can be set in one location. Maybe an ugly hack but will work for now.
 $stock_unit_type_reverse_arr	=	array(
 
-	'E'	=>	3,	//"EACH",
-	'C'	=>	5,	//"CASE",
-	'P'	=>	7	//"PALLET"
+	'E'	=>	3,	//	"EACH"
+	'C'	=>	5,	//	"CASE"
+	'P'	=>	7	//	"PALLET"
 
 );
 
 
 
-// two status code so far for products...
+// two status codes so far for products...
 $product_status_arr	=	array(
 
 	'0'	=>	'Active',
@@ -91,12 +101,28 @@ $activity_type_arr	=	array(
 
 );
 
+
 // The reverse of the above for some functions... blah blah!
 $activity_type_reverse_arr	=	array(
 
 	'Prod2Loc'	=>	10
 
 );
+
+
+
+
+$pick_status_reverse_arr	=	array(
+
+	'0'		=>	'Imported',
+	'10'	=>	'Ready2Pick',
+	'20'	=>	'Started',
+	'30'	=>	'On Hold',
+	'40'	=>	'Complete',
+	'50'	=>	'Cancelled',
+
+);
+
 
 
 
@@ -109,8 +135,8 @@ $box_size_str	=	'height:64px;';
 
 // Color code scheme for tables... Left and right side.
 // This is for the 1 row and two column setup mainly...
-$backclrA	=	'#d6bfa9';
-$backclrB	=	'#f7f2ee';
+$backclrA		=	'#d6bfa9';
+$backclrB		=	'#f7f2ee';
 
 
 $color_admin	=	'background-color: #ef5350; color: white;';
@@ -162,20 +188,6 @@ function leave_numbers_only($input_string)
 
 
 
-/*
-// Convert a dec value to binary. Add 0s to match the lenght of 16 - we can expand this later if needed !!
-// Returns an array bit values
-function convert_dec_to_bin_with_padding($dec_value)
-{
-	$binary_string	= sprintf( "%016d", decbin($dec_value));
-	$binary_arr		= str_split($binary_string);
-	return $binary_arr;
-}
-*/
-
-
-
-
 // New Version of that thing as it does not work on PHP 7.x
 // Convert a dec value to binary. Add 0s to match the lenght of 16 - we can expand this later if needed !!
 // Returns an array bit values
@@ -197,14 +209,6 @@ function core_acl_cookie_check($cookie_value)
 	return $outcome;
 }
 
-/*
-function can_user_access($cookie)
-{
-	$cookie_array	=	array();
-	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
-	return core_acl_cookie_check($cookie_array[0]);	// Check the first bit -> located at location: 1 !
-}
-*/
 
 
 
@@ -230,6 +234,7 @@ function can_user_access($cookie)
 //	1101100000000000
 //
 //	In short translates to:
+//
 //	Feature is enabled, The operator can't Add anything to the system but he can Update and Delete entries.
 //
 //	Details:
@@ -282,6 +287,7 @@ function can_user_delete($cookie)
 	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[4]);		//	Check the fifth bit
 }
+
 
 
 

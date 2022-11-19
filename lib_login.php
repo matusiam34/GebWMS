@@ -86,7 +86,6 @@ class Login
 
 
 		// create internal reference to global array with translation of language strings
-		// TODO: @devplanete: This should be $_GLOBALS !!?!?!?!?!?!
 		$this->lang = & $GLOBALS['mylang'];
 
 		// check the possible login actions:

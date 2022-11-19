@@ -1,7 +1,8 @@
 <?php
 
 
-// Now, when looking for duplicates makes sure that they are not in the same WH as the user might wants to have same location in two different WHs!!
+//	Add more checks to the input data! Leave_numbers and trim things.
+//	Now, when looking for duplicates makes sure that they are not in the same WH as the user might wants to have same location in two different WHs!!
 
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
@@ -54,7 +55,8 @@ if ($login->isUserLoggedIn() == true) {
 			$warehouse		=	leave_numbers_only($_POST['warehouse_js']);
 			$location		=	trim($_POST['location_js']);
 			$barcode		=	trim($_POST['barcode_js']);
-			$type			=	trim($_POST['type_js']);
+			$type			=	leave_numbers_only($_POST['type_js']);
+			$pickface		=	leave_numbers_only($_POST['pickface_js']);
 			$blocked		=	leave_numbers_only($_POST['blocked_js']);
 			$loc_desc		=	trim($_POST['loc_desc_js']);
 
@@ -164,6 +166,7 @@ if ($login->isUserLoggedIn() == true) {
 						loc_code,
 						loc_barcode,
 						loc_type,
+						loc_pickface,
 						loc_blocked,
 						loc_note
 					) 
@@ -175,6 +178,7 @@ if ($login->isUserLoggedIn() == true) {
 						:iloc_code,
 						:iloc_barcode,
 						:iloc_type,
+						:iloc_pickface,
 						:iloc_blocked,
 						:iloc_note
 					)
@@ -190,6 +194,7 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':iloc_code',			$location,		PDO::PARAM_STR);
 						$stmt->bindValue(':iloc_barcode',		$barcode,		PDO::PARAM_STR);
 						$stmt->bindValue(':iloc_type',			$type,			PDO::PARAM_INT);
+						$stmt->bindValue(':iloc_pickface',		$pickface,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_blocked',		$blocked,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_note',			$loc_desc,		PDO::PARAM_STR);
 						$stmt->execute();

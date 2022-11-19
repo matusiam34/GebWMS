@@ -67,8 +67,9 @@ if ($login->isUserLoggedIn() == true) {
 				$warehouse		=	trim($_POST['warehouse_js']);
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
-				$type			=	trim($_POST['type_js']);
-				$blocked		=	trim($_POST['blocked_js']);
+				$type			=	leave_numbers_only($_POST['type_js']);
+				$pickface		=	leave_numbers_only($_POST['pickface_js']);
+				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
 
 
@@ -90,6 +91,7 @@ if ($login->isUserLoggedIn() == true) {
 					loc_code		=		:uloc_code,
 					loc_barcode		=		:uloc_barcode,
 					loc_type		=		:uloc_type,
+					loc_pickface	=		:uloc_pickface,
 					loc_blocked		=		:uloc_blocked,
 					loc_note		=		:uloc_note
 
@@ -104,6 +106,7 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':uloc_code',		$location,		PDO::PARAM_STR);
 					$stmt->bindValue(':uloc_barcode',	$barcode,		PDO::PARAM_STR);
 					$stmt->bindValue(':uloc_type',		$type,			PDO::PARAM_INT);
+					$stmt->bindValue(':uloc_pickface',	$pickface,		PDO::PARAM_INT);
 					$stmt->bindValue(':uloc_blocked',	$blocked,		PDO::PARAM_INT);
 					$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
 					$stmt->bindValue(':sloc_pkey',		$loc_uid,		PDO::PARAM_INT);

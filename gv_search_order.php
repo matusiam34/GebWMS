@@ -1,5 +1,10 @@
 <?php
 
+//	By default when the order hits the system it becomes "Ready2Pick" and will show on the picker gun as an option.
+//	This can be most likely controlled by a flag of sorts to change this. For example maybe how the business
+//	is designed someone needs to authorise the order to be available for pickers to select on their gun.
+//	In that scenario the order could be named : On Hold or Requires Approval. Something to that tune
+
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
@@ -166,16 +171,30 @@ if ($login->isUserLoggedIn() == true)
 		$order_header_arr	=	array();		//	store all header info here
 		$order_uid			=	0;				//	obtained from the first query and used in the details query (second one)
 
+
 		//	Grab the order header data. Things like Order Number, Customer etc etc
 		$sql	=	'
 
 			SELECT
 
-			*
+			geb_order_header.ordhdr_uid,
+			geb_order_header.ordhdr_pick_status,
+			geb_order_header.ordhdr_pick_operator,
+			geb_order_header.ordhdr_pick_start_date,
+			geb_order_header.ordhdr_pick_complete_date,
+			geb_order_header.ordhdr_enter_date,
+			geb_order_header.ordhdr_order_number,
+			geb_order_header.ordhdr_customer,
+
+			users.user_name
+
 
 			FROM 
 
 			geb_order_header
+
+			LEFT JOIN users ON geb_order_header.ordhdr_pick_operator = users.user_id
+
 
 			WHERE
 
@@ -202,6 +221,7 @@ if ($login->isUserLoggedIn() == true)
 				$order_header_arr[]	=	$row;
 			}
 
+
 			// Analyise what the order_header_arr has to offer...
 
 			if (count($order_header_arr) == 1)
@@ -227,6 +247,7 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'</tr>';
 
 
+
 						//	mateusz
 						$enter_date		=		trim($order_header_arr[0]['ordhdr_enter_date']);
 
@@ -236,9 +257,86 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Enter Date::</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Enter Date:</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
 						$details_html	.=	'</tr>';
+
+
+
+/*
+
+	"ordhdr_uid"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"ordhdr_status"	INTEGER DEFAULT 0,
+	"ordhdr_pick_status"	INTEGER DEFAULT 0,
+	"ordhdr_pick_start_date"
+	"ordhdr_pick_operator"	INTEGER DEFAULT 0,
+	"ordhdr_pick_complete_date"	TEXT,
+
+*/
+
+						//	ordhdr_pick_status entry...
+						//	'0'		=>	'Imported',
+						//	'10'	=>	'Ready2Pick',
+						//	'20'	=>	'Started',
+						//	'30'	=>	'On Hold',
+						//	'40'	=>	'Complete',
+						//	'50'	=>	'Cancelled',
+
+
+						$pick_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_status']);
+						$pick_status_str	=	$pick_status_reverse_arr[$pick_status_cde];
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick Status:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+						$details_html	.=	'</tr>';
+
+
+						$pick_operator_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_operator']);
+						$pick_operator_str	=	'None';
+
+						if ($pick_operator_cde > 0)
+						{
+							//	There is an operator allocated to the job... Get the name!
+							$pick_operator_str	=	trim($order_header_arr[0]['user_name']);
+						}
+
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Picker:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_operator_str . '</td>';
+						$details_html	.=	'</tr>';
+
+
+
+
+
+
+						// Show more details about the pick status when the status is actually of some merit aka > 0
+						if ($pick_status_cde > 0)
+						{
+
+
+							//	mateusz
+							//	Going to hardcode few things here that probably should be stored in lib_functions.php...
+
+							$pick_status_str	=	$pick_status_reverse_arr[leave_numbers_only($order_header_arr[0]['ordhdr_pick_status'])];
+
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick Start:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+							$details_html	.=	'</tr>';
+
+
+							$details_html	.=	'<tr>';
+								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick End:</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+							$details_html	.=	'</tr>';
+
+						}
+
+
+
 
 
 					$details_html	.=	'</table>';
@@ -353,7 +451,7 @@ if ($login->isUserLoggedIn() == true)
 				// show an error if the query has an error
 				else
 				{
-					echo 'Details Query Failed!';
+					echo '<br>Order Details Query Failed!';
 				}
 
 
