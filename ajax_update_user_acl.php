@@ -66,6 +66,9 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_users				=	leave_numbers_only($_POST['adm_users_js']);
 				$adm_warehouses			=	leave_numbers_only($_POST['adm_warehouses_js']);
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
+				$my_account				=	leave_numbers_only($_POST['my_account_js']);
+
+
 
 				$db->beginTransaction();
 
@@ -87,7 +90,8 @@ if ($login->isUserLoggedIn() == true) {
 					menu_order_search			=		:umenu_order_search,
 					menu_prod2loc				=		:umenu_prod2loc,
 					menu_recent_activity		=		:umenu_recent_activity,
-					menu_mgr_prod_add_update	=		:umenu_mgr_prod_add_update
+					menu_mgr_prod_add_update	=		:umenu_mgr_prod_add_update,
+					menu_my_account				=		:umenu_my_account
 
 					WHERE
 
@@ -107,6 +111,8 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':umenu_prod2loc',					$prod2location,			PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_mgr_prod_add_update',		$mgr_products,			PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_my_account',				$my_account,			PDO::PARAM_INT);
+
 
 
 					$stmt->bindValue(':suser_id',		$user_uid,		PDO::PARAM_INT);

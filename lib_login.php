@@ -192,7 +192,7 @@ class Login
 
 				*
 
-				FROM users  
+				FROM users
 
 				WHERE
 
@@ -301,6 +301,13 @@ class Login
 				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_mgr_prod_add_update']		=	$result_row->menu_mgr_prod_add_update;
+
+				//	Each user can be granted the ability to change their password and other settings... like Language :)
+				$_SESSION['menu_my_account']				=	$result_row->menu_my_account;
+
+				//	Language that the user has set! Default is English... however there will be few available to select... later on...
+				$_SESSION['user_language']					=	$result_row->user_language;
+
 
 
 

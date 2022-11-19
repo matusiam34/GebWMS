@@ -3,18 +3,27 @@
 /*
 
 		A bunch of support functions to aid the "framework" !
+		Also many config items to make it yours :)
 
  */
 
 
-//	Set the language here. Change the name of the variable to the corresponding
-//	"language pack" php file in your lang folder. Nice and easy!
-//	To add your own language just copy one of the existing php file and start translating.
-//	To make it easy I would go with English. Unless you can translate from other languages better. Your pick!
+//	Set the language here.
+//	This has been updated (19 Nov 2022) to allow the operator to set the language in the My Account page :)
+//	To add your own language just copy one of the existing php files (lang folder) and start translating.
+//	To make it easy I would go with English. Unless you can translate from other languages better.
 
 //$set_language	=	'Polski';
-$set_language	=	'English';
+//$set_language	=	'English';
+
+$set_language	=	trim($_SESSION['user_language']);
 include('lang/' . $set_language . '.php');
+
+
+
+//	If you have added a new transation to the lang folder ==>>> please update this array,
+//	This will allow the new entry to be shown to the user.
+$supported_languages_arr	=	array('English', 'Polski');
 
 
 
@@ -287,10 +296,3 @@ function can_user_delete($cookie)
 	$cookie_array	=	convert_dec_to_bin_with_padding(leave_numbers_only($cookie));	// allow numbers only - anything else will be removed.
 	return core_acl_cookie_check($cookie_array[4]);		//	Check the fifth bit
 }
-
-
-
-
-
-
-

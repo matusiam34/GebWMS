@@ -221,6 +221,20 @@ echo	'<div class="container box has-background-light">';
 		echo '<div class="column is-3">';
 
 
+			// My Account! Change Password, set Language etc etc 
+			if (is_it_enabled($_SESSION['menu_my_account']))
+			{
+				$my_account_link		=	"location.href='gv_my_account.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $my_account_link . '">' . $mylang['my_account'] . '</a>
+							</div>
+						</div>';
+			}
+
+
+
 			// Basic user management + Access Control tool
 			if (is_it_enabled($_SESSION['menu_adm_users']))
 			{
@@ -272,9 +286,30 @@ echo	'<div class="container box has-background-light">';
 	echo '</div>';
 
 
+	echo '</div>';
+
+
+
+
+echo	'<div class="container box has-background-light">';
+
+
+	//	Footer with GebWMS info? Display the username?
+	echo	'
+
+	<div class="has-text-centered">
+		<p>
+			Logged in as <strong>' . trim($_SESSION['user_name']) . '</strong>
+		</p>
+	</div>';
+
 
 
 	echo '</div>';
+
+
+
+
 echo '</section>';
 
 

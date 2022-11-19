@@ -225,6 +225,9 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_prod2location',			obje.data.menu_prod2loc);
 					set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
 					set_Element_Value_By_ID('id_mgr_products',			obje.data.menu_mgr_prod_add_update);
+
+
+					set_Element_Value_By_ID('id_my_account',			obje.data.menu_my_account);
 					set_Element_Value_By_ID('id_adm_users',				obje.data.menu_adm_users);
 					set_Element_Value_By_ID('id_adm_warehouses',		obje.data.menu_adm_warehouse);
 					set_Element_Value_By_ID('id_adm_wh_locations',		obje.data.menu_adm_warehouse_loc);
@@ -304,6 +307,7 @@ if ($login->isUserLoggedIn() == true)
 				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
+				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
 				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
@@ -355,6 +359,7 @@ if ($login->isUserLoggedIn() == true)
 				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
+				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
 				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
@@ -774,6 +779,26 @@ echo	$user_details_html;
 	$user_acl_html	.=	'<div class="column is-2">';
 
 	$user_acl_html	.=	'
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">My Account:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_my_account">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
 
 
 <div class="field" style="'. $box_size_str .'">

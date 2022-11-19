@@ -42,7 +42,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Warehouse Locations</title>
+	<title><?php	echo $mylang['warehouse_locations'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 

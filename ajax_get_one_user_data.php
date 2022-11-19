@@ -97,6 +97,7 @@ if ($login->isUserLoggedIn() == true) {
 								'menu_order_search'				=> leave_numbers_only($row['menu_order_search']),
 								'menu_prod2loc'					=> leave_numbers_only($row['menu_prod2loc']),
 								'menu_recent_activity'			=> leave_numbers_only($row['menu_recent_activity']),
+								'menu_my_account'				=> leave_numbers_only($row['menu_my_account']),
 								'menu_mgr_prod_add_update'		=> leave_numbers_only($row['menu_mgr_prod_add_update'])
 
 

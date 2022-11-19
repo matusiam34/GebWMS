@@ -41,6 +41,7 @@ $mylang = array(
 'users'						=> 'Users',
 'warehouses'				=> 'Warehouses',
 'warehouse_locations'		=> 'Warehouse Locations',
+'my_account'				=> 'My Account',
 
 
 );
