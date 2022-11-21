@@ -67,9 +67,9 @@ $loc_types_codes_reverse_arr	=	array(
 // Since I can accept EACH, CASE and PALLET I need to figure out how to mark it.
 $stock_unit_type_arr	=	array(
 
-	'3'	=>	'EACH',
-	'5'	=>	'CASE',
-	'7'	=>	'PALLET'
+	'3'	=>	$mylang['each'],
+	'5'	=>	$mylang['case'],
+	'7'	=>	$mylang['pallet']
 
 );
 
@@ -106,7 +106,7 @@ $product_status_arr	=	array(
 
 $activity_type_arr	=	array(
 
-	'10'	=>	'Product2Location'
+	'10'	=>	$mylang['prod2location']
 
 );
 

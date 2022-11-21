@@ -37,6 +37,15 @@
 		}
 
 
+		// Set HTML on an element
+		function set_HTML_to_Element_By_ID(element_ID, html_code)
+		{
+			$('#' + element_ID).html(html_code);
+		}
+
+
+
+
 		// return a value of a given element via ID
 		function get_Element_Object_By_ID(element_ID)
 		{

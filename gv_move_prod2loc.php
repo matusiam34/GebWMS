@@ -332,7 +332,7 @@ if ($login->isUserLoggedIn() == true)
 			{
 
 
-				$product_id		=	trim($row['prod_pkey']);	// critical for further queries!
+				$product_id		=	leave_numbers_only($row['prod_pkey']);	// critical for further queries!
 
 				$columns_html	.=	'<div class="columns">';
 
@@ -349,15 +349,6 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'</tr>';
 
 
-
-/*
-	//	Probably do not need this much information do I? Create a product enquiry for this if you need tons of data!
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Description:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_desc']) . '</td>';
-						$details_html	.=	'</tr>';
-*/
 
 						// Figure out the QTY scanned based on the barcode... Will have to do something with just a product code being typed in!
 						//$scanned_qty	=	1;	// by default lets assume it is an EACH (above issue)
@@ -376,32 +367,6 @@ if ($login->isUserLoggedIn() == true)
 							$case_qty		=	leave_numbers_only($row['prod_case_qty']);
 							$stock_unit		=	'1 CASE = ' . $case_qty . ' EACHES';
 						}
-
-
-/*
-				// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
-				$stock_unit				=	trim($row['stk_unit']);
-				$stock_unit_str			=	'E';	// default lets go with EACHES
-
-				if ($stock_unit == $stock_unit_type_reverse_arr['C'])
-				{
-					$location_case_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
-
-					if (is_float($location_case_qty))
-					{
-						// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
-						// entry like 4.6666666666666666666667 or something to that tune.
-						$location_case_qty		=	number_format($location_case_qty, 2);
-					}
-					$stock_unit_str			=	$location_case_qty . ' C';
-				}
-*/
-
-
-
-
-
-
 
 
 						$details_html	.=	'<tr>';
@@ -431,15 +396,6 @@ if ($login->isUserLoggedIn() == true)
 			$qty_input_field	.=	'<p class="control">';
 			$qty_input_field	.=		'<button class="button inventory_class iconAdd" onClick="increase_value();" style="width:50px;"></button>';
 			$qty_input_field	.=	'</p>';
-
-/*
-			// Hmmmm...
-
-			$qty_input_field	.=	'<p class="control">';
-			$qty_input_field	.=		'<button class="button inventory_class iconAdd10" onClick="increase_value_by_10();" style="width:50px;"></button>';
-			$qty_input_field	.=	'</p>';
-*/
-
 
 
 
@@ -559,5 +515,3 @@ else
 
 </body>
 </html>
-
-

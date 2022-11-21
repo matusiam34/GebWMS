@@ -299,7 +299,7 @@ echo	'<div class="container box has-background-light">';
 
 	<div class="has-text-centered">
 		<p>
-			Logged in as <strong>' . trim($_SESSION['user_name']) . '</strong>
+			' . $mylang['logged_in_as'] . ' <strong>' . trim($_SESSION['user_name']) . '</strong>
 		</p>
 	</div>';
 

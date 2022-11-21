@@ -67,6 +67,23 @@
 
 
 
+
+/*	Error Message from AJAX		*/
+.ajax_err_msg_class {
+	background-color: #ef5350;
+	color: white;
+	font-size:14px;
+}
+
+
+/*	All good message from AJAX		*/
+.ajax_good_msg_class {
+	background-color: #66BB6A;
+	color: white;
+	font-size: 14px;
+}
+
+
 /*
 
 

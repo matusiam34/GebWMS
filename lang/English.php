@@ -2,12 +2,12 @@
 
 $mylang = array(
 
-// Login & Registration classes
+//	Login & Registration classes
 'Database error'			=> 'Database connection problem',
 'Empty username'			=> 'Username field was empty',
 'Empty password'			=> 'Password field was empty',
 
-// Login class
+//	Login class
 'Invalid cookie'			=> 'Invalid cookie',
 'User not exist'			=> 'This user does not exist',
 'Wrong password'			=> 'Wrong password. Try again',
@@ -17,18 +17,27 @@ $mylang = array(
 'Logged out'				=> 'You have been logged out',
 
 
+//	GebWMS lib_fucntions stuff...
+'each'						=> 'EACH(s)',
+'case'						=> 'CASE(s)',
+'pallet'					=> 'PALLET(s)',
+
 
 //
 //	The useful day to day stuff here
 //
-
-
 'logout'					=> 'Logout',
+'language'					=> 'Language',
+'save'						=> 'Save',
+'type'						=> 'Type',
+'product'					=> 'Product',
+'to_location'				=> 'To location',
+'qty'						=> 'Qty',
+'when'						=> 'When',
+'logged_in_as'				=> 'Logged in as',
 
 
 //	Main menu Search lines
-
-
 'product_code'				=> 'Product code',
 'location_barcode'			=> 'Location barcode',
 'order_number'				=> 'Order number',
@@ -42,6 +51,14 @@ $mylang = array(
 'warehouses'				=> 'Warehouses',
 'warehouse_locations'		=> 'Warehouse Locations',
 'my_account'				=> 'My Account',
+
+
+//	Error Messages
+'a_OK'						=> 'a-OK',
+'could_not_get_data'		=> 'Could not get data!',
+'could_not_update'			=> 'Could not update!',
+'user_uid_incorrect'		=> 'User UID incorrect!',
+'permissions_error'			=> 'Permissions error!',
 
 
 );

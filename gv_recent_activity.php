@@ -45,7 +45,9 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Recent Activity</title>
+	<title></title>
+	<title><?php	echo $mylang['recent_activity'];	?></title>
+
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -206,7 +208,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Type:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['type'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $activity_type_arr[leave_numbers_only($row['stk_hst_op_type'])] . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -232,10 +234,9 @@ if ($login->isUserLoggedIn() == true)
 							}
 
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['product'] . ':</td>';
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
 							$details_html	.=	'</tr>';
-
 
 
 
@@ -252,7 +253,7 @@ if ($login->isUserLoggedIn() == true)
 							}
 
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">To location:</td>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['to_location'] . ':</td>';
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . '</td>';
 							$details_html	.=	'</tr>';
 
@@ -279,8 +280,8 @@ if ($login->isUserLoggedIn() == true)
 
 							// Based on the unit I will have to do some maths to show what exactly it is (CASES, EACHES... maybe PALLETS...)
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Qty:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $entry_qty . ' ' . $unit_type_str . '(s)</td>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['qty'] . ':</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $entry_qty . ' ' . $unit_type_str . '</td>';
 							$details_html	.=	'</tr>';
 
 
@@ -292,7 +293,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">When:</td>';
+								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['when'] . ':</td>';
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
 							$details_html	.=	'</tr>';
 

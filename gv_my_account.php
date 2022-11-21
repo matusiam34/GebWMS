@@ -83,6 +83,36 @@ if ($login->isUserLoggedIn() == true)
 		});
 
 
+
+
+		// UPDATE item 
+		function update_item()
+		{
+
+
+			$.post('ajax_update_language.php', { 
+
+				language_js			:	get_Element_Value_By_ID('id_language')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+				set_HTML_to_Element_By_ID('id_message', obje.msg);
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert('server problem');
+					});
+
+		}
+
+
+
+
 	</script>
 
 
@@ -147,7 +177,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 				echo	'<div class="field" style="'. $box_size_str . '">
-							<p class="help">Language:</p>
+							<p class="help">' . $mylang['language'] . ':</p>
 							<div class="field is-narrow">
 								<div class="control">
 									<div class="select is-fullwidth">
@@ -178,9 +208,12 @@ if ($login->isUserLoggedIn() == true)
 					<div class="field" style="'. $box_size_str .'">
 						<p class="help">&nbsp;</p>
 						<div class="control">
-							<button class="button inventory_class is-fullwidth" onclick="update_item();">Save</button>
+							<button class="button inventory_class is-fullwidth" onclick="update_item();">' . $mylang['save'] . '</button>
 						</div>
-					</div>';
+					</div>
+
+					<p class="help" id="id_message">&nbsp;</p>
+					';
 				}
 
 
