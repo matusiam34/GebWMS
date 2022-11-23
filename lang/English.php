@@ -22,6 +22,8 @@ $mylang = array(
 'case'						=> 'CASE(s)',
 'pallet'					=> 'PALLET(s)',
 
+'active'					=>	'Active',
+'disabled'					=>	'Disabled',
 
 //
 //	The useful day to day stuff here
@@ -35,12 +37,21 @@ $mylang = array(
 'qty'						=> 'Qty',
 'when'						=> 'When',
 'logged_in_as'				=> 'Logged in as',
+'main_dashboard'			=> 'Main Dashboard',
+'product_search'			=> 'Product Search',
+'description'				=> 'Description',
+'category'					=> 'Kategoria',
+'status'					=> 'Status',
+'physical_qty'				=> 'Physical Qty',
+'allocated_qty'				=> 'Allocated Qty',
+'free_qty'					=> 'Free Qty',
 
 
 //	Main menu Search lines
 'product_code'				=> 'Product code',
 'location_barcode'			=> 'Location barcode',
 'order_number'				=> 'Order number',
+'product_barcode'			=> 'Product barcode',
 
 
 //	Main menu buttons... And other potentially

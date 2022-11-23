@@ -61,7 +61,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Product 2 Location</title>
+	<title><?php	echo $mylang['prod2location'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -249,7 +249,7 @@ if ($login->isUserLoggedIn() == true)
 		$page_form	.=	'<div class="field has-addons">';
 
 			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<input class="input" type="text" id="barcode" name="barcode" placeholder="Product barcode" value="' . $product_barcode . '">';
+			$page_form	.=		'<input class="input" type="text" id="barcode" name="barcode" placeholder="' . $mylang['product_barcode'] . '" value="' . $product_barcode . '">';
 			$page_form	.=	'</p>';
 
 			$page_form	.=	'<p class="control">';

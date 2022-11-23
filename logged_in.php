@@ -5,7 +5,7 @@
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Main Dashboard</title>
+	<title><?php	echo $mylang['main_dashboard'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -57,6 +57,7 @@
 
 
 //
+//
 //	Red		:	Admin type of functionality
 //	Blue	:	Manager type of functionality
 //	Green	:	Sales / Reporting functionality
@@ -65,8 +66,6 @@
 //
 
 
-	// load the supporting functions....
-//	require_once('lib_functions.php');
 
 
 // A little gap at the top to make it look better a notch.

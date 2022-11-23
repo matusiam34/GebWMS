@@ -191,15 +191,20 @@ if ($login->isUserLoggedIn() == true)
 
 			SELECT
 
-			wh_code,
-			loc_code,
-			loc_type,
-			loc_note,
-			stk_unit,
-			prod_code,
-			prod_case_qty,
-			prod_pall_qty,
-			SUM(stk_qty) as all_stk_qty
+			geb_warehouse.wh_code,
+			geb_location.loc_code,
+			geb_location.loc_type,
+			geb_location.loc_pickface,
+			geb_location.loc_blocked,
+			geb_location.loc_note,
+
+			geb_stock.stk_unit,
+
+			geb_product.prod_code,
+			geb_product.prod_case_qty,
+			geb_product.prod_pall_qty,
+			SUM(geb_stock.stk_qty) as all_stk_qty
+
 
 			FROM 
 
@@ -223,12 +228,11 @@ if ($login->isUserLoggedIn() == true)
 			loc_barcode = :ilocation_barcode
 
 
-			GROUP BY wh_code, loc_code, loc_type, loc_note, stk_unit, prod_code, prod_case_qty, prod_pall_qty
+			GROUP BY wh_code, loc_code, loc_type, loc_pickface, loc_blocked, loc_note, stk_unit, prod_code, prod_case_qty, prod_pall_qty
 
 			ORDER BY prod_code, wh_code, loc_code
 
 		';
-
 
 
 
@@ -263,9 +267,16 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 					// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-					$loc_type				=	trim($row['loc_type']);
 					$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
-					$loc_status_code_str	=	$loc_types_codes_arr[$loc_type];
+
+					$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
+					$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
+					$loc_type				=	leave_numbers_only($row['loc_type']);
+
+					if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
+					if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	}
+
+					$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
 
 
 					// A details table with Location name, Warehouse and note (for things like DAMAGES, Returns or whatever it could be)

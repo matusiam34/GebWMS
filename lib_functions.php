@@ -89,8 +89,8 @@ $stock_unit_type_reverse_arr	=	array(
 // two status codes so far for products...
 $product_status_arr	=	array(
 
-	'0'	=>	'Active',
-	'1'	=>	'Disabled'
+	'0'	=>	$mylang['active'],
+	'1'	=>	$mylang['disabled']
 
 );
 
@@ -121,14 +121,15 @@ $activity_type_reverse_arr	=	array(
 
 
 
-$pick_status_reverse_arr	=	array(
+$order_status_reverse_arr	=	array(
 
 	'0'		=>	'Imported',
 	'10'	=>	'Ready2Pick',
 	'20'	=>	'Started',
 	'30'	=>	'On Hold',
-	'40'	=>	'Complete',
-	'50'	=>	'Cancelled',
+	'40'	=>	'Complete (short)',
+	'50'	=>	'Complete',
+	'60'	=>	'Cancelled',
 
 );
 
@@ -152,6 +153,21 @@ $color_admin	=	'background-color: #ef5350; color: white;';
 $color_manager	=	'background-color: #42A5F5; color: white;';
 $color_general	=	'background-color: #8D6E63; color: white;';
 
+
+
+
+//	Get location fields and output a nice human readable description block!
+function decode_loc($loc_type, $loc_pkface, $loc_blkd, $loc_types_arr)
+{
+
+	$output_str	=	'';
+
+	if ($loc_blkd	== 1)	{	$output_str	.=	'B';	}
+	if ($loc_pkface	== 1)	{	$output_str	.=	'P';	}
+	$output_str	.=	$loc_types_arr[$loc_type];
+
+	return $output_str;
+}
 
 
 

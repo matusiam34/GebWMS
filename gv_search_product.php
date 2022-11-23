@@ -47,7 +47,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Product Search</title>
+	<title><?php	echo $mylang['product_search'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -116,7 +116,7 @@ if ($login->isUserLoggedIn() == true)
 		<div class="field has-addons">
 
 			<p class="control">
-				<input class="input" type="text" id="product" name="product" placeholder="Product code" value="' . $product_or_barcode . '">
+				<input class="input" type="text" id="product" name="product" placeholder="' . $mylang['product_code'] . '" value="' . $product_or_barcode . '">
 			</p>
 
 			<p class="control">
@@ -244,19 +244,19 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['product'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_code']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Description:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['description'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_desc']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Category:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['category'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_category']) . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -265,25 +265,25 @@ if ($login->isUserLoggedIn() == true)
 						$prod_status_id		=	leave_numbers_only($products_arr[0]['prod_disabled']);
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Status:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['status'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_status_arr[$prod_status_id] . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Physical Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['physical_qty'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_phy_qty']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Allocated Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['allocated_qty'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_alloc_qty']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Free Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['free_qty'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_free_qty']) . '</td>';
 						$details_html	.=	'</tr>';
 

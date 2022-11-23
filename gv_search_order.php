@@ -178,7 +178,7 @@ if ($login->isUserLoggedIn() == true)
 			SELECT
 
 			geb_order_header.ordhdr_uid,
-			geb_order_header.ordhdr_pick_status,
+			geb_order_header.ordhdr_status,
 			geb_order_header.ordhdr_pick_operator,
 			geb_order_header.ordhdr_pick_start_date,
 			geb_order_header.ordhdr_pick_complete_date,
@@ -283,12 +283,12 @@ if ($login->isUserLoggedIn() == true)
 						//	'50'	=>	'Cancelled',
 
 
-						$pick_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_status']);
-						$pick_status_str	=	$pick_status_reverse_arr[$pick_status_cde];
+						$order_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_status']);
+						$order_status_str	=	$order_status_reverse_arr[$order_status_cde];
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick Status:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Order Status:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
 						$details_html	.=	'</tr>';
 
 
@@ -313,24 +313,23 @@ if ($login->isUserLoggedIn() == true)
 
 
 						// Show more details about the pick status when the status is actually of some merit aka > 0
-						if ($pick_status_cde > 0)
+						if ($order_status_str > 0)
 						{
 
 
 							//	mateusz
 							//	Going to hardcode few things here that probably should be stored in lib_functions.php...
 
-							$pick_status_str	=	$pick_status_reverse_arr[leave_numbers_only($order_header_arr[0]['ordhdr_pick_status'])];
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick Start:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
 							$details_html	.=	'</tr>';
 
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick End:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_status_str . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
 							$details_html	.=	'</tr>';
 
 						}

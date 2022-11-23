@@ -22,6 +22,8 @@ $mylang = array(
 'case'						=> 'SKRZYN',
 'pallet'					=> 'PALET',
 
+'active'					=>	'Aktywny',
+'disabled'					=>	'Wyłączone',
 
 //
 //	The useful day to day stuff here
@@ -35,12 +37,22 @@ $mylang = array(
 'qty'						=> 'Ilość',
 'when'						=> 'Kiedy',
 'logged_in_as'				=> 'Zalogowany jako',
+'main_dashboard'			=> 'Główny Pulpit',
+'product_search'			=> 'Wyszukiwarka Produktów',
+'description'				=> 'Opis',
+'category'					=> 'Kategoria',
+'status'					=> 'Status',
+'physical_qty'				=> 'Ilość fizyczna',
+'allocated_qty'				=> 'Przydzielona ilość',
+'free_qty'					=> 'Wolna ilość',
+
 
 
 //	Main menu Search lines
 'product_code'				=> 'Kod produktu',
 'location_barcode'			=> 'Kod lokalizacji',
 'order_number'				=> 'Numer zamówienia',
+'product_barcode'			=> 'Kod kreskowy produktu',
 
 
 //	Main menu buttons... And other potentially
