@@ -76,7 +76,7 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-			// Triggers a function every time the row in the table departmentList is clicked !
+			// Do things when operator clicks on the row.
 			$('#curr_table').on('click', 'tr', function()
 			{
 					// When user clicks on anything it gets selected !
@@ -229,12 +229,11 @@ if ($login->isUserLoggedIn() == true)
 	.tableAttr { height: 360px; overflow-y: scroll;}
 
 
-
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
 
 	table th
 	{
-		/*position: sticky;*/
+		position: sticky;
 		top: 0;
 		background: #eee;
 	}
@@ -299,11 +298,11 @@ if ($login->isUserLoggedIn() == true)
 				<div class="columns">
 
 					<div class="column is-4">
-						<div class="tableAttr">
-							<table class="table is-fullwidth is-hoverable is-scrollable " id="curr_table">
+						<div class="tableAttr it-has-border">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
 							<thead>
 								<tr>
-									<th>ID</th>
+									<th>UID</th>
 									<th>Warehouse Name</th>
 								</tr>
 							</thead>

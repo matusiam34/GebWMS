@@ -27,7 +27,19 @@ $supported_languages_arr	=	array('English', 'Polski');
 
 
 
+
+
+
 //	Some GebWMS constants...
+
+
+//	Order Header: Order Type!
+//	Since I want to support different types of orders:
+//	- a typical order that will come from a website,
+//	- an order placed within the GebWMS system,
+//	- Point of Sale (potentially... why not?)
+
+
 
 
 //	There are only 3 types of locations in GebWMS
@@ -120,19 +132,45 @@ $activity_type_reverse_arr	=	array(
 
 
 
+//	Codes that are assigned to the geb_order_header table: ordhdr_type column
+//	These are required if I want to have the ability to report on orders that
+//	have been imported from a different system, placed within GebWMS or via
+//	o Point Of Sale system (or anything else)
+$order_type_arr	=	array(
 
-$order_status_reverse_arr	=	array(
-
-	'0'		=>	'Imported',
-	'10'	=>	'Ready2Pick',
-	'20'	=>	'Started',
-	'30'	=>	'On Hold',
-	'40'	=>	'Complete (short)',
-	'50'	=>	'Complete',
-	'60'	=>	'Cancelled',
+	'200'		=>	'Imported',
+	'300'		=>	'Place Order'
 
 );
 
+
+
+
+//	Codes that are assigned to the geb_order_header table: ordhdr_status column
+$order_status_arr	=	array(
+
+	'10'	=>	'On Hold',
+	'20'	=>	'Ready',
+	'30'	=>	'Started',
+	'40'	=>	'Paused',
+	'50'	=>	'Complete (short)',
+	'60'	=>	'Complete',
+	'70'	=>	'Cancelled'
+
+);
+
+
+$order_status_reverse_arr	=	array(
+
+	'H'		=>	10,
+	'R'		=>	20,
+	'S'		=>	30,
+	'P'		=>	40,
+	'X'		=>	50,
+	'C'		=>	60,
+	'9'		=>	70
+
+);
 
 
 

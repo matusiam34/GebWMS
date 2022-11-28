@@ -84,6 +84,7 @@ if ($login->isUserLoggedIn() == true) {
 					$data_results	=	array();
 					$table_text		=	'';
 
+					$table_text		.=	'<thead>';
 
 					$table_text		.=	'<tr>';
 
@@ -96,6 +97,10 @@ if ($login->isUserLoggedIn() == true) {
 					$table_text		.=		'<th>Note</th>';
 
 					$table_text		.=	'</tr>';
+
+					$table_text		.=	'</thead>';
+
+					$table_text		.=	'<tbody style="max-height:400px;">';
 
 
 					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -200,6 +205,9 @@ if ($login->isUserLoggedIn() == true) {
 
 
 					}
+
+
+					$table_text		.=	'</tbody>';
 
 
 					$result['data'] = $data_results;

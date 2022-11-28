@@ -83,6 +83,10 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
+			//	Submit the form when the operator on the desktop selects a recent item... No need to press enter :)
+			$('#product').change(function() {
+				this.form.submit();
+			});
 
 		});
 
@@ -195,9 +199,7 @@ if ($login->isUserLoggedIn() == true)
 		else
 		{
 			// Search for a product by name
-//			$sql	.=	' prod_code = :iprod_code ';
 			$sql	.=	' prod_code LIKE "%' . $product_or_barcode . '%"';
-			
 		}
 		
 		
@@ -418,9 +420,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 					$details_html	.=	'<tr>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Warehouse</th>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Location</th>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Qty</th>';
+					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['warehouse'] . '</th>';
+					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['location'] . '</th>';
+					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['qty'] . '</th>';
 					$details_html	.=	'</tr>';
 
 
@@ -485,7 +487,7 @@ if ($login->isUserLoggedIn() == true)
 
 					$details_html	.=	'<tr>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
-					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">Total EACHES</td>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $mylang['total_eaches'] . '</td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
 					$details_html	.=	'</tr>';
 

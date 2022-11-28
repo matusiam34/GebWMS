@@ -250,7 +250,6 @@ if ($login->isUserLoggedIn() == true)
 
 						//	mateusz
 						$enter_date		=		trim($order_header_arr[0]['ordhdr_enter_date']);
-
 						$act_date		=		date('d/m/Y', strtotime($enter_date));
 						$act_time		=		date('H:i:s', strtotime($enter_date));
 
@@ -263,28 +262,21 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-/*
 
-	"ordhdr_uid"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"ordhdr_status"	INTEGER DEFAULT 0,
-	"ordhdr_pick_status"	INTEGER DEFAULT 0,
-	"ordhdr_pick_start_date"
-	"ordhdr_pick_operator"	INTEGER DEFAULT 0,
-	"ordhdr_pick_complete_date"	TEXT,
 
-*/
-
-						//	ordhdr_pick_status entry...
-						//	'0'		=>	'Imported',
-						//	'10'	=>	'Ready2Pick',
-						//	'20'	=>	'Started',
-						//	'30'	=>	'On Hold',
-						//	'40'	=>	'Complete',
-						//	'50'	=>	'Cancelled',
+						//	ordhdr_status entry...
+						//'0'	=>	'Imported',
+						//'10'	=>	'On Hold',
+						//'20'	=>	'Ready2Pick',
+						//'30'	=>	'Started',
+						//'40'	=>	'Paused',
+						//'50'	=>	'Complete (short)',
+						//'60'	=>	'Complete',
+						//'70'	=>	'Cancelled',
 
 
 						$order_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_status']);
-						$order_status_str	=	$order_status_reverse_arr[$order_status_cde];
+						$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
 
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Order Status:</td>';

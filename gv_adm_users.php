@@ -415,7 +415,7 @@ if ($login->isUserLoggedIn() == true)
 
 	table th
 	{
-		/*position: sticky;*/
+		position: sticky;
 		top: 0;
 		background: #eee;
 	}
@@ -489,11 +489,14 @@ if ($login->isUserLoggedIn() == true)
 
 						<div class="tableAttr it-has-border">
 							<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
-							<thead>
-							</thead>
-							<tbody>
-							</tbody>
-
+								<thead>
+									<tr>
+										<th>UID</th>
+										<th>User</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
 							</table>
 						</div>
 

@@ -335,17 +335,19 @@ if ($login->isUserLoggedIn() == true)
 <style>
 
 
-	.tableAttr { height: 300px; overflow-y: scroll;}
+
+	.tableAttr { height: 400px; overflow-y: scroll;}
 
 
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
 
 	table th
 	{
-		/*position: sticky;*/
+		position: sticky;
 		top: 0;
 		background: #eee;
 	}
+
 
 	/*      For changing the colour of the clicked row in the table         */
 	.highlighted {
@@ -409,7 +411,7 @@ if ($login->isUserLoggedIn() == true)
 				<div class="columns">
 
 					<div class="column is-12">
-						<div class="tableAttr">
+						<div class="tableAttr it-has-border">
 							<table class="table is-fullwidth is-hoverable is-scrollable " id="curr_table">
 								<tbody>
 								</tbody>

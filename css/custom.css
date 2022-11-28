@@ -84,6 +84,43 @@
 }
 
 
+
+
+
+/*		The new way of displaying the table!?		*/
+/*
+
+table.fixed_header tbody
+{
+	display:block;
+	max-height:300px;
+	overflow-y:scroll;
+}
+
+
+table.fixed_header thead, tbody tr
+{
+	display:table;
+	width:100%;
+	table-layout:fixed;
+}
+
+
+table.fixed_header thead
+{
+	width:100%; 
+}
+
+
+table.fixed_header table
+{
+	width:100%;
+}
+*/
+
+
+
+
 /*
 
 
@@ -285,31 +322,4 @@
 		background-size: 24px;
      }
 
-
-
-
-
-/*	My own table class... Bulma is great and all but... yeah... my own			*/
-
-/*
-.myTable {
-  width: 100%;
-}
-
-
-.myTable td {
-  padding: 5px; 
-  border: 1px solid #999;
-  text-align: left; 
-}
-*/
-
-
-/*
-tbody tr td:first-child {
-  min-width: 8em;
-  max-width: 8em;
-  word-break: break-all;
-}
-*/
 

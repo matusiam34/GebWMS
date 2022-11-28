@@ -300,7 +300,9 @@ class Login
 				$_SESSION['menu_order_search']				=	$result_row->menu_order_search;
 				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
+				$_SESSION['menu_pick_order']				=	$result_row->menu_pick_order;
 				$_SESSION['menu_mgr_prod_add_update']		=	$result_row->menu_mgr_prod_add_update;
+				$_SESSION['menu_mgr_place_order']			=	$result_row->menu_mgr_place_order;
 
 				//	Each user can be granted the ability to change their password and other settings... like Language :)
 				$_SESSION['menu_my_account']				=	$result_row->menu_my_account;

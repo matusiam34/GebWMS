@@ -37,6 +37,34 @@
 
 	<script>
 
+
+
+		$(document).ready(function() 
+		{
+
+			//	Submit the product search form when the operator on the desktop selects a recent item... No need to press enter :)
+			$('#product').change(function() {
+				this.form.submit();
+			});
+
+
+			//	Submit the location search form when the operator on the desktop selects a recent item... No need to press enter :)
+			$('#location').change(function() {
+				this.form.submit();
+			});
+
+
+			//	Submit the order numbner search form when the operator on the desktop selects a recent item... No need to press enter :)
+			$('#ordnum').change(function() {
+				this.form.submit();
+			});
+
+
+
+		});
+
+
+
 		// fixed the resub error message! Important if you don't wanna be annoyed!
 		if ( window.history.replaceState )
 		{
@@ -178,6 +206,16 @@ echo	'<div class="container box has-background-light">';
 						</div>';
 			}
 
+
+				$pick_order_link		=	"location.href='gv_pick_order.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $pick_order_link . '">' . 'Pick Order' . '</a>
+							</div>
+						</div>';
+
+
 			// Display menu items that are granted
 			if (is_it_enabled($_SESSION['menu_recent_activity']))
 			{
@@ -210,6 +248,18 @@ echo	'<div class="container box has-background-light">';
 							</div>
 						</div>';
 			}
+
+			if (is_it_enabled($_SESSION['menu_mgr_place_order']))
+			{
+				$place_order_link		=	"location.href='gv_mgr_place_order.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $place_order_link . '">' . 'Place Order' . '</a>
+							</div>
+						</div>';
+			}
+
 
 		echo '</div>';
 
