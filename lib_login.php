@@ -303,6 +303,7 @@ class Login
 				$_SESSION['menu_pick_order']				=	$result_row->menu_pick_order;
 				$_SESSION['menu_mgr_prod_add_update']		=	$result_row->menu_mgr_prod_add_update;
 				$_SESSION['menu_mgr_place_order']			=	$result_row->menu_mgr_place_order;
+				$_SESSION['menu_mgr_orders']				=	$result_row->menu_mgr_orders;
 
 				//	Each user can be granted the ability to change their password and other settings... like Language :)
 				$_SESSION['menu_my_account']				=	$result_row->menu_my_account;

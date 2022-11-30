@@ -138,8 +138,8 @@ $activity_type_reverse_arr	=	array(
 //	o Point Of Sale system (or anything else)
 $order_type_arr	=	array(
 
-	'200'		=>	'Imported',
-	'300'		=>	'Place Order'
+	'100'		=>	'Imported',
+	'110'		=>	'Place Order'
 
 );
 

@@ -260,6 +260,23 @@ echo	'<div class="container box has-background-light">';
 						</div>';
 			}
 
+			if (is_it_enabled($_SESSION['menu_mgr_orders']))
+			{
+				$orders_link		=	"location.href='gv_mgr_orders.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $orders_link . '">' . 'Orders' . '</a>
+							</div>
+						</div>';
+			}
+
+
+
+
+
+
+
 
 		echo '</div>';
 

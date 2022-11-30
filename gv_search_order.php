@@ -178,6 +178,7 @@ if ($login->isUserLoggedIn() == true)
 			SELECT
 
 			geb_order_header.ordhdr_uid,
+			geb_order_header.ordhdr_type,
 			geb_order_header.ordhdr_status,
 			geb_order_header.ordhdr_pick_operator,
 			geb_order_header.ordhdr_pick_start_date,
@@ -264,10 +265,28 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+
+						//	ordhdr_type...
+						//
+						//	'100'		=>	'Imported',
+						//	'110'		=>	'Place Order'
+
+
+						$order_type_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_type']);
+						$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Order Type:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_type_str . '</td>';
+						$details_html	.=	'</tr>';
+
+
+
+
 						//	ordhdr_status entry...
-						//'0'	=>	'Imported',
 						//'10'	=>	'On Hold',
-						//'20'	=>	'Ready2Pick',
+						//'20'	=>	'Ready',
 						//'30'	=>	'Started',
 						//'40'	=>	'Paused',
 						//'50'	=>	'Complete (short)',

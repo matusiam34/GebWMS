@@ -1,9 +1,6 @@
 <?php
 
 
-//	If the operator is not allocated to any order than please allow him to select one to do.
-//	If an order has the picker set to > 0 than show the picking page... To be done that is!
-
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
 require_once('lib_passwd.php');
@@ -28,7 +25,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if (is_it_enabled($_SESSION['menu_pick_order']))
+	if (is_it_enabled($_SESSION['menu_mgr_orders']))
 	{
 
 		// needs a db connection...
@@ -50,7 +47,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Pick Order</title>
+	<title>Orders</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -198,21 +195,15 @@ if ($login->isUserLoggedIn() == true)
 
 	$page_form	=	'';
 
-/*
-	$page_form	.=	'<p class="control">';
-	$menu_link	=	"'index.php'";
-	$page_form	.=		'<button class="button inventory_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
-	$page_form	.=	'</p>';
-*/
 
 	$page_form	.=	'<p class="control">';
-	$page_form	.=		'<button class="button inventory_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
+	$page_form	.=		'<button class="button manager_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
 	$page_form	.=	'</p>';
 
 
 	// Not sure if the escape \ is the perfect match... Works tho.
 	$page_form	.=	'<p class="control">';
-	$page_form	.=		'<button class="button inventory_class iconRefresh" style="width:50px;" onClick="window.location.href = \'gv_pick_order.php\';"></button>';
+	$page_form	.=		'<button class="button manager_class iconRefresh" style="width:50px;" onClick="window.location.href = \'gv_mgr_orders.php\';"></button>';
 	$page_form	.=	'</p>';
 
 
@@ -239,210 +230,180 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
-		$order_running	=	0;	//	0 means that operator has not claimed an order to pick yet!
-
-		//	Before going any further first make sure to check if the operator is not already
-		//	in the middle of a picking job. Because if that is the case that means that
-		//	I need to show a picking screen and not the order selection screen.
-		//	Simples :)
-
-		//	Only check if the order is active. What I want to allow is for the operator to be picking
-		//	and the manager going : nahh mate, we need to pause this picking because Dan needs to do a replen.
-		//	So can he needs to be able to put the order in a pause mode but this should not stop the picker
-		//	from going to the screen and selecting a different order to pick while the other order is being sorted
-		//	for stock or other issues.
 
 
+		$orders_arr			=	array();		//	all orders here
+
+
+		//	Only show orders with the order_status = Ready
 		$sql	=	'
 
 			SELECT
 
-			ordhdr_uid,
-			ordhdr_order_number
+			geb_order_header.ordhdr_uid,
+			geb_order_header.ordhdr_order_number,
+			geb_order_header.ordhdr_type,
+			geb_order_header.ordhdr_status,
+			geb_order_header.ordhdr_pick_operator,
+			users.user_name,
+			COUNT(*) as linesPerOrder
+
 
 			FROM 
 
 			geb_order_header
 
+			INNER JOIN geb_order_details ON geb_order_header.ordhdr_uid = geb_order_details.orddet_ordhdr_uid
 
-			WHERE
+			LEFT JOIN users ON geb_order_header.ordhdr_pick_operator = users.user_id
 
-			ordhdr_pick_operator = :soperator_uid
 
-			AND
 
-			ordhdr_status = :sStarted
+			GROUP BY geb_order_header.ordhdr_uid, geb_order_header.ordhdr_order_number
 
 		';
+
 
 
 		if ($stmt = $db->prepare($sql))
 		{
 
-			$stmt->bindValue(':soperator_uid',	leave_numbers_only($_SESSION['user_id']),		PDO::PARAM_INT);
-			$stmt->bindValue(':sStarted',		$order_status_reverse_arr['S'],					PDO::PARAM_INT);
-			//$stmt->bindValue(':sPaused',		$order_status_reverse_arr['P'],					PDO::PARAM_INT);
+/*
+			WHERE
 
+			geb_order_header.ordhdr_status = :sorder_ready_status
+*/
+
+
+			//	Get only orders that are status = Ready (lib_functions.php)
+//			$stmt->bindValue(':sorder_ready_status',	$order_status_reverse_arr['R'],		PDO::PARAM_STR);
 			$stmt->execute();
 
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
-				//	Now... The operator can only be assigned to one order at a time.
-				$order_running	=	1;	//	Operator has an order going...
+				$orders_arr[]	=	$row;
 			}
 
 
-		}
 
-
-
-
-
-
-		//	Operator is free to take on any order!
-		if ($order_running == 0)
-		{
-
-			$orders_arr			=	array();		//	all pickable orders here
-
-
-			//	Only show orders with the order_status = Ready
-			$sql	=	'
-
-				SELECT
-
-				geb_order_header.ordhdr_uid,
-				geb_order_header.ordhdr_order_number,
-				COUNT(*) as linesPerOrder
-
-				FROM 
-
-				geb_order_header
-
-				INNER JOIN geb_order_details ON geb_order_header.ordhdr_uid = geb_order_details.orddet_ordhdr_uid
-
-				WHERE
-
-				geb_order_header.ordhdr_status = :sorder_ready_status
-
-				GROUP BY geb_order_header.ordhdr_uid, geb_order_header.ordhdr_order_number
-
-			';
-
-
-			$columns_html	=	'';
-			$details_html	=	'';
-
-
-
-			if ($stmt = $db->prepare($sql))
+			//	If there is anything of interest please build a simple page with a table that holds all of the
+			//	orders that are Ready for picking. Provide the line amount and order number,
+			if (count($orders_arr) > 0)
 			{
 
-				//	Get only orders that are status = Ready (lib_functions.php)
-				$stmt->bindValue(':sorder_ready_status',	$order_status_reverse_arr['R'],		PDO::PARAM_STR);
-				$stmt->execute();
+
+				echo	'<div class="columns">
+
+							<div class="column is-12">
+								<div class="tableAttr it-has-border">
+									<table class="table is-fullwidth is-hoverable is-scrollable"  style="table-layout:fixed;" id="curr_table">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Order</th>
+											<th>Type</th>
+											<th>Status</th>
+											<th>Lines</th>
+											<th>Operator</th>
+										</tr>
+									</thead>
 
 
-				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-				{
-					$orders_arr[]	=	$row;
-				}
+									<tbody>';
 
 
+									foreach ($orders_arr as $order_line)
+									{
 
-				//	If there is anything of interest please build a simple page with a table that holds all of the
-				//	orders that are Ready for picking. Provide the line amount and order number,
-				if (count($orders_arr) > 0)
-				{
-
-
-					echo	'<div class="columns">
-
-								<div class="column is-6">
-									<div class="tableAttr it-has-border">
-										<table class="table is-fullwidth is-hoverable is-scrollable"  style="table-layout:fixed;" id="curr_table">
-										<thead>
-											<tr>
-												<th>ID</th>
-												<th>Order</th>
-												<th>Lines</th>
-											</tr>
-										</thead>
+										//	ordhdr_type...
+										//
+										//	'100'		=>	'Imported',
+										//	'110'		=>	'Place Order'
 
 
-										<tbody>';
-
-
-										foreach ($orders_arr as $order_line)
-										{
-											echo	'<tr>';
-											echo	'<td>' . leave_numbers_only($order_line['ordhdr_uid']) . '</td>';
-											echo	'<td>' . trim($order_line['ordhdr_order_number']) . '</td>';
-											echo	'<td>' . $order_line['linesPerOrder'] . '</td>';
-											echo	'</tr>';
-										}
+										$order_type_cde	=	leave_numbers_only($order_line['ordhdr_type']);
+										$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
 
 
 
-					echo				'</tbody>
-										</table>
 
-									</div>';
-
-
-
-					echo	'<div class="field" style="'. $box_size_str .'">
-								<p class="help">&nbsp;</p>
-								<div class="control">
-									<button class="button inventory_class is-fullwidth" onclick="claim_order();">Pick Order</button>
-								</div>
-							</div>
+										//	ordhdr_status entry...
+										//'10'	=>	'On Hold',
+										//'20'	=>	'Ready',
+										//'30'	=>	'Started',
+										//'40'	=>	'Paused',
+										//'50'	=>	'Complete (short)',
+										//'60'	=>	'Complete',
+										//'70'	=>	'Cancelled',
 
 
+										$order_status_cde	=	leave_numbers_only($order_line['ordhdr_status']);
+										$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
+
+
+										echo	'<tr>';
+										echo	'<td>' . leave_numbers_only($order_line['ordhdr_uid']) . '</td>';
+										echo	'<td>' . trim($order_line['ordhdr_order_number']) . '</td>';
+										echo	'<td>' . $order_type_str . '</td>';
+										echo	'<td>' . $order_status_str . '</td>';
+										echo	'<td>' . $order_line['linesPerOrder'] . '</td>';
+										echo	'<td>' . trim($order_line['user_name']) . '</td>';
+										echo	'</tr>';
+									}
+
+
+
+
+				echo				'</tbody>
+									</table>
+
+								</div>';
+
+
+/*
+				echo	'<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
 							<div class="control">
-								<input id="id_hidden" class="input is-normal" type="hidden" value="0">
-							</div>';
+								<button class="button inventory_class is-fullwidth" onclick="claim_order();">Pick Order</button>
+							</div>
+						</div>
+
+
+						<div class="control">
+							<input id="id_hidden" class="input is-normal" type="hidden" value="0">
+						</div>';
+*/
 
 
 
+				echo		'</div>';	//	column close
 
-					echo		'</div>';	//	column close
-
-					echo	'</div>';	//	close the entire columns div
-
-
-
-
-
-
-				}	//	END OF count($orders_arr) > 0
-				else
-				{
-					//	say something about no orders to pick.
-				}
+				echo	'</div>';	//	close the entire columns div
 
 
 
 
 
-			}
-			// show an error if the query has an error
+
+			}	//	END OF count($orders_arr) > 0
 			else
 			{
-				echo 'Order Query Failed!';
+				//	say something about no orders to pick.
 			}
 
+
+
+
+
 		}
+		// show an error if the query has an error
 		else
-		if ($order_running == 1)
 		{
-			//	The operator needs a menu to allow picking!
-			
-			echo	'<p>Insert a working picking process here...</p>';
-			
-			
+			echo 'Orders Query Failed!';
 		}
+
+
 
 
 
