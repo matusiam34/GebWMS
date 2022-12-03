@@ -26,7 +26,9 @@ include('lang/' . $set_language . '.php');
 $supported_languages_arr	=	array('English', 'Polski');
 
 
-
+$date_display_style	=	0;		//	Default is GebWMS style = 	25/11/2022 at 18:04:33
+								//	No other styles currently but... it will be easy to add here and manipulate!
+								//	display_date is the one to adjust to reflect the changes here :)
 
 
 
@@ -49,11 +51,13 @@ $supported_languages_arr	=	array('English', 'Polski');
 
 $loc_types_arr	=	array(
 
-	'10'	=>	'Single',
-	'20'	=>	'Multi',
-	'30'	=>	'Mixed'
+	'10'	=>	$mylang['single'],
+	'20'	=>	$mylang['multi'],
+	'30'	=>	$mylang['mixed']
 
 );
+
+
 
 
 // Holds the short 1 character code for each location type. Used typically as additional info for the operator in places
@@ -162,13 +166,13 @@ $order_status_arr	=	array(
 
 $order_status_reverse_arr	=	array(
 
-	'H'		=>	10,
-	'R'		=>	20,
-	'S'		=>	30,
-	'P'		=>	40,
-	'X'		=>	50,
-	'C'		=>	60,
-	'9'		=>	70
+	'H'		=>	10,	// On Hold
+	'R'		=>	20,	// Ready
+	'S'		=>	30,	// Started
+	'P'		=>	40,	// Pause
+	'X'		=>	50,	// Complete (short)
+	'C'		=>	60,	// Complete
+	'9'		=>	70	// Cancelled
 
 );
 
@@ -191,6 +195,23 @@ $color_admin	=	'background-color: #ef5350; color: white;';
 $color_manager	=	'background-color: #42A5F5; color: white;';
 $color_general	=	'background-color: #8D6E63; color: white;';
 
+
+
+//	This will set the global way of showing the date. This will impact the pick_start date,
+//	order enter date, pick complete date etc etc
+function display_date($date_str, $date_format_selected)
+{
+	$output_date	=	'';
+
+	if ($date_format_selected == 0)
+	{
+//		$just_date		=		date('d/m/Y', strtotime($date_str));
+//		$just_time		=		date('H:i:s', strtotime($date_str));
+		$output_date	=	date('d/m/Y, H:i:s', strtotime($date_str));
+	}
+
+	return $output_date;
+}
 
 
 

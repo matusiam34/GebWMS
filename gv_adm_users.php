@@ -186,7 +186,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 		// Grab one user data
 		function get_one_user_data()
 		{
@@ -223,8 +222,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 					set_Element_Value_By_ID('id_prod2location',			obje.data.menu_prod2loc);
+					set_Element_Value_By_ID('id_pick_order',			obje.data.menu_pick_order);
 					set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
+
+
 					set_Element_Value_By_ID('id_mgr_products',			obje.data.menu_mgr_prod_add_update);
+					set_Element_Value_By_ID('id_mgr_place_order',		obje.data.menu_mgr_place_order);
+					set_Element_Value_By_ID('id_mgr_orders',			obje.data.menu_mgr_orders);
+
+
 
 
 					set_Element_Value_By_ID('id_my_account',			obje.data.menu_my_account);
@@ -310,7 +316,11 @@ if ($login->isUserLoggedIn() == true)
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
-				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
+				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
+
+				mgr_place_order_js		:	get_Element_Value_By_ID('id_mgr_place_order'),
+				mgr_orders_js			:	get_Element_Value_By_ID('id_mgr_orders'),
+				pick_order_js			:	get_Element_Value_By_ID('id_pick_order')
 
 			},
 
@@ -362,7 +372,13 @@ if ($login->isUserLoggedIn() == true)
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
-				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
+				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
+
+				mgr_place_order_js		:	get_Element_Value_By_ID('id_mgr_place_order'),
+				mgr_orders_js			:	get_Element_Value_By_ID('id_mgr_orders'),
+				pick_order_js			:	get_Element_Value_By_ID('id_pick_order')
+
+
 
 			},
 
@@ -449,13 +465,6 @@ if ($login->isUserLoggedIn() == true)
 				$page_form	=	'<p class="control">';
 				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
 				$page_form	.=	'</p>';
-
-
-				$page_form	.=	'<p class="control">';
-				$menu_link	=	"'index.php'";
-				$page_form	.=		'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
-				$page_form	.=	'</p>';
-
 
 
 				// The menu!
@@ -724,6 +733,24 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
+	<p class="help">Pick Order:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_pick_order">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+<div class="field" style="'. $box_size_str .'">
 	<p class="help">Recent Activity:</p>
 	<div class="field is-narrow">
 	  <div class="control">
@@ -771,7 +798,50 @@ echo	$user_details_html;
 		</div>
 	  </div>
 	</div>
-</div>';
+</div>
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Place Order:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_manager . '" id="id_mgr_place_order">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">Orders:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_manager . '" id="id_mgr_orders">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+
+
+';
 
 
 

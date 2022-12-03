@@ -125,7 +125,7 @@ if ($login->isUserLoggedIn() == true)
 		$page_form	.=	'<div class="field has-addons">';
 
 			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<input class="input" type="text" id="location" name="location" placeholder="Location code" value="' . $location_code . '">';
+			$page_form	.=		'<input class="input" type="text" id="location" name="location" placeholder="' . $mylang['location_barcode'] . '" value="' . $location_code . '">';
 			$page_form	.=	'</p>';
 
 			$page_form	.=	'<p class="control">';
@@ -252,8 +252,8 @@ if ($login->isUserLoggedIn() == true)
 			// Table that stores product codes and Qty in them locations
 			$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 			$details_html	.=	'<tr>';
-			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Product</th>';
-			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Qty</th>';
+			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['product'] . '</th>';
+			$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['qty'] . '</th>';
 			$details_html	.=	'</tr>';
 
 
@@ -274,7 +274,10 @@ if ($login->isUserLoggedIn() == true)
 					$loc_type				=	leave_numbers_only($row['loc_type']);
 
 					if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
-					if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	}
+
+					//	Get the pickface flag!
+					$loc_pickface_style	=	'';
+					if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
 
 					$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
 
@@ -283,17 +286,17 @@ if ($login->isUserLoggedIn() == true)
 					$location_details	=	'<table class="is-fullwidth table is-bordered">';
 
 						$location_details	.=	'<tr>';
-							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Warehouse:</td>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['warehouse'] . ':</td>';
 							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
 						$location_details	.=	'</tr>';
 
 						$location_details	.=	'<tr>';
-							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Location:</td>';
-							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['location'] . ':</td>';
+							$location_details	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_pickface_style . '">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
 						$location_details	.=	'</tr>';
 
 						$location_details	.=	'<tr>';
-							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Note:</td>';
+							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['note'] . ':</td>';
 							$location_details	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['loc_note']) . '</td>';
 						$location_details	.=	'</tr>';
 
@@ -352,7 +355,7 @@ if ($login->isUserLoggedIn() == true)
 			// Provide a total eaches for this product in the last row
 
 			$details_html	.=	'<tr>';
-			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">Total EACHES</td>';
+			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $mylang['total_eaches'] . ':</td>';
 			$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
 			$details_html	.=	'</tr>';
 

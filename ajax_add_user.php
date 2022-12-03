@@ -88,13 +88,20 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
 				$my_account				=	leave_numbers_only($_POST['my_account_js']);
 
-
+				$mgr_place_order		=	leave_numbers_only($_POST['mgr_place_order_js']);
+				$mgr_orders				=	leave_numbers_only($_POST['mgr_orders_js']);
+				$pick_order				=	leave_numbers_only($_POST['pick_order_js']);
 
 
 				if ($stmt = $db->prepare('
 
 
 					INSERT
+
+
+
+
+
 
 					INTO
 
@@ -115,8 +122,15 @@ if ($login->isUserLoggedIn() == true) {
 						menu_location_search,
 						menu_order_search,
 						menu_prod2loc,
+
+						menu_pick_order,
+
 						menu_recent_activity,
 						menu_mgr_prod_add_update,
+
+						menu_mgr_place_order,
+						menu_mgr_orders,
+
 						menu_my_account
 					) 
 
@@ -137,14 +151,23 @@ if ($login->isUserLoggedIn() == true) {
 						:imenu_location_search,
 						:imenu_order_search,
 						:imenu_prod2loc,
+
+						:imenu_pick_order,
+
 						:imenu_recent_activity,
 						:imenu_mgr_prod_add_update,
+
+						:imenu_mgr_place_order,
+						:imenu_mgr_orders,
+
 						:imenu_my_account
 					)
 
 
 				'))
 				{
+
+
 
 
 					$stmt->bindValue(':iuser_name',				$user_name,				PDO::PARAM_STR);
@@ -166,8 +189,11 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':imenu_location_search',			$location_search,		PDO::PARAM_INT);
 					$stmt->bindValue(':imenu_order_search',				$order_search,			PDO::PARAM_INT);
 					$stmt->bindValue(':imenu_prod2loc',					$prod2location,			PDO::PARAM_INT);
+					$stmt->bindValue(':imenu_pick_order',				$pick_order,			PDO::PARAM_INT);
 					$stmt->bindValue(':imenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);
 					$stmt->bindValue(':imenu_mgr_prod_add_update',		$mgr_products,			PDO::PARAM_INT);
+					$stmt->bindValue(':imenu_mgr_place_order',			$mgr_place_order,		PDO::PARAM_INT);
+					$stmt->bindValue(':imenu_mgr_orders',				$mgr_orders,			PDO::PARAM_INT);
 					$stmt->bindValue(':imenu_my_account',				$my_account,			PDO::PARAM_INT);
 
 

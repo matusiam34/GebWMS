@@ -43,10 +43,6 @@ if ($login->isUserLoggedIn() == true) {
 
 			(is_it_enabled($_SESSION['menu_pick_order']))
 
-			AND
-
-			(can_user_update($_SESSION['menu_pick_order']))
-
 		)
 
 

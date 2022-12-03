@@ -19,11 +19,16 @@ $mylang = array(
 
 //	GebWMS lib_fucntions stuff...
 'each'						=>	'JEDNOSTEK',
-'case'						=>	'SKRZYN',
+'case'						=>	'SKRZYŃ',
 'pallet'					=>	'PALET',
 
 'active'					=>	'Aktywny',
 'disabled'					=>	'Wyłączone',
+
+'single'					=>	'Pojedynczy',
+'multi'						=>	'Wielo',
+'mixed'						=>	'Mieszany',
+
 
 //
 //	The useful day to day stuff here
@@ -42,13 +47,18 @@ $mylang = array(
 'description'				=>	'Opis',
 'category'					=>	'Kategoria',
 'status'					=>	'Status',
-'physical_qty'				=>	'Ilość fizyczna',
+'physical_qty'				=>	'Fizyczna ilość',
 'allocated_qty'				=>	'Przydzielona ilość',
 'free_qty'					=>	'Wolna ilość',
 'warehouse'					=>	'Magazyn',
 'location'					=>	'Lokalizacja',
 'total_eaches'				=>	'Suma JEDNOSTEK',
-
+'each_barcode'				=>	'POJEDYNCZY Kod Kreskowy',
+'each_weight'				=>	'POJEDYNCZY Waga',
+'case_barcode'				=>	'SKRZYŃ Kod Kreskowy',
+'case_qty'					=>	'SKRZYŃ Ilość',
+'pallet_qty'				=>	'PALET Ilość',
+'note'						=>	'Notatka',
 
 
 //	Main menu Search lines

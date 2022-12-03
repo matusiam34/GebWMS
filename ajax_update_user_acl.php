@@ -69,6 +69,11 @@ if ($login->isUserLoggedIn() == true) {
 				$my_account				=	leave_numbers_only($_POST['my_account_js']);
 
 
+				$mgr_place_order		=	leave_numbers_only($_POST['mgr_place_order_js']);
+				$mgr_orders				=	leave_numbers_only($_POST['mgr_orders_js']);
+				$pick_order				=	leave_numbers_only($_POST['pick_order_js']);
+
+
 
 				$db->beginTransaction();
 
@@ -89,8 +94,11 @@ if ($login->isUserLoggedIn() == true) {
 					menu_location_search		=		:umenu_location_search,
 					menu_order_search			=		:umenu_order_search,
 					menu_prod2loc				=		:umenu_prod2loc,
+					menu_pick_order				=		:umenu_pick_order,
 					menu_recent_activity		=		:umenu_recent_activity,
 					menu_mgr_prod_add_update	=		:umenu_mgr_prod_add_update,
+					menu_mgr_place_order		=		:umenu_mgr_place_order,
+					menu_mgr_orders				=		:umenu_mgr_orders,
 					menu_my_account				=		:umenu_my_account
 
 					WHERE
@@ -109,10 +117,14 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':umenu_location_search',			$location_search,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_order_search',				$order_search,			PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_prod2loc',					$prod2location,			PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_pick_order',				$mgr_place_order,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);
-					$stmt->bindValue(':umenu_mgr_prod_add_update',		$mgr_products,			PDO::PARAM_INT);
-					$stmt->bindValue(':umenu_my_account',				$my_account,			PDO::PARAM_INT);
 
+					$stmt->bindValue(':umenu_mgr_prod_add_update',		$mgr_products,			PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_mgr_place_order',			$mgr_place_order,		PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_mgr_orders',				$mgr_orders,			PDO::PARAM_INT);
+
+					$stmt->bindValue(':umenu_my_account',				$my_account,			PDO::PARAM_INT);
 
 
 					$stmt->bindValue(':suser_id',		$user_uid,		PDO::PARAM_INT);

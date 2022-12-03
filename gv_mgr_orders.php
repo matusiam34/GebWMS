@@ -300,7 +300,7 @@ if ($login->isUserLoggedIn() == true)
 									<table class="table is-fullwidth is-hoverable is-scrollable"  style="table-layout:fixed;" id="curr_table">
 									<thead>
 										<tr>
-											<th>ID</th>
+											<th>UID</th>
 											<th>Order</th>
 											<th>Type</th>
 											<th>Status</th>

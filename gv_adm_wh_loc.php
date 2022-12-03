@@ -382,12 +382,6 @@ if ($login->isUserLoggedIn() == true)
 				$page_form	.=	'</p>';
 
 
-				$page_form	.=	'<p class="control">';
-				$menu_link	=	"'index.php'";
-				$page_form	.=		'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
-				$page_form	.=	'</p>';
-
-
 				// The "menu"!
 				echo '<nav class="level">
 

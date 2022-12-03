@@ -308,31 +308,31 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">EACH Barcode:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['each_barcode'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_each_barcode']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">EACH Weight:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['each_weight'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_each_weight']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">CASE Barcode:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['case_barcode'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_case_barcode']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">CASE Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['case_qty'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_case_qty']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">PALLET Qty:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['pallet_qty'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_pall_qty']) . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -367,6 +367,8 @@ if ($login->isUserLoggedIn() == true)
 					loc_code,
 					loc_barcode,
 					loc_type,
+					loc_pickface,
+					loc_blocked,
 					stk_unit,
 					prod_case_qty,
 					prod_pall_qty,
@@ -398,7 +400,7 @@ if ($login->isUserLoggedIn() == true)
 					prod_pkey = :iprod_pkey
 
 
-					GROUP BY wh_code, loc_code, loc_barcode, loc_type, stk_unit, prod_case_qty, prod_pall_qty
+					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_pickface, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
 
 					ORDER BY wh_code, loc_code
 
@@ -432,11 +434,22 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$location_stock_qty		=	trim($row['all_stk_qty']);
+						$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
 
 						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-						$loc_type				=	trim($row['loc_type']);
-						$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
-						$loc_status_code_str	=	$loc_types_codes_arr[$loc_type];
+						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
+						$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
+						$loc_type				=	leave_numbers_only($row['loc_type']);
+
+
+						if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
+
+						//	Get the pickface flag!
+						$loc_pickface_style	=	'';
+						if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
+
+						$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
+
 
 
 						// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
@@ -469,12 +482,11 @@ if ($login->isUserLoggedIn() == true)
 							$loc_details_lnk	=	'<a href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
 						}
 
+
 						$details_html	.=	'<tr>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . ' (' . $loc_status_code_str . ')</td>';
+						$details_html	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_pickface_style . '">' . $loc_details_lnk . ' (' . $loc_status_code_str . ')</td>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
-
-
 						$details_html	.=	'</tr>';
 
 						$total_product_eaches	=	$total_product_eaches + trim($row['all_stk_qty']);

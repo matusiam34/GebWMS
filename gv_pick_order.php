@@ -239,8 +239,6 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
-		$order_running	=	0;	//	0 means that operator has not claimed an order to pick yet!
-
 		//	Before going any further first make sure to check if the operator is not already
 		//	in the middle of a picking job. Because if that is the case that means that
 		//	I need to show a picking screen and not the order selection screen.
@@ -249,8 +247,13 @@ if ($login->isUserLoggedIn() == true)
 		//	Only check if the order is active. What I want to allow is for the operator to be picking
 		//	and the manager going : nahh mate, we need to pause this picking because Dan needs to do a replen.
 		//	So can he needs to be able to put the order in a pause mode but this should not stop the picker
-		//	from going to the screen and selecting a different order to pick while the other order is being sorted
+		//	from going to the screen and selecting a different order to pick while the other order is being sorted out
 		//	for stock or other issues.
+
+
+		$current_order_uid		=	0;		//	UID of the order number 
+		$current_order_number	=	'';		//	order number that is currently being processed by the operator (the string)
+		$current_order_pick_start_date	=	'';		//	when it all started...
 
 
 		$sql	=	'
@@ -258,7 +261,8 @@ if ($login->isUserLoggedIn() == true)
 			SELECT
 
 			ordhdr_uid,
-			ordhdr_order_number
+			ordhdr_order_number,
+			ordhdr_pick_start_date
 
 			FROM 
 
@@ -289,7 +293,14 @@ if ($login->isUserLoggedIn() == true)
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
 				//	Now... The operator can only be assigned to one order at a time.
-				$order_running	=	1;	//	Operator has an order going...
+				//	Needs to be a tool that will notify the manager or admin if that is not
+				//	the case so that it can be fixed otherwise strange things will happen!
+				//	Maybe given give the operator a warning as well to go and see a manager / admin??!?!
+				$current_order_uid					=	leave_numbers_only($row['ordhdr_uid']);
+				$current_order_number				=	trim($row['ordhdr_order_number']);
+
+				//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
+				$current_order_pick_start_date	=	display_date( trim($row['ordhdr_pick_start_date']) , $date_display_style);
 			}
 
 
@@ -301,7 +312,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Operator is free to take on any order!
-		if ($order_running == 0)
+		if ($current_order_uid == 0)
 		{
 
 			$orders_arr			=	array();		//	all pickable orders here
@@ -419,7 +430,7 @@ if ($login->isUserLoggedIn() == true)
 				}	//	END OF count($orders_arr) > 0
 				else
 				{
-					//	say something about no orders to pick.
+					//	say something about no orders to pick?
 				}
 
 
@@ -435,13 +446,65 @@ if ($login->isUserLoggedIn() == true)
 
 		}
 		else
-		if ($order_running == 1)
+		if ($current_order_uid > 0)
 		{
+
+
+			//
+			//
+			//
 			//	The operator needs a menu to allow picking!
-			
-			echo	'<p>Insert a working picking process here...</p>';
-			
-			
+			//
+			//
+			//
+
+
+			$columns_html	=	'';
+			$details_html	=	'';
+
+
+			$columns_html	.=	'<div class="columns">';
+			$columns_html	.=	'<div class="column is-6">';
+
+			$details_html	.=	'<table class="is-fullwidth table is-bordered">';
+
+				$details_html	.=	'<tr>';
+					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Order:</td>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $current_order_number . '</td>';
+				$details_html	.=	'</tr>';
+
+
+				$details_html	.=	'<tr>';
+					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Started:</td>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $current_order_pick_start_date . '</td>';
+				$details_html	.=	'</tr>';
+
+
+
+
+
+
+
+			$details_html	.=	'</table>';
+
+
+
+			$columns_html	.=	$details_html;	// place the table in the column...
+			$details_html	=	"";				// empty for the next run!
+			$columns_html	.=	'</div>';
+
+
+			// End of columns div!
+			$columns_html	.=	'</div>';
+
+
+			// Show the order header details!
+			echo	$columns_html;
+
+
+
+
+
 		}
 
 

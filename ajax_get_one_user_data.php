@@ -89,16 +89,22 @@ if ($login->isUserLoggedIn() == true) {
 								'description'	=> trim($row['user_description']),
 								'active'		=> leave_numbers_only($row['user_active']),
 
+								'menu_my_account'				=> leave_numbers_only($row['menu_my_account']),
 								'menu_adm_warehouse'			=> leave_numbers_only($row['menu_adm_warehouse']),
 								'menu_adm_warehouse_loc'		=> leave_numbers_only($row['menu_adm_warehouse_loc']),
 								'menu_adm_users'				=> leave_numbers_only($row['menu_adm_users']),
+
 								'menu_prod_search'				=> leave_numbers_only($row['menu_prod_search']),
 								'menu_location_search'			=> leave_numbers_only($row['menu_location_search']),
 								'menu_order_search'				=> leave_numbers_only($row['menu_order_search']),
+
 								'menu_prod2loc'					=> leave_numbers_only($row['menu_prod2loc']),
+								'menu_pick_order'				=> leave_numbers_only($row['menu_pick_order']),
 								'menu_recent_activity'			=> leave_numbers_only($row['menu_recent_activity']),
-								'menu_my_account'				=> leave_numbers_only($row['menu_my_account']),
-								'menu_mgr_prod_add_update'		=> leave_numbers_only($row['menu_mgr_prod_add_update'])
+
+								'menu_mgr_prod_add_update'		=> leave_numbers_only($row['menu_mgr_prod_add_update']),
+								'menu_mgr_place_order'			=> leave_numbers_only($row['menu_mgr_place_order']),
+								'menu_mgr_orders'				=> leave_numbers_only($row['menu_mgr_orders'])
 
 
 						);

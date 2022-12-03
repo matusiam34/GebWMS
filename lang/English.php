@@ -25,6 +25,11 @@ $mylang = array(
 'active'					=>	'Active',
 'disabled'					=>	'Disabled',
 
+'single'					=>	'Single',
+'multi'						=>	'Multi',
+'mixed'						=>	'Mixed',
+
+
 //
 //	The useful day to day stuff here
 //
@@ -48,6 +53,12 @@ $mylang = array(
 'warehouse'					=>	'Warehouse',
 'location'					=>	'Location',
 'total_eaches'				=>	'Total EACHES',
+'each_barcode'				=>	'EACH Barcode',
+'each_weight'				=>	'EACH Weight',
+'case_barcode'				=>	'CASE Barcode',
+'case_qty'					=>	'CASE Qty',
+'pallet_qty'				=>	'PALLET Qty',
+'note'						=>	'Note',
 
 
 //	Main menu Search lines

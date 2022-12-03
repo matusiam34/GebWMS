@@ -176,6 +176,8 @@ if ($login->isUserLoggedIn() == true)
 
 			geb_stock_history.stk_hst_operator = :suser_id
 
+			ORDER BY stk_hst_date DESC
+
 			LIMIT 10
 
 		';
@@ -312,17 +314,13 @@ if ($login->isUserLoggedIn() == true)
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $entry_qty . ' ' . $unit_type_str . '</td>';
 							$details_html	.=	'</tr>';
 
-
-							//	mateusz
-							$activity_date	=		trim($row['stk_hst_date']);
-
-							$act_date		=		date('d/m/Y', strtotime($activity_date));
-							$act_time		=		date('H:i:s', strtotime($activity_date));
-
+							//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
+							$act_date	=	display_date( trim($row['stk_hst_date']), $date_display_style);
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['when'] . ':</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
+//								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
 							$details_html	.=	'</tr>';
 
 						}

@@ -248,17 +248,12 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'</tr>';
 
 
-
-						//	mateusz
-						$enter_date		=		trim($order_header_arr[0]['ordhdr_enter_date']);
-						$act_date		=		date('d/m/Y', strtotime($enter_date));
-						$act_time		=		date('H:i:s', strtotime($enter_date));
-
-
+						//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
+						$act_date	=	display_date( trim($order_header_arr[0]['ordhdr_enter_date']) , $date_display_style);
 
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Enter Date:</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
 						$details_html	.=	'</tr>';
 
 
@@ -329,7 +324,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 							//	mateusz
-							//	Going to hardcode few things here that probably should be stored in lib_functions.php...
+							//	Going to hardcode few things here that probably should be stored in lib_functions.php... ?!?
 
 
 							$details_html	.=	'<tr>';
