@@ -56,7 +56,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Location details</title>
+	<title><?php	echo $mylang['location_details'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 

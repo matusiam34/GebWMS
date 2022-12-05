@@ -85,8 +85,15 @@ if ($login->isUserLoggedIn() == true)
 					$('.highlighted').removeClass('highlighted');
 					$(this).addClass('highlighted');
 
-					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
-					get_location();
+
+					//	Check if the row has a numer
+					if ($.isNumeric(	$(this).find('td:nth-child(1)').text()	))
+					{
+						$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
+						get_location();
+					}
+
+
 
 			});
 
@@ -137,7 +144,6 @@ if ($login->isUserLoggedIn() == true)
 		// Get one location... potentially should be fixed in the future but for now this will do.
 		function get_location()
 		{
-
 
 			$.post('ajax_get_one_wh_location.php', { 
 

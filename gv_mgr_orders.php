@@ -47,7 +47,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Orders</title>
+	<title><?php	echo $mylang['orders'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -301,11 +301,11 @@ if ($login->isUserLoggedIn() == true)
 									<thead>
 										<tr>
 											<th>UID</th>
-											<th>Order</th>
-											<th>Type</th>
-											<th>Status</th>
-											<th>Lines</th>
-											<th>Operator</th>
+											<th>' . $mylang['order'] . '</th>
+											<th>' . $mylang['type'] . '</th>
+											<th>' . $mylang['status'] . '</th>
+											<th>' . $mylang['entries'] . '</th>
+											<th>' . $mylang['picker'] . '</th>
 										</tr>
 									</thead>
 

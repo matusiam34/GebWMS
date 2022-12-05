@@ -513,8 +513,8 @@ if ($login->isUserLoggedIn() == true)
 
 											{
 
-												//$date_now_str	=	date('Y-m-d H:i:s'); // Merica format
-												$date_now_str	=	date('H:i:s d/m/Y'); // Brit format
+												$date_now_str	=	date('Y-m-d H:i:s'); // Merica format
+												//$date_now_str	=	date('H:i:s d/m/Y'); // Brit format
 
 												$stmt->bindValue(':istk_hst_op_type',		10,						PDO::PARAM_INT);	// operation 10 is prod2loc.. more to come!
 												$stmt->bindValue(':istk_hst_prod_pkey',		$prod_id,				PDO::PARAM_INT);
@@ -755,13 +755,13 @@ if ($login->isUserLoggedIn() == true)
 								$html_results	.=	'<table class="is-fullwidth table is-bordered">';
 
 									$html_results	.=	'<tr>';
-										$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Location:</td>';
+										$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['location'] . ':</td>';
 										$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_code . '</td>';
 									$html_results	.=	'</tr>';
 
 
 									$html_results	.=	'<tr>';
-										$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Type:</td>';
+										$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['type'] . ':</td>';
 										$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_types_arr[$loc_type] . '</td>';
 									$html_results	.=	'</tr>';
 
@@ -775,8 +775,8 @@ if ($login->isUserLoggedIn() == true)
 
 
 								// Declare the two buttons that I will need for the final step.
-								$confirm_lnk	=	'<a class="button is-fullwidth green_class" onClick="get_location_details(1);">CONFIRM</a>';
-								$cancel_lnk		=	'<a class="button is-fullwidth red_class" href="gv_move_prod2loc.php">CANCEL</a>';
+								$confirm_lnk	=	'<a class="button is-fullwidth green_class" onClick="get_location_details(1);">' . strtoupper($mylang['confirm']) . '</a>';
+								$cancel_lnk		=	'<a class="button is-fullwidth red_class" href="gv_move_prod2loc.php">' . strtoupper($mylang['cancel']) . '</a>';
 
 								if ($allow_item)
 								{

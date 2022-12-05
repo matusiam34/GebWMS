@@ -142,24 +142,23 @@ $activity_type_reverse_arr	=	array(
 //	o Point Of Sale system (or anything else)
 $order_type_arr	=	array(
 
-	'100'		=>	'Imported',
-	'110'		=>	'Place Order'
+	'100'		=>	$mylang['imported'],
+	'110'		=>	$mylang['geb_order']
 
 );
-
 
 
 
 //	Codes that are assigned to the geb_order_header table: ordhdr_status column
 $order_status_arr	=	array(
 
-	'10'	=>	'On Hold',
-	'20'	=>	'Ready',
-	'30'	=>	'Started',
-	'40'	=>	'Paused',
-	'50'	=>	'Complete (short)',
-	'60'	=>	'Complete',
-	'70'	=>	'Cancelled'
+	'10'	=>	$mylang['on_hold'],
+	'20'	=>	$mylang['ready'],
+	'30'	=>	$mylang['started'],
+	'40'	=>	$mylang['paused'],
+	'50'	=>	$mylang['completed_short'],
+	'60'	=>	$mylang['completed'],
+	'70'	=>	$mylang['cancelled']
 
 );
 
@@ -207,7 +206,12 @@ function display_date($date_str, $date_format_selected)
 	{
 //		$just_date		=		date('d/m/Y', strtotime($date_str));
 //		$just_time		=		date('H:i:s', strtotime($date_str));
-		$output_date	=	date('d/m/Y, H:i:s', strtotime($date_str));
+
+		//	make sure that there is at least something in the provided date string.
+		if (strlen($date_str) > 5)
+		{
+			$output_date	=	date('d/m/Y, H:i:s', strtotime($date_str));
+		}
 	}
 
 	return $output_date;

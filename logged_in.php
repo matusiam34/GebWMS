@@ -211,7 +211,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $pick_order_link . '">' . 'Pick Order' . '</a>
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $pick_order_link . '">' . $mylang['pick_order'] . '</a>
 							</div>
 						</div>';
 
@@ -266,7 +266,7 @@ echo	'<div class="container box has-background-light">';
 
 				echo	'<div class="field">
 							<div class="control">
-								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $orders_link . '">' . 'Orders' . '</a>
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $orders_link . '">' . $mylang['orders'] . '</a>
 							</div>
 						</div>';
 			}

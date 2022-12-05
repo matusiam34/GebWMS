@@ -50,7 +50,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Pick Order</title>
+	<title><?php	echo $mylang['pick_order'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -375,9 +375,9 @@ if ($login->isUserLoggedIn() == true)
 										<table class="table is-fullwidth is-hoverable is-scrollable"  style="table-layout:fixed;" id="curr_table">
 										<thead>
 											<tr>
-												<th>ID</th>
-												<th>Order</th>
-												<th>Lines</th>
+												<th>UID</th>
+												<th>' . $mylang['order'] . '</th>
+												<th>' . $mylang['entries'] . '</th>
 											</tr>
 										</thead>
 
@@ -406,7 +406,7 @@ if ($login->isUserLoggedIn() == true)
 					echo	'<div class="field" style="'. $box_size_str .'">
 								<p class="help">&nbsp;</p>
 								<div class="control">
-									<button class="button inventory_class is-fullwidth" onclick="claim_order();">Pick Order</button>
+									<button class="button inventory_class is-fullwidth" onclick="claim_order();">' . $mylang['pick_order'] . '</button>
 								</div>
 							</div>
 
@@ -469,7 +469,7 @@ if ($login->isUserLoggedIn() == true)
 			$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 				$details_html	.=	'<tr>';
-					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Order:</td>';
+					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order'] . ':</td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $current_order_number . '</td>';
 				$details_html	.=	'</tr>';
 

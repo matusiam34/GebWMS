@@ -47,7 +47,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Products</title>
+	<title><?php	echo $mylang['products'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -193,7 +193,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 <?php
 
 	// A little gap at the top to make it look better a notch.
@@ -211,7 +210,7 @@ if ($login->isUserLoggedIn() == true)
 		$page_form	.=	'<div class="field has-addons">';
 
 			$page_form	.=	'<p class="control">';
-			$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="Product code" value="' . $product_or_barcode . '">';
+			$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="' . $mylang['product_code'] . '" value="' . $product_or_barcode . '">';
 			$page_form	.=	'</p>';
 
 			$page_form	.=	'<p class="control">';
@@ -370,7 +369,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Product Code:</p>
+	<p class="help">' . $mylang['product_code'] . ':</p>
 	<div class="control">
 		<input id="id_product_code" class="input is-normal" type="text" placeholder="e.g. CLSPMRD" value="'. $prod_code .'" name="id_product_code" required>
 	</div>
@@ -378,7 +377,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Description:</p>
+	<p class="help">' . $mylang['description'] . ':</p>
 	<div class="control">
 		<input id="id_product_description" class="input is-normal" type="text" placeholder="Collection Sports Medium Red" value="'. $prod_desc . '" name="id_product_description">
 	</div>
@@ -386,7 +385,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Category:</p>
+	<p class="help">' . $mylang['category'] . ':</p>
 	<div class="control">
 		<input id="id_product_category" class="input is-normal" type="text" placeholder="GARDENWARE" value="'. $prod_category. '" name="id_product_category">
 	</div>
@@ -397,7 +396,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Status:</p>
+	<p class="help">' . $mylang['status'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-fullwidth">
@@ -429,7 +428,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">EACH Barcode:</p>
+	<p class="help">' . $mylang['each_barcode'] . ':</p>
 	<div class="control">
 		<input id="id_each_barcode" class="input is-normal" type="text" placeholder="87341285732154" value="'. $prod_each_barcode .'" name="id_each_barcode">
 	</div>
@@ -437,7 +436,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">EACH Weight:	</p>
+	<p class="help">' . $mylang['each_weight'] . ':	</p>
 	<div class="control">
 		<input id="id_each_weight" class="input is-normal" type="text" placeholder="4.25" value="'. $prod_each_weight . '" name="id_each_weight">
 	</div>
@@ -445,7 +444,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">CASE Barcode:</p>
+	<p class="help">' . $mylang['case_barcode'] . ':</p>
 	<div class="control">
 		<input id="id_case_barcode" class="input is-normal" type="text" placeholder="51682361869185" value="'. $prod_case_barcode. '" name="id_case_barcode">
 	</div>
@@ -453,7 +452,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">CASE Qty:</p>
+	<p class="help">' . $mylang['case_qty'] . ':</p>
 	<div class="control">
 		<input id="id_case_qty" class="input is-normal" type="text" placeholder="12" value="'. $prod_case_qty. '" name="id_case_qty">
 	</div>
@@ -461,7 +460,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">PALLET Qty:</p>
+	<p class="help">' . $mylang['pallet_qty'] . ':</p>
 	<div class="control">
 		<input id="id_pall_qty" class="input is-normal" type="text" placeholder="144" value="'. $prod_pall_qty. '" name="id_pall_qty">
 	</div>

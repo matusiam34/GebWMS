@@ -29,6 +29,20 @@ $mylang = array(
 'multi'						=>	'Wielo',
 'mixed'						=>	'Mieszany',
 
+//	$order_type_arr
+
+'imported'					=>	'Importowane',
+'geb_order'					=>	'Zamówienie Geb',
+
+//	order_status_arr
+
+'on_hold'					=>	'W oczekiwaniu',
+'ready'						=>	'Gotowy',
+'started'					=>	'Rozpoczęty',
+'paused'					=>	'Wstrzymany',
+'completed_short'			=>	'Zakończony (skrócony)',
+'completed'					=>	'Zakończony',
+'cancelled'					=>	'Cancelled',
 
 //
 //	The useful day to day stuff here
@@ -59,6 +73,19 @@ $mylang = array(
 'case_qty'					=>	'SKRZYŃ Ilość',
 'pallet_qty'				=>	'PALET Ilość',
 'note'						=>	'Notatka',
+'location_details'			=>	'Szczegóły lokalizacji',
+'order_details'				=>	'Szczegóły zamówienia',
+'order'						=>	'Zamówienie',
+'orders'					=>	'Zamówienia',
+'customer'					=>	'Klient',
+'entered_date'				=>	'Data wprowadzenia',
+'order_type'				=>	'Typ zamówienia',
+'order_status'				=>	'Status zamówienia',
+'picker'					=>	'Piker',
+'entries'					=>	'Wpisy',
+'unit'						=>	'Jednostka',
+'start_date'				=>	'Data rozpoczęcia',
+'end_date'					=>	'Data zakonczenia',
 
 
 //	Main menu Search lines
@@ -76,9 +103,16 @@ $mylang = array(
 'warehouses'				=>	'Magazyny',
 'warehouse_locations'		=>	'Lokalizacje w Magazynach',
 'my_account'				=>	'Moje Konto',
+'pick_order'				=>	'Spikuj zamówienie',
 
 
-//	Error Messages
+//	General buttons like add, update etc etc
+'add'						=>	'Dodaj',
+'update'					=>	'Aktualizuj',
+'confirm'					=>	'Potwierdź',
+'cancel'					=>	'Anuluj',
+
+//	Error Messages and Messages
 'a_OK'						=>	'Wszystko OK',
 'could_not_get_data'		=>	'Nie można uzyskać danych!',
 'could_not_update'			=>	'Nie można zaktualizować!',

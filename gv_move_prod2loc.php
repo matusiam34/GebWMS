@@ -344,7 +344,7 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Product:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['product'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['prod_code']) . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -370,7 +370,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Unit:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['unit'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $stock_unit . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -379,7 +379,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold; vertical-align: middle;">Qty:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold; vertical-align: middle;">' . $mylang['qty'] . ':</td>';
 
 
 

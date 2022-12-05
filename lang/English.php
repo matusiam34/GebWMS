@@ -17,7 +17,7 @@ $mylang = array(
 'Logged out'				=>	'You have been logged out',
 
 
-//	GebWMS lib_fucntions stuff...
+//	GebWMS lib_functions stuff...
 'each'						=>	'EACH(s)',
 'case'						=>	'CASE(s)',
 'pallet'					=>	'PALLET(s)',
@@ -28,6 +28,21 @@ $mylang = array(
 'single'					=>	'Single',
 'multi'						=>	'Multi',
 'mixed'						=>	'Mixed',
+
+//	$order_type_arr
+
+'imported'					=>	'Imported',
+'geb_order'					=>	'Geb Order',
+
+//	order_status_arr
+
+'on_hold'					=>	'On Hold',
+'ready'						=>	'Ready',
+'started'					=>	'Started',
+'paused'					=>	'Paused',
+'completed_short'			=>	'Completed (short)',
+'completed'					=>	'Completed',
+'cancelled'					=>	'Cancelled',
 
 
 //
@@ -59,6 +74,19 @@ $mylang = array(
 'case_qty'					=>	'CASE Qty',
 'pallet_qty'				=>	'PALLET Qty',
 'note'						=>	'Note',
+'location_details'			=>	'Location details',
+'order_details'				=>	'Order details',
+'order'						=>	'Order',
+'orders'					=>	'Orders',
+'customer'					=>	'Customer',
+'entered_date'				=>	'Entered date',
+'order_type'				=>	'Order type',
+'order_status'				=>	'Order status',
+'picker'					=>	'Picker',
+'entries'					=>	'Entries',
+'unit'						=>	'Unit',
+'start_date'				=>	'Start date',
+'end_date'					=>	'End date',
 
 
 //	Main menu Search lines
@@ -76,9 +104,17 @@ $mylang = array(
 'warehouses'				=>	'Warehouses',
 'warehouse_locations'		=>	'Warehouse Locations',
 'my_account'				=>	'My Account',
+'pick_order'				=>	'Pick Order',
 
 
-//	Error Messages
+//	General buttons like add, update etc etc
+'add'						=>	'Add',
+'update'					=>	'Update',
+'confirm'					=>	'Confirm',
+'cancel'					=>	'Cancel',
+
+
+//	Error Messages and Messages
 'a_OK'						=>	'a-OK',
 'could_not_get_data'		=>	'Could not get data!',
 'could_not_update'			=>	'Could not update!',

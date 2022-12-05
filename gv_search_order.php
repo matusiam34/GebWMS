@@ -52,7 +52,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Order Search</title>
+	<title><?php	echo $mylang['order_details'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -232,18 +232,20 @@ if ($login->isUserLoggedIn() == true)
 				$order_uid		=	leave_numbers_only($order_header_arr[0]['ordhdr_uid']);
 
 				$columns_html	.=	'<div class="columns">';
+
+
 				$columns_html	.=	'<div class="column is-6">';
 
 					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Order:</td>';
+							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_order_number']) . '</td>';
 						$details_html	.=	'</tr>';
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Customer:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['customer'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_customer']) . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -252,14 +254,9 @@ if ($login->isUserLoggedIn() == true)
 						$act_date	=	display_date( trim($order_header_arr[0]['ordhdr_enter_date']) , $date_display_style);
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Enter Date:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['entered_date'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
 						$details_html	.=	'</tr>';
-
-
-
-
-
 
 
 						//	ordhdr_type...
@@ -272,12 +269,24 @@ if ($login->isUserLoggedIn() == true)
 						$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Order Type:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order_type'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_type_str . '</td>';
 						$details_html	.=	'</tr>';
 
 
+					$details_html	.=	'</table>';
 
+
+
+				$columns_html	.=	$details_html;	// place the table in the column...
+				$details_html	=	"";				// empty for the next run!
+				$columns_html	.=	'</div>';
+
+
+				//	Pick info
+				$columns_html	.=	'<div class="column is-6">';
+
+					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 						//	ordhdr_status entry...
 						//'10'	=>	'On Hold',
@@ -288,12 +297,11 @@ if ($login->isUserLoggedIn() == true)
 						//'60'	=>	'Complete',
 						//'70'	=>	'Cancelled',
 
-
 						$order_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_status']);
 						$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Order Status:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold; width:40%;">' . $mylang['order_status'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
 						$details_html	.=	'</tr>';
 
@@ -309,39 +317,29 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Picker:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['picker'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_operator_str . '</td>';
 						$details_html	.=	'</tr>';
 
 
-
-
-
-
+/*
 						// Show more details about the pick status when the status is actually of some merit aka > 0
-						if ($order_status_str > 0)
+						if ($order_status_cde > 0)
 						{
-
-
-							//	mateusz
+*/
 							//	Going to hardcode few things here that probably should be stored in lib_functions.php... ?!?
-
-
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick Start:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['start_date'] . ':</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_start_date']), $date_display_style) . '</td>';
 							$details_html	.=	'</tr>';
 
 
 							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">Pick End:</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['end_date'] . ':</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_complete_date']), $date_display_style) . '</td>';
 							$details_html	.=	'</tr>';
 
-						}
-
-
-
+//						}
 
 
 					$details_html	.=	'</table>';
@@ -350,7 +348,11 @@ if ($login->isUserLoggedIn() == true)
 
 				$columns_html	.=	$details_html;	// place the table in the column...
 				$details_html	=	"";				// empty for the next run!
+
+
+
 				$columns_html	.=	'</div>';
+
 
 
 				// End of columns div!
