@@ -23,7 +23,8 @@ $mylang = array(
 'pallet'					=>	'PALET',
 
 'active'					=>	'Aktywny',
-'disabled'					=>	'Wyłączone',
+'disabled'					=>	'Wyłączony',
+'suspended'					=>	'Zawieszony',
 
 'single'					=>	'Pojedynczy',
 'multi'						=>	'Wielo',
@@ -43,6 +44,10 @@ $mylang = array(
 'completed_short'			=>	'Zakończony (skrócony)',
 'completed'					=>	'Zakończony',
 'cancelled'					=>	'Cancelled',
+
+//	Extra status translations
+'pause'					=>	'Wstrzymaj',
+
 
 //
 //	The useful day to day stuff here
@@ -77,15 +82,25 @@ $mylang = array(
 'order_details'				=>	'Szczegóły zamówienia',
 'order'						=>	'Zamówienie',
 'orders'					=>	'Zamówienia',
+'ordered'					=>	'Zamówione',
 'customer'					=>	'Klient',
 'entered_date'				=>	'Data wprowadzenia',
 'order_type'				=>	'Typ zamówienia',
 'order_status'				=>	'Status zamówienia',
 'picker'					=>	'Piker',
+'picked'					=>	'Spikowane',
 'entries'					=>	'Wpisy',
 'unit'						=>	'Jednostka',
 'start_date'				=>	'Data rozpoczęcia',
 'end_date'					=>	'Data zakonczenia',
+'user'						=>	'Użytkownik',
+'username'					=>	'Nazwa Użytkownika',
+'first_name'				=>	'Imię',
+'last_name'					=>	'Nazwisko',
+'email'						=>	'Email',
+'save_details'				=>	'Zapisz detale',
+'shipping_address'			=>	'Adres wysyłki',
+'billing_address'			=>	'Adres rozliczeniowy',
 
 
 //	Main menu Search lines

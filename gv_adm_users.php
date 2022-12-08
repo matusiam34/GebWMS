@@ -93,7 +93,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Users</title>
+	<title><?php	echo $mylang['users'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -501,7 +501,7 @@ if ($login->isUserLoggedIn() == true)
 								<thead>
 									<tr>
 										<th>UID</th>
-										<th>User</th>
+										<th>' . $mylang['user'] . '</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -520,7 +520,7 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-2">
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">User name:</p>
+							<p class="help">' . $mylang['username'] . ':</p>
 							<div class="control">
 								<input id="id_user_name" class="input is-normal" type="text" placeholder="toms">
 							</div>
@@ -528,7 +528,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">First name:</p>
+							<p class="help">' . $mylang['first_name'] . ':</p>
 							<div class="control">
 								<input id="id_user_firstname" class="input is-normal" type="text" placeholder="Tom">
 							</div>
@@ -536,7 +536,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">Last name:</p>
+							<p class="help">' . $mylang['last_name'] . ':</p>
 							<div class="control">
 								<input id="id_user_lastname" class="input is-normal" type="text" placeholder="Smith">
 							</div>
@@ -549,14 +549,14 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-4">
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">Description:</p>
+							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
 								<input id="id_user_desc" class="input is-normal" type="text" placeholder="Operations Manager">
 							</div>
 						</div>
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">Email:</p>
+							<p class="help">' . $mylang['email'] . ':</p>
 							<div class="control">
 								<input id="id_user_email" class="input is-normal" type="text" placeholder="tom.smith@jacknhide.co.uk">
 							</div>
@@ -569,15 +569,15 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-2">
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">Status:</p>
+							<p class="help">' . $mylang['status'] . ':</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
 									<select id="id_user_active">
 
-										<option value="0">Active</option>
-										<option value="1">Disabled</option>
-										<option value="2">Suspended</option>
+										<option value="0">' . $mylang['active'] . '</option>
+										<option value="1">' . $mylang['disabled'] . '</option>
+										<option value="2">' . $mylang['suspended'] . '</option>
 
 									</select>
 								</div>
@@ -598,7 +598,7 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button admin_class is-fullwidth"  onclick="update_user_details();">Update Details</button>
+								<button class="button admin_class is-fullwidth"  onclick="update_user_details();">' . $mylang['save_details'] . '</button>
 							</div>
 						</div>';
 

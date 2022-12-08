@@ -24,6 +24,7 @@ $mylang = array(
 
 'active'					=>	'Active',
 'disabled'					=>	'Disabled',
+'suspended'					=>	'Suspended',
 
 'single'					=>	'Single',
 'multi'						=>	'Multi',
@@ -44,6 +45,8 @@ $mylang = array(
 'completed'					=>	'Completed',
 'cancelled'					=>	'Cancelled',
 
+//	Extra status translations
+'pause'					=>	'Pause',
 
 //
 //	The useful day to day stuff here
@@ -78,15 +81,25 @@ $mylang = array(
 'order_details'				=>	'Order details',
 'order'						=>	'Order',
 'orders'					=>	'Orders',
+'ordered'					=>	'Ordered',
 'customer'					=>	'Customer',
 'entered_date'				=>	'Entered date',
 'order_type'				=>	'Order type',
 'order_status'				=>	'Order status',
 'picker'					=>	'Picker',
+'picked'					=>	'Picked',
 'entries'					=>	'Entries',
 'unit'						=>	'Unit',
 'start_date'				=>	'Start date',
 'end_date'					=>	'End date',
+'user'						=>	'User',
+'username'					=>	'Nazwa Użytkownika',
+'first_name'				=>	'First name',
+'last_name'					=>	'Last name',
+'email'						=>	'Email',
+'save_details'				=>	'Save Details',
+'shipping_address'			=>	'Shipping address',
+'billing_address'			=>	'Billing address',
 
 
 //	Main menu Search lines

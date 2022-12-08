@@ -186,7 +186,16 @@ if ($login->isUserLoggedIn() == true)
 			geb_order_header.ordhdr_enter_date,
 			geb_order_header.ordhdr_order_number,
 			geb_order_header.ordhdr_customer,
-
+			geb_order_header.ordhdr_bill_address1,
+			geb_order_header.ordhdr_bill_address2,
+			geb_order_header.ordhdr_bill_address3,
+			geb_order_header.ordhdr_bill_address4,
+			geb_order_header.ordhdr_bill_address5,
+			geb_order_header.ordhdr_ship_address1,
+			geb_order_header.ordhdr_ship_address2,
+			geb_order_header.ordhdr_ship_address3,
+			geb_order_header.ordhdr_ship_address4,
+			geb_order_header.ordhdr_ship_address5,
 			users.user_name
 
 
@@ -231,136 +240,145 @@ if ($login->isUserLoggedIn() == true)
 				//	Ok, order has been found in the system. Give it to the operator!
 				$order_uid		=	leave_numbers_only($order_header_arr[0]['ordhdr_uid']);
 
-				$columns_html	.=	'<div class="columns">';
+
+				//	Need a bit of a redesign. Keep each table in a different variable.
+				$billing_shipping_address	=	'';
+				$billing_shipping_address	.=	'<table class="is-fullwidth table is-bordered">';
+
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<th style="width:50%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['shipping_address'] . '</th>';
+				$billing_shipping_address	.=	'<th style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['billing_address'] . '</th>';
+				$billing_shipping_address	.=	'</tr>';
 
 
-				$columns_html	.=	'<div class="column is-6">';
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_ship_address1']) . '&nbsp</td>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_bill_address1']) . '</td>';
+				$billing_shipping_address	.=	'</tr>';
 
-					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_ship_address2']) . '&nbsp</td>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_bill_address2']) . '</td>';
+				$billing_shipping_address	.=	'</tr>';
 
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_order_number']) . '</td>';
-						$details_html	.=	'</tr>';
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_ship_address3']) . '&nbsp</td>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_bill_address3']) . '</td>';
+				$billing_shipping_address	.=	'</tr>';
 
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_ship_address4']) . '&nbsp</td>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_bill_address4']) . '</td>';
+				$billing_shipping_address	.=	'</tr>';
 
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['customer'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_customer']) . '</td>';
-						$details_html	.=	'</tr>';
+				$billing_shipping_address	.=	'<tr>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_ship_address5']) . '&nbsp</td>';
+				$billing_shipping_address	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_bill_address5']) . '</td>';
+				$billing_shipping_address	.=	'</tr>';
 
-
-						//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
-						$act_date	=	display_date( trim($order_header_arr[0]['ordhdr_enter_date']) , $date_display_style);
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['entered_date'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
-						$details_html	.=	'</tr>';
-
-
-						//	ordhdr_type...
-						//
-						//	'100'		=>	'Imported',
-						//	'110'		=>	'Place Order'
-
-
-						$order_type_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_type']);
-						$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order_type'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_type_str . '</td>';
-						$details_html	.=	'</tr>';
-
-
-					$details_html	.=	'</table>';
+				$billing_shipping_address	.=	'</table>';
 
 
 
-				$columns_html	.=	$details_html;	// place the table in the column...
-				$details_html	=	"";				// empty for the next run!
-				$columns_html	.=	'</div>';
+
+				$order_details_general_info	=	'';
+				$order_details_general_info	.=	'<table class="is-fullwidth table is-bordered">';
+
+				$order_details_general_info	.=	'<tr>';
+				$order_details_general_info	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order'] . ':</td>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_order_number']) . '</td>';
+				$order_details_general_info	.=	'</tr>';
 
 
-				//	Pick info
-				$columns_html	.=	'<div class="column is-6">';
-
-					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
-
-						//	ordhdr_status entry...
-						//'10'	=>	'On Hold',
-						//'20'	=>	'Ready',
-						//'30'	=>	'Started',
-						//'40'	=>	'Paused',
-						//'50'	=>	'Complete (short)',
-						//'60'	=>	'Complete',
-						//'70'	=>	'Cancelled',
-
-						$order_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_status']);
-						$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold; width:40%;">' . $mylang['order_status'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
-						$details_html	.=	'</tr>';
+				$order_details_general_info	.=	'<tr>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['customer'] . ':</td>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($order_header_arr[0]['ordhdr_customer']) . '</td>';
+				$order_details_general_info	.=	'</tr>';
 
 
-						$pick_operator_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_operator']);
-						$pick_operator_str	=	'None';
+				//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
+				$act_date	=	display_date( trim($order_header_arr[0]['ordhdr_enter_date']) , $date_display_style);
 
-						if ($pick_operator_cde > 0)
-						{
-							//	There is an operator allocated to the job... Get the name!
-							$pick_operator_str	=	trim($order_header_arr[0]['user_name']);
-						}
-
-
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['picker'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_operator_str . '</td>';
-						$details_html	.=	'</tr>';
+				$order_details_general_info	.=	'<tr>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['entered_date'] . ':</td>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
+				$order_details_general_info	.=	'</tr>';
 
 
-/*
-						// Show more details about the pick status when the status is actually of some merit aka > 0
-						if ($order_status_cde > 0)
-						{
-*/
-							//	Going to hardcode few things here that probably should be stored in lib_functions.php... ?!?
-							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['start_date'] . ':</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_start_date']), $date_display_style) . '</td>';
-							$details_html	.=	'</tr>';
+				//	ordhdr_type...
+				//
+				//	'100'		=>	'Imported',
+				//	'110'		=>	'Place Order'
+
+				$order_type_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_type']);
+				$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
+
+				$order_details_general_info	.=	'<tr>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['order_type'] . ':</td>';
+				$order_details_general_info	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_type_str . '</td>';
+				$order_details_general_info	.=	'</tr>';
 
 
-							$details_html	.=	'<tr>';
-								$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['end_date'] . ':</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_complete_date']), $date_display_style) . '</td>';
-							$details_html	.=	'</tr>';
-
-//						}
-
-
-					$details_html	.=	'</table>';
+				$order_details_general_info	.=	'</table>';
 
 
 
-				$columns_html	.=	$details_html;	// place the table in the column...
-				$details_html	=	"";				// empty for the next run!
+
+
+				$order_details_picking_info	=	'';
+				$order_details_picking_info	.=	'<table class="is-fullwidth table is-bordered">';
+
+				//	ordhdr_status entry...
+				//'10'	=>	'On Hold',
+				//'20'	=>	'Ready',
+				//'30'	=>	'Started',
+				//'40'	=>	'Paused',
+				//'50'	=>	'Complete (short)',
+				//'60'	=>	'Complete',
+				//'70'	=>	'Cancelled',
+
+				$order_status_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_status']);
+				$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
+
+				$order_details_picking_info	.=	'<tr>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold; width:40%;">' . $mylang['order_status'] . ':</td>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrB . ';">' . $order_status_str . '</td>';
+				$order_details_picking_info	.=	'</tr>';
+
+
+				$pick_operator_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_operator']);
+				$pick_operator_str	=	'None';
+
+				if ($pick_operator_cde > 0)
+				{
+					//	There is an operator allocated to the job... Get the name!
+					$pick_operator_str	=	trim($order_header_arr[0]['user_name']);
+				}
+
+
+				$order_details_picking_info	.=	'<tr>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['picker'] . ':</td>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrB . ';">' . $pick_operator_str . '</td>';
+				$order_details_picking_info	.=	'</tr>';
+
+				//	Going to hardcode few things here that probably should be stored in lib_functions.php... ?!?
+				$order_details_picking_info	.=	'<tr>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['start_date'] . ':</td>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_start_date']), $date_display_style) . '</td>';
+				$order_details_picking_info	.=	'</tr>';
+
+
+				$order_details_picking_info	.=	'<tr>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['end_date'] . ':</td>';
+				$order_details_picking_info	.=	'<td style="background-color: ' . $backclrB . ';">' . display_date(trim($order_header_arr[0]['ordhdr_pick_complete_date']), $date_display_style) . '</td>';
+				$order_details_picking_info	.=	'</tr>';
+
+
+				$order_details_picking_info	.=	'</table>';
 
 
 
-				$columns_html	.=	'</div>';
-
-
-
-				// End of columns div!
-				$columns_html	.=	'</div>';
-
-
-				// Show the order header details!
-				echo	$columns_html;
+				$items_ordered	=	'';
 
 
 
@@ -397,19 +415,14 @@ if ($login->isUserLoggedIn() == true)
 					$stmt->bindValue(':sorder_number',	$order_uid,		PDO::PARAM_INT);
 					$stmt->execute();
 
-					$columns_html	=	'';
-					$details_html	=	'';
 
+					$items_ordered	.=	'<table class="is-fullwidth table is-bordered">';
 
-					$columns_html	.=	'<div class="columns">';
-					$columns_html	.=	'<div class="column is-6">';
-					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
-
-					$details_html	.=	'<tr>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Product</th>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Ordered</th>';
-					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">Picked</th>';
-					$details_html	.=	'</tr>';
+					$items_ordered	.=	'<tr>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['product'] . '</th>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['ordered'] . '</th>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['picked'] . '</th>';
+					$items_ordered	.=	'</tr>';
 
 
 
@@ -432,38 +445,66 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-						$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['orddet_ord_qty']) . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['orddet_pk_qty']) . '</td>';
-						$details_html	.=	'</tr>';
+						$items_ordered	.=	'<tr>';
+						$items_ordered	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_details_lnk . '</td>';
+						$items_ordered	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['orddet_ord_qty']) . '</td>';
+						$items_ordered	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['orddet_pk_qty']) . '</td>';
+						$items_ordered	.=	'</tr>';
 
 
 					}
 
 
-					$details_html	.=	'</table>';
-
-					$columns_html	.=	$details_html;	// place the table in the column...
-					$columns_html	.=	'</div>';
-
-					// End of columns div!
-					$columns_html	.=	'</div>';
-
-					// Show the details of the order: products, order vs picked qty etc
-					echo	$columns_html;
+					$items_ordered	.=	'</table>';
 
 
 				}
 				// show an error if the query has an error
 				else
 				{
-					echo '<br>Order Details Query Failed!';
+					$items_ordered	=	'<br>Order Details Query Failed!';
 				}
 
 
 
+				//	Show everything here... 
 
+				$columns_html	=	'';
+
+
+				//	Get the first row in...
+				$columns_html	.=	'<div class="columns">';
+
+				$columns_html	.=	'<div class="column is-6">';
+				$columns_html	.=	$order_details_general_info;
+				$columns_html	.=	'</div>';
+
+				$columns_html	.=	'<div class="column is-6">';
+				$columns_html	.=	$order_details_picking_info;
+				$columns_html	.=	'</div>';
+
+				$columns_html	.=	'</div>';
+
+
+
+				//	Second row...
+				$columns_html	.=	'<div class="columns">';
+
+				$columns_html	.=	'<div class="column is-6">';
+				$columns_html	.=	$billing_shipping_address;
+				$columns_html	.=	'</div>';
+
+				$columns_html	.=	'<div class="column is-6">';
+				$columns_html	.=	$items_ordered;
+				$columns_html	.=	'</div>';
+
+				$columns_html	.=	'</div>';
+
+
+
+
+				//	Show everything!
+				echo $columns_html;
 
 
 

@@ -415,7 +415,7 @@ if ($login->isUserLoggedIn() == true)
 
 					$details_html	.=	'<div class="field">
 											<div class="control">
-												<input id="location_code" class="input is-normal" type="text" placeholder="location code">
+												<input id="location_code" class="input is-normal" type="text" placeholder="' . $mylang['location_barcode'] . '">
 											</div>
 										</div>
 

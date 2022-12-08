@@ -357,11 +357,11 @@ if ($login->isUserLoggedIn() == true)
 				// Note: ugly but works for now.
 				$status_html	=	'<option value="0"';
 				if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
-				$status_html	.=	'>Active</option>';
+				$status_html	.=	'>' . $mylang['active'] . '</option>';
 
 				$status_html	.=	'<option value="1"';
 				if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
-				$status_html	.=	'>Disabled</option>';
+				$status_html	.=	'>' . $mylang['disabled'] . '</option>';
 
 
 			// General product info
@@ -496,7 +496,7 @@ if (can_user_add($_SESSION['menu_mgr_prod_add_update']))
 	<div class="field" style="'. $box_size_str .'">
 		<p class="help">&nbsp;</p>
 		<div class="control">
-			<button class="button manager_class is-fullwidth"  onclick="add_item();">Add</button>
+			<button class="button manager_class is-fullwidth"  onclick="add_item();">' . $mylang['add'] . '</button>
 		</div>
 	</div>';
 }
@@ -509,7 +509,7 @@ if (can_user_update($_SESSION['menu_mgr_prod_add_update']))
 	<div class="field" style="'. $box_size_str .'">
 		<p class="help">&nbsp;</p>
 		<div class="control">
-			<button class="button manager_class is-fullwidth"  onclick="update_item();">Update</button>
+			<button class="button manager_class is-fullwidth"  onclick="update_item();">' . $mylang['update'] . '</button>
 		</div>
 	</div>';
 }

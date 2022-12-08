@@ -475,7 +475,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 				$details_html	.=	'<tr>';
-					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">Started:</td>';
+					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['start_date'] . ':</td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $current_order_pick_start_date . '</td>';
 				$details_html	.=	'</tr>';
 
