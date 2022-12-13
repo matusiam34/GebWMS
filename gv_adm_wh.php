@@ -40,7 +40,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title>Warehouses</title>
+	<title><?php	echo $mylang['warehouses'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -287,7 +287,6 @@ if ($login->isUserLoggedIn() == true)
 
 ?>
 
-
 				<div class="columns">
 
 					<div class="column is-4">
@@ -296,7 +295,7 @@ if ($login->isUserLoggedIn() == true)
 							<thead>
 								<tr>
 									<th>UID</th>
-									<th>Warehouse Name</th>
+									<th><?php	echo $mylang['warehouse'];	?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -309,7 +308,7 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-3">
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Warehouse Name:</p>
+							<p class="help"><?php	echo $mylang['warehouse'];	?>:</p>
 							<div class="control">
 								<input id="id_item_name" class="input is-normal" type="text" placeholder="COV">
 							</div>
@@ -332,7 +331,7 @@ if ($login->isUserLoggedIn() == true)
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
+				<button class="button admin_class is-fullwidth"  onclick="add_item();">' . $mylang['add'] . '</button>
 			</div>
 		</div>';
 	}
@@ -346,7 +345,7 @@ if ($login->isUserLoggedIn() == true)
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="update_item();">Update</button>
+				<button class="button admin_class is-fullwidth"  onclick="update_item();">' . $mylang['update'] . '</button>
 			</div>
 		</div>';
 	}

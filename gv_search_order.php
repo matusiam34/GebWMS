@@ -169,7 +169,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		$order_header_arr	=	array();		//	store all header info here
-		$order_uid			=	0;				//	obtained from the first query and used in the details query (second one)
+//		$order_uid			=	0;				//	obtained from the first query and used in the details query (second one)
 
 
 		//	Grab the order header data. Things like Order Number, Customer etc etc
@@ -236,9 +236,6 @@ if ($login->isUserLoggedIn() == true)
 
 			if (count($order_header_arr) == 1)
 			{
-
-				//	Ok, order has been found in the system. Give it to the operator!
-				$order_uid		=	leave_numbers_only($order_header_arr[0]['ordhdr_uid']);
 
 
 				//	Need a bit of a redesign. Keep each table in a different variable.
@@ -401,7 +398,7 @@ if ($login->isUserLoggedIn() == true)
 
 					WHERE
 
-					orddet_ordhdr_uid = :sorder_number
+					orddet_ordhdr_ordnum = :sorder_number
 
 					ORDER BY orddet_uid
 
@@ -412,7 +409,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 
-					$stmt->bindValue(':sorder_number',	$order_uid,		PDO::PARAM_INT);
+					$stmt->bindValue(':sorder_number',	$order_number,		PDO::PARAM_STR);
 					$stmt->execute();
 
 

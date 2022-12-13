@@ -331,7 +331,7 @@ if ($login->isUserLoggedIn() == true)
 
 				geb_order_header
 
-				INNER JOIN geb_order_details ON geb_order_header.ordhdr_uid = geb_order_details.orddet_ordhdr_uid
+				INNER JOIN geb_order_details ON geb_order_header.ordhdr_order_number = geb_order_details.orddet_ordhdr_ordnum
 
 				WHERE
 
