@@ -93,21 +93,22 @@ if ($login->isUserLoggedIn() == true)
 					// 1 = ID
 					// 2 = Order Number
 					// 3 = Number of Lines in the order
-					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
-
+					$('#id_hidden').val($(this).find('td:nth-child(2)').text()); 
+					get_order();
 			});
 
 
 		});
 
 
-		// Bind the order with the operator! 
-		function claim_order()
+		// Get order items to pick... Later on with current stock level? As in available stock?
+		function get_order()
 		{
 
-			$.post('ajax_claim_order4picking.php', { 
+			$.post('ajax_mgr_orders_get_order_details.php', { 
+//			$.post('ajax_mgr_orders_get_order_details.php', { 
 
-				order_uid_js	:	get_Element_Value_By_ID('id_hidden')
+				ordnum_js	:	get_Element_Value_By_ID('id_hidden')
 
 			},
 
@@ -122,7 +123,9 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 					//	Need to refresh the page to show the picking screen.
-					window.location.href = 'gv_pick_order.php';
+					//window.location.href = 'gv_pick_order.php';
+					$('#items').empty();
+					$('#items').append(obje.html);
 
 				}
 				else
@@ -162,11 +165,12 @@ if ($login->isUserLoggedIn() == true)
 
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
 
+
+
 	table th
 	{
 		position: sticky;
 		top: 0;
-		background: #eee;
 	}
 
 
@@ -260,6 +264,8 @@ if ($login->isUserLoggedIn() == true)
 
 
 			GROUP BY geb_order_header.ordhdr_uid, geb_order_header.ordhdr_order_number
+			
+			ORDER BY geb_order_header.ordhdr_order_number, geb_order_header.ordhdr_enter_date
 
 		';
 
@@ -297,15 +303,15 @@ if ($login->isUserLoggedIn() == true)
 
 							<div class="column is-12">
 								<div class="tableAttr it-has-border">
-									<table class="table is-fullwidth is-hoverable is-scrollable"  style="table-layout:fixed;" id="curr_table">
+									<table class="table is-fullwidth is-hoverable is-scrollable" style="table-layout:fixed;" id="curr_table">
 									<thead>
 										<tr>
-											<th>UID</th>
-											<th>' . $mylang['order'] . '</th>
-											<th>' . $mylang['type'] . '</th>
-											<th>' . $mylang['status'] . '</th>
-											<th>' . $mylang['entries'] . '</th>
-											<th>' . $mylang['picker'] . '</th>
+											<th class="manager_class">UID</th>
+											<th class="manager_class">' . $mylang['order'] . '</th>
+											<th class="manager_class">' . $mylang['type'] . '</th>
+											<th class="manager_class">' . $mylang['status'] . '</th>
+											<th class="manager_class">' . $mylang['entries'] . '</th>
+											<th class="manager_class">' . $mylang['picker'] . '</th>
 										</tr>
 									</thead>
 
@@ -369,11 +375,11 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
+*/
 
-						<div class="control">
+				echo	'<div class="control">
 							<input id="id_hidden" class="input is-normal" type="hidden" value="0">
 						</div>';
-*/
 
 
 
@@ -404,6 +410,21 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
+		//	Columns used to show the order info...
+
+
+				echo	'<div id="items"></div>';
+
+/*
+				echo	'<div class="columns">
+
+							<div class="column is-12">
+
+								<div id="items"></div>
+
+							</div>
+						</div>';
+*/
 
 
 

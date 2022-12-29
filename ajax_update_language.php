@@ -128,11 +128,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		// Close db connection !
-		$db = null;
-
-
-
 	}		//	End of try bracket !
 	catch(PDOException $e)
 	{
@@ -149,6 +144,10 @@ if ($login->isUserLoggedIn() == true) {
 	//echo $mylang['ps not logged in message'];
 }
 
+
+
+// Close db connection !
+$db = null;
 
 
 

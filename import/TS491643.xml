@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<order>
+
+	<header>
+
+		<warehouse>100</warehouse>
+		<customer_code>F150</customer_code>
+		<order_number>TS491643</order_number>
+		<order_type>100</order_type>
+
+		<billing_address1>BS Systems</billing_address1>
+		<billing_address2>15-25 Hogarth Rd</billing_address2>
+		<billing_address3>London</billing_address3>
+		<billing_address4>SW5 0QJ</billing_address4>
+		<billing_address5>United Kingdom</billing_address5>
+
+		<shipping_address1>BS Systems</shipping_address1>
+		<shipping_address2>31 Hobs Moat Rd</shipping_address2>
+		<shipping_address3>Solihull</shipping_address3>
+		<shipping_address4>West Midlands</shipping_address4>
+		<shipping_address5>B92 8JL</shipping_address5>
+
+	</header>
+
+	<items>
+		<item_code>NUT550</item_code>
+		<item_qty>170</item_qty>
+	</items>
+
+	<items>
+		<item_code>NUT350</item_code>
+		<item_qty>200</item_qty>
+	</items>
+
+	<items>
+		<item_code>KINDCARD8</item_code>
+		<item_qty>64</item_qty>
+	</items>
+
+</order>

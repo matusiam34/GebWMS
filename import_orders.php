@@ -1,3 +1,20 @@
+<style>
+
+table, th, td
+{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td
+{
+  padding: 5px;
+}
+
+
+</style>
+
+
 <?php
 
 
@@ -10,82 +27,170 @@
 //
 
 
-$order_header_arr		=	array();	//	keep all header info about the order
-$order_items_arr		=	array();	//	keep all order items here!
-$order_items_only_arr	=	array();	//	store just product codes. Used for that one query to get the the product UID codes from DB.
-$items_uid_arr			=	array();	//	store all product + UID codes here! 
 
-$order_xml				=	simplexml_load_file('TS491643.xml');
-
+// needs a db connection...
+require_once('lib_functions.php');
+require_once('lib_db.php');
+require_once('lib_db_conn.php');
 
 
-$order_header_arr	=	array(
+$import_directory = 'import';
 
-	'customer_code'		=>	trim($order_xml->header->customer_code),
-	'order_number'		=>	trim($order_xml->header->order_number),
-	'order_type'		=>	trim($order_xml->header->order_type),
+//	All files found in the folder. Exclude the .. and .
+$files_arr	=	array_diff(scandir($import_directory), array('.', '..')); 
 
-	'billing_address1'		=>	trim($order_xml->header->billing_address1),
-	'billing_address2'		=>	trim($order_xml->header->billing_address2),
-	'billing_address3'		=>	trim($order_xml->header->billing_address3),
-	'billing_address4'		=>	trim($order_xml->header->billing_address4),
-	'billing_address5'		=>	trim($order_xml->header->billing_address5),
-	'shipping_address1'		=>	trim($order_xml->header->shipping_address1),
-	'shipping_address2'		=>	trim($order_xml->header->shipping_address2),
-	'shipping_address3'		=>	trim($order_xml->header->shipping_address3),
-	'shipping_address4'		=>	trim($order_xml->header->shipping_address4),
-	'shipping_address5'		=>	trim($order_xml->header->shipping_address5),
-
-);
+$db->beginTransaction();
 
 
-//	Jam the items in!
-for ($i = 0; $i < count($order_xml->items); $i++)
+$xen	=	1;
+
+//	Note: maybe grab all orders first and process all files?
+
+foreach ($files_arr as $order_file)
 {
 
-	$order_items_arr[]	=	array(
+	echo	'Processing file: <b>' . $order_file . '</b>';
+	echo	'<br>';
+	echo	'<br>';
 
-		'item_code'		=>	trim( $order_xml->items[$i]->item_code),
-		'item_qty'		=>	trim( $order_xml->items[$i]->item_qty),
+
+	$order_header_arr		=	array();	//	keep all header info about the order
+	$order_items_arr		=	array();	//	keep all order items here!
+	$order_items_only_arr	=	array();	//	store just product codes. Used for that one query to get the the product UID codes from DB.
+	$items_uid_arr			=	array();	//	store all product + UID codes here! 
+
+	//$order_xml			=	simplexml_load_file('TS491643.xml');
+	$order_xml				=	simplexml_load_file($import_directory . '/' . $order_file);
+
+
+
+
+
+
+	$order_header_arr	=	array(
+
+		'customer_code'		=>	trim($order_xml->header->customer_code),
+		'order_number'		=>	trim($order_xml->header->order_number),
+		'order_type'		=>	trim($order_xml->header->order_type),
+
+		'billing_address1'		=>	trim($order_xml->header->billing_address1),
+		'billing_address2'		=>	trim($order_xml->header->billing_address2),
+		'billing_address3'		=>	trim($order_xml->header->billing_address3),
+		'billing_address4'		=>	trim($order_xml->header->billing_address4),
+		'billing_address5'		=>	trim($order_xml->header->billing_address5),
+		'shipping_address1'		=>	trim($order_xml->header->shipping_address1),
+		'shipping_address2'		=>	trim($order_xml->header->shipping_address2),
+		'shipping_address3'		=>	trim($order_xml->header->shipping_address3),
+		'shipping_address4'		=>	trim($order_xml->header->shipping_address4),
+		'shipping_address5'		=>	trim($order_xml->header->shipping_address5),
 
 	);
 
-	array_push($order_items_only_arr, trim($order_xml->items[$i]->item_code));
-
-}
 
 
-echo 'Order Header:';
-echo '<br>';
+	//	Jam the items in!
+	for ($i = 0; $i < count($order_xml->items); $i++)
+	{
 
-print_r($order_header_arr);
+		$order_items_arr[]	=	array(
 
-echo '<br>';
-echo '<br>';
+			'item_code'		=>	trim( $order_xml->items[$i]->item_code),
+			'item_qty'		=>	trim( $order_xml->items[$i]->item_qty),
 
-echo 'Ordered items:';
-echo '<br>';
+		);
 
+		array_push($order_items_only_arr, trim($order_xml->items[$i]->item_code));
 
-
-print_r($order_items_arr);
+	}
 
 
 
 
-echo '<br>';
-echo '<br>';
+	echo '<table style="text-align: left;">';
+
+
+	echo '<tr>';
+	echo '<th>Customer Code</th>';
+	echo '<th>Order Number</th>';
+	echo '<th>Import Code</th>';
+	echo '<th>Billing Address</th>';
+	echo '<th>Shipping Address</th>';
+	echo '</tr>';
+	echo '<tr>';
+	echo '<td>' . $order_header_arr['customer_code'] . '</td>';
+	echo '<td>' . $order_header_arr['order_number'] . '</td>';
+	echo '<td>' . $order_header_arr['order_type'] . '</td>';
+	echo '<td>' . $order_header_arr['billing_address1'] . '</td>';
+	echo '<td>' . $order_header_arr['shipping_address1'] . '</td>';
+	echo '</tr>';
+
+	echo '<tr>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td>' . $order_header_arr['billing_address2'] . '</td>';
+	echo '<td>' . $order_header_arr['shipping_address2'] . '</td>';
+	echo '</tr>';
+
+	echo '<tr>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td>' . $order_header_arr['billing_address3'] . '</td>';
+	echo '<td>' . $order_header_arr['shipping_address3'] . '</td>';
+	echo '</tr>';
+
+	echo '<tr>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td>' . $order_header_arr['billing_address4'] . '</td>';
+	echo '<td>' . $order_header_arr['shipping_address4'] . '</td>';
+	echo '</tr>';
+
+	echo '<tr>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td></td>';
+	echo '<td>' . $order_header_arr['billing_address5'] . '</td>';
+	echo '<td>' . $order_header_arr['shipping_address5'] . '</td>';
+	echo '</tr>';
+
+
+	echo '</table>';
+
+	echo '<br>';
+
+
+
+	echo 'Ordered items:';
+	echo '<br>';
+
+
+	echo '<table style="text-align: left;">';
+	echo '<tr>';
+	echo '<th>Product Code</th>';
+	echo '<th>Qty</th>';
+	echo '</tr>';
+
+
+	foreach ($order_items_arr as $order_item)
+	{
+		echo '<tr>';
+		echo '<td>' . $order_item['item_code'] . '</td>';
+		echo '<td>' . $order_item['item_qty'] . '</td>';
+		echo '</tr>';
+	}
+
+	echo '</table>';
+
+
+	echo '<br>';
 
 
 	try
 	{
 
-
-		// needs a db connection...
-		require_once('lib_functions.php');
-		require_once('lib_db.php');
-		require_once('lib_db_conn.php');
-		$db->beginTransaction();
 
 
 		//	by default nothing found!
@@ -255,7 +360,6 @@ echo '<br>';
 				$stmt->bindValue(':iordhdr_ship_address4',		$order_header_arr['shipping_address4'],		PDO::PARAM_STR);
 				$stmt->bindValue(':iordhdr_ship_address5',		$order_header_arr['shipping_address5'],		PDO::PARAM_STR);
 
-
 				$stmt->execute();
 
 
@@ -299,11 +403,7 @@ echo '<br>';
 						$stmt->execute();
 					}
 
-
-					// make sure to commit all of the changes to the DATABASE !
-					$db->commit();
-
-					echo	'<br><br>Order imported!';
+					echo	'<br>Order imported!';
 
 				}
 				// show an error if the query has an error
@@ -315,27 +415,12 @@ echo '<br>';
 
 
 
-				// make sure to commit all of the changes to the DATABASE !
-				//$db->commit();
-
-
 			}
 			// show an error if the query has an error
 			else
 			{
 				echo	'Error: x10002';
 			}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -346,6 +431,8 @@ echo '<br>';
 		}
 
 
+		echo '<br>';
+		echo '<br>';
 
 
 
@@ -354,10 +441,15 @@ echo '<br>';
 	catch(PDOException $e)
 	{
 		$db->rollBack();
-		echo 'Dead';
+		echo $e;
 	}
 
 
+
+}	//	order loop end!
+
+					// make sure to commit all of the changes to the DATABASE !
+					$db->commit();
 
 
 

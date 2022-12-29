@@ -1,5 +1,9 @@
 /* Any custom things added by Matt to the system...
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+/*
+    background-color: #009879;
+	//	interesting green...
+*/
 
 /*		Main color of the GebWMS?!		*/
 
@@ -40,7 +44,7 @@
 /*	blue	*/
 .manager_class {
 	background-color: #42A5F5; /*#2196F3;*/
-	color: white;
+	color: white !important;
 }
 
 

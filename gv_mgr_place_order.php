@@ -127,7 +127,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
@@ -174,7 +174,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong -> could not execute php script most likely !
-						alert("server problem");
+						alert('server problem');
 					});
 
 		}
