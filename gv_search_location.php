@@ -279,7 +279,7 @@ if ($login->isUserLoggedIn() == true)
 					$loc_pickface_style	=	'';
 					if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
 
-					$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
+					$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
 
 
 					// A details table with Location name, Warehouse and note (for things like DAMAGES, Returns or whatever it could be)

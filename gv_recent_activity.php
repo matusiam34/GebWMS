@@ -256,7 +256,7 @@ if ($login->isUserLoggedIn() == true)
 							if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
 							if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	}
 
-							$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
+							$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
 
 
 							//	Important feature right here!

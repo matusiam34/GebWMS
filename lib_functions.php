@@ -13,8 +13,6 @@
 //	To add your own language just copy one of the existing php files (lang folder) and start translating.
 //	To make it easy I would go with English. Unless you can translate from other languages better.
 
-//$set_language	=	'Polski';
-//$set_language	=	'English';
 
 $set_language	=	trim($_SESSION['user_language']);
 include('lang/' . $set_language . '.php');
@@ -62,7 +60,7 @@ $loc_types_arr	=	array(
 
 // Holds the short 1 character code for each location type. Used typically as additional info for the operator in places
 // like the product search page.
-$loc_types_codes_arr	=	array(
+$loc_type_codes_arr	=	array(
 
 	'10'	=>	'S',	//	"Single"
 	'20'	=>	'M',	//	"Multi"
@@ -78,6 +76,37 @@ $loc_types_codes_reverse_arr	=	array(
 	'X'		=>	30		//	"Multi Mixed"
 
 );
+
+
+
+//	GebWMS supports different location functions. As of 24/04/2023 there will be:
+//	-	Pickface (usually bottom of the rack),
+//	-	Bulk (usually above pickface to keep product that will be used to replenish the pickface stock)
+//	-	Goods IN (one location per warehouse). This by default needs to be a multi location as products will be stored here
+//		before they get labels and get moved to somewhere (potentially bulk location or emply pallet spaces)
+
+
+
+$loc_functions_arr	=	array(
+
+	'310'	=>	$mylang['pickface'],
+	'320'	=>	$mylang['bulk'],
+	'330'	=>	$mylang['goodsin'],
+
+);
+
+
+$loc_function_codes_arr	=	array(
+
+	'310'	=>	'P',	//	Pick face
+	'320'	=>	'B',	//	Bulk
+	'330'	=>	'G',	//	Goods IN
+
+);
+
+
+
+
 
 
 // Since I can accept EACH, CASE and PALLET I need to figure out how to mark it.
@@ -102,6 +131,14 @@ $stock_unit_type_reverse_arr	=	array(
 
 
 
+
+
+
+
+
+
+
+
 // two status codes so far for products...
 $product_status_arr	=	array(
 
@@ -112,7 +149,7 @@ $product_status_arr	=	array(
 
 
 
-// Activity types. This is going to be used for recent acftivity page to map what code means what.
+// Activity types. This is going to be used for recent activity page to map what code means what.
 // Product2Location
 // Location 2 Location
 // etc etc
@@ -139,7 +176,8 @@ $activity_type_reverse_arr	=	array(
 //	Codes that are assigned to the geb_order_header table: ordhdr_type column
 //	These are required if I want to have the ability to report on orders that
 //	have been imported from a different system, placed within GebWMS or via
-//	o Point Of Sale system (or anything else)
+//	a Point Of Sale system (or anything else)
+//	Can be customised to add your own codes if required
 $order_type_arr	=	array(
 
 	'100'		=>	$mylang['imported'],
@@ -204,8 +242,6 @@ function display_date($date_str, $date_format_selected)
 
 	if ($date_format_selected == 0)
 	{
-//		$just_date		=		date('d/m/Y', strtotime($date_str));
-//		$just_time		=		date('H:i:s', strtotime($date_str));
 
 		//	make sure that there is at least something in the provided date string.
 		if (strlen($date_str) > 5)
@@ -219,20 +255,78 @@ function display_date($date_str, $date_format_selected)
 
 
 
-//	Get location fields and output a nice human readable description block!
-function decode_loc($loc_type, $loc_pkface, $loc_blkd, $loc_types_arr)
+
+//
+//	Warehouse Specific functions
+//
+//	In the future these could be moved to a different php file if required.
+//
+
+
+
+//	Get location fields and output a nice human readable description!
+function decode_loc($loc_func, $loc_type, $loc_blkd, $function_codes_arr, $type_codes_arr)
 {
 
-	$output_str	=	'';
+	//	The goal here is to have a little system that allows me to make it very flexible to add
+	//	other stuff later on if required. 
 
-	if ($loc_blkd	== 1)	{	$output_str	.=	'B';	}
+	$loc_str	=	'';	//	The final string. Like: PX, BMX or PM etc
+
+
+	$loc_str	.=	$function_codes_arr[$loc_func];
+	$loc_str	.=	$type_codes_arr[$loc_type];
+
+
+
+/*
+
+
+$loc_function_codes_arr	=	array(
+
+	'310'	=>	'P',	//	Pick face
+	'320'	=>	'B',	//	Bulk
+	'330'	=>	'G',	//	Goods IN
+
+);
+
+$loc_type_codes_arr
+
+*/
+
+
+	
+
+
+
+
+	//	This is meant to be the last entry. Blocked locations!
+	if ($loc_blkd	==	1)		{	$loc_str	.=	'B';	}
+
+
+/*
+	//	This will need to be adjusted since I am changing how the pickface flag works! XXX
 	if ($loc_pkface	== 1)	{	$output_str	.=	'P';	}
 	$output_str	.=	$loc_types_arr[$loc_type];
+*/
 
-	return $output_str;
+
+
+	return $loc_str;
 }
 
 
+
+
+//
+//	END of: Warehouse Specific function
+//
+
+
+
+
+
+//	Some support stuff here...
 
 // define the print message function !
 function print_message($control, $msg)
@@ -304,10 +398,11 @@ function core_acl_cookie_check($cookie_value)
 //
 //	GebWMS Access Control
 //
-//	The structure of the Access Control will be super simple
+//	The structure of the Access Control will be super simple!
 //
-//	Access is going to be determined by setting proper bits in a 65k integer value. However the first bit is always going to be 1
-//	which means that I got only about 15 options left to explore. Probably will never happen but it is there.
+//	Access is going to be determined by setting proper bits in a 65k integer value. This means 16 possible bits to set.
+//	However the first bit is always going to be 1 which means that I got only about 15 options left to explore.
+//	Probably will never happen but it is there if anyone ever needs it.
 //
 //	Baseline decimal value 32768 represented below in binary = NO RIGHTS!
 //	1000000000000000

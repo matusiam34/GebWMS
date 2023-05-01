@@ -368,6 +368,7 @@ if ($login->isUserLoggedIn() == true)
 					loc_barcode,
 					loc_type,
 					loc_pickface,
+					loc_function,
 					loc_blocked,
 					stk_unit,
 					prod_case_qty,
@@ -400,7 +401,7 @@ if ($login->isUserLoggedIn() == true)
 					prod_pkey = :iprod_pkey
 
 
-					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_pickface, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
+					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_pickface, loc_function, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
 
 					ORDER BY wh_code, loc_code
 
@@ -438,7 +439,13 @@ if ($login->isUserLoggedIn() == true)
 
 						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
 						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
+
+						$loc_function			=	leave_numbers_only($row['loc_function']);
+
+
 						$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
+
+
 						$loc_type				=	leave_numbers_only($row['loc_type']);
 
 
@@ -448,7 +455,15 @@ if ($login->isUserLoggedIn() == true)
 						$loc_pickface_style	=	'';
 						if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
 
-						$loc_status_code_str	.=	$loc_types_codes_arr[$loc_type];
+						$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
+
+						//	Figure out if the location is a pickface, bulk, goods in etc etc 
+						//	A function in lib_functions will do the decoding for me. Also, it will provide the text and boldness so
+						//	that I can have a consistent experiece across the entire app. 1:54am and I am on fire!!!
+
+						$loc_final_str	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
+
+
 
 
 
@@ -462,7 +477,7 @@ if ($login->isUserLoggedIn() == true)
 
 							if (is_float($location_case_qty))
 							{
-								// If the number is a float than do please trim down the deciman places to a 2 as will look ugly with an
+								// If the number is a float than do please trim down the deciman places to a 2 as it will look ugly with an
 								// entry like 4.6666666666666666666667 or something to that tune.
 								$location_case_qty		=	number_format($location_case_qty, 2);
 							}

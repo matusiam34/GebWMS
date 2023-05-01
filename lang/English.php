@@ -30,6 +30,10 @@ $mylang = array(
 'multi'						=>	'Multi',
 'mixed'						=>	'Mixed',
 
+'pickface'					=>	'Pick face',
+'bulk'						=>	'Bulk',
+'goodsin'					=>	'Goods IN',
+
 //	$order_type_arr
 
 'imported'					=>	'Imported',
@@ -46,7 +50,7 @@ $mylang = array(
 'cancelled'					=>	'Cancelled',
 
 //	Extra status translations
-'pause'					=>	'Pause',
+'pause'						=>	'Pause',
 
 //
 //	The useful day to day stuff here

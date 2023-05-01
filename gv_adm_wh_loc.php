@@ -471,7 +471,6 @@ if ($login->isUserLoggedIn() == true)
 										<select id="id_item_type" name="id_item_type" >
 
 											<!--	Populate this so that it uses the array from lib_functions			-->
-
 											<option value="10">Single</option>
 											<option value="20">Multi</option>
 											<option value="30">Mixed</option>
@@ -484,7 +483,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Pickface:</p>
+							<p class="help">Function:</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
