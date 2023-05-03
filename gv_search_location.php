@@ -194,7 +194,7 @@ if ($login->isUserLoggedIn() == true)
 			geb_warehouse.wh_code,
 			geb_location.loc_code,
 			geb_location.loc_type,
-			geb_location.loc_pickface,
+			geb_location.loc_function,
 			geb_location.loc_blocked,
 			geb_location.loc_note,
 
@@ -228,7 +228,7 @@ if ($login->isUserLoggedIn() == true)
 			loc_barcode = :ilocation_barcode
 
 
-			GROUP BY wh_code, loc_code, loc_type, loc_pickface, loc_blocked, loc_note, stk_unit, prod_code, prod_case_qty, prod_pall_qty
+			GROUP BY wh_code, loc_code, loc_type, loc_function, loc_blocked, loc_note, stk_unit, prod_code, prod_case_qty, prod_pall_qty
 
 			ORDER BY prod_code, wh_code, loc_code
 
@@ -269,17 +269,15 @@ if ($login->isUserLoggedIn() == true)
 					// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
 					$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
 
-					$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
-					$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
+					$loc_function			=	leave_numbers_only($row['loc_function']);
 					$loc_type				=	leave_numbers_only($row['loc_type']);
+					$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
 
-					if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
 
-					//	Get the pickface flag!
-					$loc_pickface_style	=	'';
-					if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
-
-					$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
+					//	NOTE:
+					//	0:	Stores the string
+					//	1:	Stores the styling 
+					$loc_details_arr	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
 
 
 					// A details table with Location name, Warehouse and note (for things like DAMAGES, Returns or whatever it could be)
@@ -292,7 +290,8 @@ if ($login->isUserLoggedIn() == true)
 
 						$location_details	.=	'<tr>';
 							$location_details	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['location'] . ':</td>';
-							$location_details	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_pickface_style . '">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
+							$location_details	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_details_arr[1] . '">' . trim($row['loc_code']) . ' (' . $loc_details_arr[0] . ')</td>';
+//							$location_details	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_pickface_style . '">' . trim($row['loc_code']) . ' (' . $loc_status_code_str . ')</td>';
 						$location_details	.=	'</tr>';
 
 						$location_details	.=	'<tr>';

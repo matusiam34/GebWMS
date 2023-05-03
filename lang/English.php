@@ -33,6 +33,7 @@ $mylang = array(
 'pickface'					=>	'Pick face',
 'bulk'						=>	'Bulk',
 'goodsin'					=>	'Goods IN',
+'despatch'					=>	'Despatch',
 
 //	$order_type_arr
 

@@ -55,8 +55,8 @@ if ($login->isUserLoggedIn() == true) {
 			$warehouse		=	leave_numbers_only($_POST['warehouse_js']);
 			$location		=	trim($_POST['location_js']);
 			$barcode		=	trim($_POST['barcode_js']);
+			$lfunction		=	leave_numbers_only($_POST['function_js']);
 			$type			=	leave_numbers_only($_POST['type_js']);
-			$pickface		=	leave_numbers_only($_POST['pickface_js']);
 			$blocked		=	leave_numbers_only($_POST['blocked_js']);
 			$loc_desc		=	trim($_POST['loc_desc_js']);
 
@@ -165,8 +165,8 @@ if ($login->isUserLoggedIn() == true) {
 						loc_wh_pkey,
 						loc_code,
 						loc_barcode,
+						loc_function,
 						loc_type,
-						loc_pickface,
 						loc_blocked,
 						loc_note
 					) 
@@ -177,8 +177,8 @@ if ($login->isUserLoggedIn() == true) {
 						:iloc_wh_pkey,
 						:iloc_code,
 						:iloc_barcode,
+						:iloc_function,
 						:iloc_type,
-						:iloc_pickface,
 						:iloc_blocked,
 						:iloc_note
 					)
@@ -193,8 +193,8 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':iloc_wh_pkey',		$warehouse,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_code',			$location,		PDO::PARAM_STR);
 						$stmt->bindValue(':iloc_barcode',		$barcode,		PDO::PARAM_STR);
+						$stmt->bindValue(':iloc_function',		$lfunction,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_type',			$type,			PDO::PARAM_INT);
-						$stmt->bindValue(':iloc_pickface',		$pickface,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_blocked',		$blocked,		PDO::PARAM_INT);
 						$stmt->bindValue(':iloc_note',			$loc_desc,		PDO::PARAM_STR);
 						$stmt->execute();

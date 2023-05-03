@@ -154,7 +154,7 @@ if ($login->isUserLoggedIn() == true)
 			geb_location.loc_code,
 			geb_location.loc_barcode,
 			geb_location.loc_type,
-			geb_location.loc_pickface,
+			geb_location.loc_function,
 			geb_location.loc_blocked,
 			geb_stock_history.stk_hst_op_type,
 			geb_stock_history.stk_hst_unit,
@@ -247,44 +247,36 @@ if ($login->isUserLoggedIn() == true)
 
 
 							// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-							$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
-
-							$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
-							$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
+							$loc_function			=	leave_numbers_only($row['loc_function']);
 							$loc_type				=	leave_numbers_only($row['loc_type']);
+							$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
 
-							if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
-							if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	}
 
-							$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
-
+							//	NOTE:
+							//	0:	Stores the string
+							//	1:	Stores the styling 
+							$loc_details_arr	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
 
 							//	Important feature right here!
 							//	If the user does not have access to the location search than do not
 							//	provide the links to it here! Logic! :)
 							//	By default just provide with the location code.
-							$loc_details_lnk	=	trim($row['loc_code']) . ' (' . $loc_status_code_str . ')';
+
+							$loc_details_code_str	=	' (' . $loc_details_arr[0] . ')';
+							$loc_details_lnk		=	trim($row['loc_code']) . $loc_details_code_str;
 
 							if (is_it_enabled($_SESSION['menu_location_search']))
 							{
 								// Create a clickable link so that the operator can investigate the location in more detail (if required & allowed)
-								$loc_details_lnk	=	'<a href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . $loc_details_lnk . '</a>';
+								$loc_details_lnk	=	'<a style="' . $loc_details_arr[1] . '" href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . $loc_details_code_str . '</a>';
 							}
 
-
-							//	Get the pickface flag!
-							$loc_pickface_style	=	'';
-							if ($loc_pickface == 1)
-							{
-								//	Make the text bold...
-								$loc_pickface_style	=	'font-weight: bold;';
-							}
 
 
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['to_location'] . ':</td>';
-								$details_html	.=	'<td style="background-color: ' . $backclrB . ';' . $loc_pickface_style . '">' . $loc_details_lnk . '</td>';
+								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . '</td>';
 							$details_html	.=	'</tr>';
 
 
@@ -319,7 +311,6 @@ if ($login->isUserLoggedIn() == true)
 
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['when'] . ':</td>';
-//								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . ' at ' . $act_time . '</td>';
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $act_date . '</td>';
 							$details_html	.=	'</tr>';
 
@@ -328,9 +319,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 					$details_html	.=	'</table>';
-
-
-
 					$columns_html	.=	$details_html;	// place the table in the column...
 					$columns_html	.=	'</div>';
 

@@ -50,8 +50,8 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_code,
 
 					geb_location.loc_barcode,
+					geb_location.loc_function,
 					geb_location.loc_type,
-					geb_location.loc_pickface,
 					geb_location.loc_blocked,
 					geb_location.loc_note
 
@@ -87,15 +87,11 @@ if ($login->isUserLoggedIn() == true) {
 					$table_text		.=	'<thead>';
 
 					$table_text		.=	'<tr>';
-
 					$table_text		.=		'<th>UID</th>';
 					$table_text		.=		'<th>Warehouse</th>';
 					$table_text		.=		'<th>Location</th>';
 					$table_text		.=		'<th>Barcode</th>';
-					$table_text		.=		'<th>Type</th>';
-					$table_text		.=		'<th>Blocked</th>';
 					$table_text		.=		'<th>Note</th>';
-
 					$table_text		.=	'</tr>';
 
 					$table_text		.=	'</thead>';
@@ -107,101 +103,30 @@ if ($login->isUserLoggedIn() == true) {
 					{
 
 
-						$table_text		.=		'<tr>';
-						$table_text		.=			'<td>'	.	trim($row['loc_pkey'])		.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['wh_code'])		.	'</td>';
+						$table_text		.=	'<tr>';
+						$table_text		.=		'<td>'	.	trim($row['loc_pkey'])	.	'</td>';
+						$table_text		.=		'<td>'	.	trim($row['wh_code'])	.	'</td>';
 
-						$pickface_cde		=	leave_numbers_only($row['loc_pickface']);
-						$pickface_style		=	'';		//	by default do nothing! Only bold it up when location is a pickface!
 
-						if ($pickface_cde == 1)
-						{
-							$pickface_style		=	' style="font-weight: bold;" ';
-						}
 
-						$table_text		.=			'<td ' . $pickface_style . '>'	.	trim($row['loc_code'])	.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['loc_barcode'])	.	'</td>';
+						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
+						$loc_function			=	leave_numbers_only($row['loc_function']);
+						$loc_type				=	leave_numbers_only($row['loc_type']);
+						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
 
+						$loc_details_arr		=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
+
+
+						$table_text		.=		'<td style="'	.	$loc_details_arr[1]	.	'">'	.	trim($row['loc_code'])	.	' ('	.	$loc_details_arr[0]	.	')</td>';
+
+
+						$table_text		.=		'<td>'	.	trim($row['loc_barcode'])	.	'</td>';
 
 
 						// Convert the type of location type info into meaninful text.
-						$type_row		=	leave_numbers_only($row['loc_type']);
-						$table_text		.=			'<td>'	.	$loc_types_arr[$type_row]	.	'</td>';
-
-
-
-						// Convert the loc blocked to more meaningful text for the operator.
-						$blocked_str	=	'';
-						$blocked_row	=	leave_numbers_only($row['loc_blocked']);
-
-						if ($blocked_row == 0)
-						{
-							$blocked_str	=	'N';
-						}
-						elseif ($blocked_row == 1)
-						{
-							$blocked_str	=	'Y';
-						}
-
-
-						$table_text		.=			'<td>'	.	$blocked_str		.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['loc_note'])		.	'</td>';
-						$table_text		.=		'</tr>';
-
-
-
-/*
-
-						$table_text		.=		'<tr>';
-						$table_text		.=			'<td>'	.	trim($row['warehouse_alias_name'])		.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['warehouse_location_name'])	.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['warehouse_location_barcode'])	.	'</td>';
-
-
-						$type_row		=	trim($row['warehouse_location_type']);
-						$type_str		=	'None';
-
-						if ($type_row == 0)
-						{
-							$type_str	=	'Single';
-						}
-						elseif ($type_row == 1)
-						{
-							$type_str	=	'Multi';
-						}
-
-						$table_text		.=			'<td>'	.	$type_str	.	'</td>';
-
-						$mixed_str	=	'';
-						$mixed_row	=	trim($row['warehouse_location_mixed']);
-
-						if ($mixed_row == 0)
-						{
-							$mixed_str	=	'No';
-						}
-						elseif ($mixed_row == 1)
-						{
-							$mixed_str	=	'Yes';
-						}
-
-						$table_text		.=			'<td>'	.	$mixed_str	.	'</td>';
-
-						$blocked_str	=	'';
-						$blocked_row	=	trim($row['warehouse_location_blocked']);
-
-						if ($blocked_row == 0)
-						{
-							$blocked_str	=	'N';
-						}
-						elseif ($blocked_row == 1)
-						{
-							$blocked_str	=	'Y';
-						}
-
-						$table_text		.=			'<td>'	.	$blocked_str	.	'</td>';
-						$table_text		.=			'<td>'	.	trim($row['warehouse_location_desc'])	.	'</td>';
-						$table_text		.=		'</tr>';
-*/
+//						$table_text		.=			'<td>'	.	$loc_types_arr[$loc_type]	.	'</td>';
+						$table_text		.=		'<td>'	.	trim($row['loc_note'])		.	'</td>';
+						$table_text		.=	'</tr>';
 
 
 					}

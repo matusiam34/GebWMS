@@ -367,7 +367,6 @@ if ($login->isUserLoggedIn() == true)
 					loc_code,
 					loc_barcode,
 					loc_type,
-					loc_pickface,
 					loc_function,
 					loc_blocked,
 					stk_unit,
@@ -401,7 +400,7 @@ if ($login->isUserLoggedIn() == true)
 					prod_pkey = :iprod_pkey
 
 
-					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_pickface, loc_function, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
+					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_function, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
 
 					ORDER BY wh_code, loc_code
 
@@ -435,36 +434,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 						$location_stock_qty		=	trim($row['all_stk_qty']);
-						$loc_status_code_str	=	'';		// a small code that explains what the location "does" / "is"
 
 						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
+						$loc_function			=	leave_numbers_only($row['loc_function']);
+						$loc_type				=	leave_numbers_only($row['loc_type']);
 						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
 
-						$loc_function			=	leave_numbers_only($row['loc_function']);
-
-
-						$loc_pickface			=	leave_numbers_only($row['loc_pickface']);
-
-
-						$loc_type				=	leave_numbers_only($row['loc_type']);
-
-
-						if ($loc_blocked	==	1)		{	$loc_status_code_str	.=	'B';	}
-
-						//	Get the pickface flag!
-						$loc_pickface_style	=	'';
-						if ($loc_pickface	==	1)		{	$loc_status_code_str	.=	'P';	$loc_pickface_style	=	'font-weight: bold;';	}
-
-						$loc_status_code_str	.=	$loc_type_codes_arr[$loc_type];
 
 						//	Figure out if the location is a pickface, bulk, goods in etc etc 
 						//	A function in lib_functions will do the decoding for me. Also, it will provide the text and boldness so
 						//	that I can have a consistent experiece across the entire app. 1:54am and I am on fire!!!
-
-						$loc_final_str	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
-
-
-
+						//	NOTE:
+						//	0:	Stores the string
+						//	1:	Stores the styling 
+						$loc_details_arr	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
 
 
 						// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
@@ -489,18 +472,20 @@ if ($login->isUserLoggedIn() == true)
 						//	If the user does not have access to the location search than do not
 						//	provide the links to it here! Logic! :)
 						//	By default just provide with the location code.
-						$loc_details_lnk	=	trim($row['loc_code']);
+
+						$loc_details_code_str	=	' (' . $loc_details_arr[0] . ')';
+						$loc_details_lnk		=	trim($row['loc_code']) . $loc_details_code_str;
 
 						if (is_it_enabled($_SESSION['menu_location_search']))
 						{
 							// Create a clickable link so that the operator can investigate the location in more detail (if required & allowed)
-							$loc_details_lnk	=	'<a href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . '</a>';
+							$loc_details_lnk	=	'<a style="' . $loc_details_arr[1] . '" href="gv_search_location.php?location=' . trim($row['loc_barcode']) . '">' . trim($row['loc_code']) . $loc_details_code_str . '</a>';
 						}
 
 
 						$details_html	.=	'<tr>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_pickface_style . '">' . $loc_details_lnk . ' (' . $loc_status_code_str . ')</td>';
+						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . '</td>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
 						$details_html	.=	'</tr>';
 

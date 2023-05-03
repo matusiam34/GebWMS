@@ -60,8 +60,8 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_code,
 
 					geb_location.loc_barcode,
+					geb_location.loc_function,
 					geb_location.loc_type,
-					geb_location.loc_pickface,
 					geb_location.loc_blocked,
 					geb_location.loc_note
 

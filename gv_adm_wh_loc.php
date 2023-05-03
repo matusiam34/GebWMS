@@ -164,7 +164,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_location_name', obje.data.loc_code);
 					set_Element_Value_By_ID('id_barcode', obje.data.loc_barcode);
 					set_Element_Value_By_ID('id_item_type', obje.data.loc_type);
-					set_Element_Value_By_ID('id_pickface', obje.data.loc_pickface);
+					set_Element_Value_By_ID('id_function', obje.data.loc_function);
 					set_Element_Value_By_ID('id_blocked', obje.data.loc_blocked);
 					set_Element_Value_By_ID('id_desc', obje.data.loc_note);
 				}
@@ -183,7 +183,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Add an item to the database
+		// Add location to the system
 		function add_item()
 		{
 
@@ -193,8 +193,8 @@ if ($login->isUserLoggedIn() == true)
 				warehouse_js	:	get_Element_Value_By_ID('id_warehouse'),
 				location_js		:	get_Element_Value_By_ID('id_location_name'),
 				barcode_js		:	get_Element_Value_By_ID('id_barcode'),
+				function_js		:	get_Element_Value_By_ID('id_function'),
 				type_js			:	get_Element_Value_By_ID('id_item_type'),
-				pickface_js		:	get_Element_Value_By_ID('id_pickface'),
 				blocked_js		:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js		:	get_Element_Value_By_ID('id_desc')
 
@@ -227,7 +227,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// UPDATE item
+		// UPDATE location
 		function update_item()
 		{
 
@@ -237,8 +237,8 @@ if ($login->isUserLoggedIn() == true)
 				warehouse_js	:	get_Element_Value_By_ID('id_warehouse'),
 				location_js		:	get_Element_Value_By_ID('id_location_name'),
 				barcode_js		:	get_Element_Value_By_ID('id_barcode'),
+				function_js		:	get_Element_Value_By_ID('id_function'),
 				type_js			:	get_Element_Value_By_ID('id_item_type'),
-				pickface_js		:	get_Element_Value_By_ID('id_pickface'),
 				blocked_js		:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js		:	get_Element_Value_By_ID('id_desc')
 
@@ -464,6 +464,29 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help">Function:</p>
+							<div class="field is-narrow">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select id="id_function" name="id_function" >
+											<!--	Populate this so that it uses the array from lib_functions			-->
+											<?php
+
+												foreach ($loc_functions_arr as $locid => $locdescription)
+												{
+													echo	'<option value="' . $locid . '">' . $locdescription . '</option>';
+												}
+
+											?>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="<?php echo $box_size_str; ?>">
 							<p class="help">Type:</p>
 							<div class="field is-narrow">
 								<div class="control">
@@ -477,22 +500,6 @@ if ($login->isUserLoggedIn() == true)
 										</select>
 									</div>
 								</div>
-							</div>
-						</div>
-
-
-
-						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Function:</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-fullwidth">
-								  <select id="id_pickface" name="id_pickface" >
-									<option value="0">No</option>
-									<option value="1">Yes</option>
-								  </select>
-								</div>
-							  </div>
 							</div>
 						</div>
 

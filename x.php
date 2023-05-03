@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 /*
 
 		A bunch of support functions to aid the "framework" !
@@ -14,8 +17,7 @@
 //	To make it easy I would go with English. Unless you can translate from other languages better.
 
 
-$set_language	=	trim($_SESSION['user_language']);
-include('lang/' . $set_language . '.php');
+include('lang/English.php');
 
 
 
@@ -73,7 +75,7 @@ $loc_types_codes_reverse_arr	=	array(
 
 	'S'		=>	10,		//	"Single"
 	'M'		=>	20,		//	"Multi"
-	'X'		=>	30		//	"Multi Mixeds"
+	'X'		=>	30		//	"Multi Mixed"
 
 );
 
@@ -89,20 +91,35 @@ $loc_types_codes_reverse_arr	=	array(
 
 $loc_functions_arr	=	array(
 
-	'300'	=>	$mylang['goodsin'],
 	'310'	=>	$mylang['pickface'],
 	'320'	=>	$mylang['bulk'],
-	'399'	=>	$mylang['despatch']
+	'330'	=>	$mylang['goodsin'],
 
 );
 
 
+//echo $loc_functions_arr['310'];
+
+foreach ($loc_functions_arr as $key => $value)
+{
+
+	echo $key . ":" . $value . "<BR>";
+
+}
+ 
+
+
+
+
+
+die();
+
+
 $loc_function_codes_arr	=	array(
 
-	'300'	=>	'GI',	//	Goods IN
 	'310'	=>	'PF',	//	Pick face
 	'320'	=>	'BU',	//	Bulk
-	'399'	=>	'DE'	//	Despatch
+	'330'	=>	'GI',	//	Goods IN
 
 );
 
@@ -282,10 +299,9 @@ function decode_loc($loc_func, $loc_type, $loc_blkd, $function_codes_arr, $type_
 
 
 	//	Location fuction "decoder"
-	if		($loc_func == 300)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Goods IN	:	GI
-	elseif	($loc_func == 310)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'font-weight: bold;';		}	//	Pickface	:	PF
+	if		($loc_func == 310)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'font-weight: bold;';		}	//	Pickface	:	PF
 	elseif	($loc_func == 320)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Bulk		:	BU
-	elseif	($loc_func == 399)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Despatch	:	DE
+	elseif	($loc_func == 330)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Goods IN	:	GI
 
 
 	//	Location type "decoder"
