@@ -104,9 +104,9 @@ if ($login->isUserLoggedIn() == true) {
 					$items_ordered	.=	'<table class="is-fullwidth table is-bordered">';
 					$items_ordered	.=	'<tr>';
 					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['product'] . '</th>';
-					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . 'Total Qty' . '</th>';
-					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . 'Allocated' . '</th>';
-					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . 'Free Qty' . '</th>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['physical_qty'] . '</th>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['allocated_qty'] . '</th>';
+					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['free_qty'] . '</th>';
 					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['ordered'] . '</th>';
 					$items_ordered	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['picked'] . '</th>';
 					$items_ordered	.=	'</tr>';

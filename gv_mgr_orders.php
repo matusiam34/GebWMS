@@ -106,7 +106,6 @@ if ($login->isUserLoggedIn() == true)
 		{
 
 			$.post('ajax_mgr_orders_get_order_details.php', { 
-//			$.post('ajax_mgr_orders_get_order_details.php', { 
 
 				ordnum_js	:	get_Element_Value_By_ID('id_hidden')
 
@@ -366,16 +365,6 @@ if ($login->isUserLoggedIn() == true)
 
 								</div>';
 
-
-/*
-				echo	'<div class="field" style="'. $box_size_str .'">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button inventory_class is-fullwidth" onclick="claim_order();">Pick Order</button>
-							</div>
-						</div>
-
-*/
 
 				echo	'<div class="control">
 							<input id="id_hidden" class="input is-normal" type="hidden" value="0">

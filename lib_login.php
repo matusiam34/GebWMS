@@ -288,6 +288,7 @@ class Login
 				// Hmmmm...
 
 				$_SESSION['user_priv']				=	$result_row->user_priv;
+				$_SESSION['user_warehouse']			=	$result_row->user_warehouse;	//	default warehouse where the warehouse staff works!
 				$_SESSION['user_logged_in']			=	1;
 
 
@@ -298,6 +299,7 @@ class Login
 				$_SESSION['menu_prod_search']				=	$result_row->menu_prod_search;
 				$_SESSION['menu_location_search']			=	$result_row->menu_location_search;
 				$_SESSION['menu_order_search']				=	$result_row->menu_order_search;
+				$_SESSION['menu_goodsin']					=	$result_row->menu_goodsin;
 				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_pick_order']				=	$result_row->menu_pick_order;

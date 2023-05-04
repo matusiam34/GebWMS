@@ -60,6 +60,7 @@ if ($login->isUserLoggedIn() == true) {
 				$product_search			=	leave_numbers_only($_POST['product_search_js']);
 				$location_search		=	leave_numbers_only($_POST['location_search_js']);
 				$order_search			=	leave_numbers_only($_POST['order_search_js']);
+				$goodsin				=	leave_numbers_only($_POST['goodsin_js']);
 				$prod2location			=	leave_numbers_only($_POST['prod2location_js']);
 				$recent_activity		=	leave_numbers_only($_POST['recent_activity_js']);
 				$mgr_products			=	leave_numbers_only($_POST['mgr_products_js']);
@@ -93,6 +94,7 @@ if ($login->isUserLoggedIn() == true) {
 					menu_prod_search			=		:umenu_prod_search,
 					menu_location_search		=		:umenu_location_search,
 					menu_order_search			=		:umenu_order_search,
+					menu_goodsin				=		:umenu_goodsin,
 					menu_prod2loc				=		:umenu_prod2loc,
 					menu_pick_order				=		:umenu_pick_order,
 					menu_recent_activity		=		:umenu_recent_activity,
@@ -116,6 +118,7 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':umenu_prod_search',				$product_search,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_location_search',			$location_search,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_order_search',				$order_search,			PDO::PARAM_INT);
+					$stmt->bindValue(':umenu_goodsin',					$goodsin,				PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_prod2loc',					$prod2location,			PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_pick_order',				$mgr_place_order,		PDO::PARAM_INT);
 					$stmt->bindValue(':umenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);

@@ -82,12 +82,12 @@ if ($login->isUserLoggedIn() == true) {
 						$data_results = array
 						(
 
-								'username'		=> trim($row['user_name']),
-								'firstname'		=> trim($row['user_firstname']),
-								'surname'		=> trim($row['user_surname']),
-								'email'			=> trim($row['user_email']),
-								'description'	=> trim($row['user_description']),
-								'active'		=> leave_numbers_only($row['user_active']),
+								'username'						=> trim($row['user_name']),
+								'firstname'						=> trim($row['user_firstname']),
+								'surname'						=> trim($row['user_surname']),
+								'email'							=> trim($row['user_email']),
+								'description'					=> trim($row['user_description']),
+								'active'						=> leave_numbers_only($row['user_active']),
 
 								'menu_my_account'				=> leave_numbers_only($row['menu_my_account']),
 								'menu_adm_warehouse'			=> leave_numbers_only($row['menu_adm_warehouse']),
@@ -98,6 +98,8 @@ if ($login->isUserLoggedIn() == true) {
 								'menu_location_search'			=> leave_numbers_only($row['menu_location_search']),
 								'menu_order_search'				=> leave_numbers_only($row['menu_order_search']),
 
+
+								'menu_goodsin'					=> leave_numbers_only($row['menu_goodsin']),
 								'menu_prod2loc'					=> leave_numbers_only($row['menu_prod2loc']),
 								'menu_pick_order'				=> leave_numbers_only($row['menu_pick_order']),
 								'menu_recent_activity'			=> leave_numbers_only($row['menu_recent_activity']),

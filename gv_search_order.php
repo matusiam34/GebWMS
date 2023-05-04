@@ -344,7 +344,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 				$pick_operator_cde	=	leave_numbers_only($order_header_arr[0]['ordhdr_pick_operator']);
-				$pick_operator_str	=	'None';
+				$pick_operator_str	=	'';	//	no picker name or even "None" if the order is not allocated to one.
 
 				if ($pick_operator_cde > 0)
 				{

@@ -195,6 +195,23 @@ echo	'<div class="container box has-background-light">';
 
 
 			// Display menu items that are granted
+
+
+			if (is_it_enabled($_SESSION['menu_goodsin']))
+			{
+				$goodsin_link		=	"location.href='gv_goodsin.php'";
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $goodsin_link . '">' . $mylang['goodsin'] . '</a>
+							</div>
+						</div>';
+			}
+
+
+
+
+
 			if (is_it_enabled($_SESSION['menu_prod2loc']))
 			{
 				$bookin_prod2loc_link		=	"location.href='gv_move_prod2loc.php'";
@@ -207,6 +224,10 @@ echo	'<div class="container box has-background-light">';
 			}
 
 
+
+			if (is_it_enabled($_SESSION['menu_pick_order']))
+			{
+
 				$pick_order_link		=	"location.href='gv_pick_order.php'";
 
 				echo	'<div class="field">
@@ -214,6 +235,8 @@ echo	'<div class="container box has-background-light">';
 								<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $pick_order_link . '">' . $mylang['pick_order'] . '</a>
 							</div>
 						</div>';
+			}
+
 
 
 			// Display menu items that are granted
@@ -238,6 +261,7 @@ echo	'<div class="container box has-background-light">';
 		echo '<div class="column is-3">';
 
 
+
 			if (is_it_enabled($_SESSION['menu_mgr_prod_add_update']))
 			{
 				$products_link		=	"location.href='gv_mgr_products.php'";
@@ -248,6 +272,8 @@ echo	'<div class="container box has-background-light">';
 							</div>
 						</div>';
 			}
+
+
 
 			if (is_it_enabled($_SESSION['menu_mgr_place_order']))
 			{
@@ -260,6 +286,8 @@ echo	'<div class="container box has-background-light">';
 						</div>';
 			}
 
+
+
 			if (is_it_enabled($_SESSION['menu_mgr_orders']))
 			{
 				$orders_link		=	"location.href='gv_mgr_orders.php'";
@@ -270,10 +298,6 @@ echo	'<div class="container box has-background-light">';
 							</div>
 						</div>';
 			}
-
-
-
-
 
 
 
@@ -314,6 +338,7 @@ echo	'<div class="container box has-background-light">';
 			}
 
 
+
 			if (is_it_enabled($_SESSION['menu_adm_warehouse']))
 			{
 				$warehouses_link		=	"location.href='gv_adm_wh.php'";
@@ -324,6 +349,8 @@ echo	'<div class="container box has-background-light">';
 							</div>
 						</div>';
 			}
+
+
 
 			if (is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 			{

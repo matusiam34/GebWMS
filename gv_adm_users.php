@@ -221,6 +221,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_order_search',			obje.data.menu_order_search);
 
 
+					set_Element_Value_By_ID('id_goodsin',				obje.data.menu_goodsin);
 					set_Element_Value_By_ID('id_prod2location',			obje.data.menu_prod2loc);
 					set_Element_Value_By_ID('id_pick_order',			obje.data.menu_pick_order);
 					set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
@@ -310,6 +311,7 @@ if ($login->isUserLoggedIn() == true)
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
 				order_search_js			:	get_Element_Value_By_ID('id_order_search'),
+				goodsin_js				:	get_Element_Value_By_ID('id_goodsin'),
 				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
@@ -366,6 +368,7 @@ if ($login->isUserLoggedIn() == true)
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
 				order_search_js			:	get_Element_Value_By_ID('id_order_search'),
+				goodsin_js				:	get_Element_Value_By_ID('id_goodsin'),
 				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
@@ -712,6 +715,29 @@ echo	$user_details_html;
 	$user_acl_html	.=	'<div class="column is-2">';
 
 	$user_acl_html	.=	'
+
+
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">GOODS IN:</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_goodsin">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
 
 
 <div class="field" style="'. $box_size_str .'">
