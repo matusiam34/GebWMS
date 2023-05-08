@@ -18,6 +18,13 @@ $set_language	=	trim($_SESSION['user_language']);
 include('lang/' . $set_language . '.php');
 
 
+//	NOTE: Orders
+//
+//	geb_order_header contains an ordhdr_warehouse_uid column which is set to 0 by default in the sqlite!
+//	0 can't be a warehouse hence there can ba a page where it will tell the administrator
+//	that orders have arrived with 
+
+
 
 //	If you have added a new transation to the lang folder ==>>> please update this array,
 //	This will allow the new entry to be shown to the user.
@@ -130,12 +137,6 @@ $stock_unit_type_reverse_arr	=	array(
 	'P'	=>	7	//	"PALLET"
 
 );
-
-
-
-
-
-
 
 
 

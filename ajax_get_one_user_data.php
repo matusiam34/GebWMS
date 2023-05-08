@@ -58,7 +58,6 @@ if ($login->isUserLoggedIn() == true) {
 				
 				user_id	=	:suser_id
 
-				ORDER BY user_name ASC
 
 				'))
 				{
@@ -88,6 +87,7 @@ if ($login->isUserLoggedIn() == true) {
 								'email'							=> trim($row['user_email']),
 								'description'					=> trim($row['user_description']),
 								'active'						=> leave_numbers_only($row['user_active']),
+								'warehouse'						=> leave_numbers_only($row['user_warehouse']),
 
 								'menu_my_account'				=> leave_numbers_only($row['menu_my_account']),
 								'menu_adm_warehouse'			=> leave_numbers_only($row['menu_adm_warehouse']),

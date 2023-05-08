@@ -429,7 +429,7 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-3">
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Warehouse</p>
+							<p class="help"><?php	echo $mylang['warehouse'];		?></p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">

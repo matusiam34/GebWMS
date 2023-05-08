@@ -199,7 +199,7 @@ echo	'<div class="container box has-background-light">';
 
 			if (is_it_enabled($_SESSION['menu_goodsin']))
 			{
-				$goodsin_link		=	"location.href='gv_goodsin.php'";
+				$goodsin_link		=	"location.href='gv_goods_in.php'";
 
 				echo	'<div class="field">
 							<div class="control">

@@ -246,13 +246,13 @@ if ($login->isUserLoggedIn() == true)
 
 		//	Only check if the order is active. What I want to allow is for the operator to be picking
 		//	and the manager going : nahh mate, we need to pause this picking because Dan needs to do a replen.
-		//	So can he needs to be able to put the order in a pause mode but this should not stop the picker
+		//	So he needs to be able to put the order in a pause mode but this should not stop the picker
 		//	from going to the screen and selecting a different order to pick while the other order is being sorted out
 		//	for stock or other issues.
 
 
-		$current_order_uid		=	0;		//	UID of the order number 
-		$current_order_number	=	'';		//	order number that is currently being processed by the operator (the string)
+		$current_order_uid				=	0;		//	UID of the order number 
+		$current_order_number			=	'';		//	order number that is currently being processed by the operator (the string)
 		$current_order_pick_start_date	=	'';		//	when it all started...
 
 
@@ -285,7 +285,6 @@ if ($login->isUserLoggedIn() == true)
 
 			$stmt->bindValue(':soperator_uid',	leave_numbers_only($_SESSION['user_id']),		PDO::PARAM_INT);
 			$stmt->bindValue(':sStarted',		$order_status_reverse_arr['S'],					PDO::PARAM_INT);
-			//$stmt->bindValue(':sPaused',		$order_status_reverse_arr['P'],					PDO::PARAM_INT);
 
 			$stmt->execute();
 
@@ -312,6 +311,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Operator is free to take on any order!
+		//	Column ordhdr_pick_operator is populated in geb_order_header with an operator UID from the users table.
+		//	Each operator can only exist ONCE in the geb_order_header... otherwise they are picking two orders at the
+		//	same time which is not how this is meant to work.
 		if ($current_order_uid == 0)
 		{
 
@@ -359,7 +361,6 @@ if ($login->isUserLoggedIn() == true)
 				{
 					$orders_arr[]	=	$row;
 				}
-
 
 
 				//	If there is anything of interest please build a simple page with a table that holds all of the
@@ -456,6 +457,10 @@ if ($login->isUserLoggedIn() == true)
 			//	The operator needs a menu to allow picking!
 			//
 			//
+			//	Here I need some kind of menu similar to prod2location page...
+			//	Some kind of logic needs to be introduced that will iterate through each product on the list
+			//	and spit out the location where it needs to be picked from...
+			//
 			//
 
 
@@ -478,11 +483,6 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['start_date'] . ':</td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $current_order_pick_start_date . '</td>';
 				$details_html	.=	'</tr>';
-
-
-
-
-
 
 
 			$details_html	.=	'</table>';

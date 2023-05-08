@@ -288,7 +288,9 @@ class Login
 				// Hmmmm...
 
 				$_SESSION['user_priv']				=	$result_row->user_priv;
-				$_SESSION['user_warehouse']			=	$result_row->user_warehouse;	//	default warehouse where the warehouse staff works!
+				$_SESSION['user_warehouse']			=	$result_row->user_warehouse;	//	default warehouse where the user / operator works!
+																						//	Will make life easier to managed several locations and
+																						//	fullfil orders from different branches
 				$_SESSION['user_logged_in']			=	1;
 
 

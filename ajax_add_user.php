@@ -70,11 +70,13 @@ if ($login->isUserLoggedIn() == true) {
 				//	Data from the user to process...
 
 				//	General details
-				$user_firstname		=	trim($_POST['user_firstname_js']);
-				$user_lastname		=	trim($_POST['user_lastname_js']);
-				$user_desc			=	trim($_POST['user_desc_js']);
-				$user_email			=	trim($_POST['user_email_js']);
-				$user_active		=	leave_numbers_only($_POST['user_active_js']);
+				$user_firstname			=	trim($_POST['user_firstname_js']);
+				$user_lastname			=	trim($_POST['user_lastname_js']);
+				$user_desc				=	trim($_POST['user_desc_js']);
+				$user_email				=	trim($_POST['user_email_js']);
+				$user_active			=	leave_numbers_only($_POST['user_active_js']);
+				$user_warehouse			=	leave_numbers_only($_POST['user_warehouse_js']);
+
 
 				//	ACL
 				$product_search			=	leave_numbers_only($_POST['product_search_js']);
@@ -116,6 +118,7 @@ if ($login->isUserLoggedIn() == true) {
 						user_description,
 						user_password_hash,
 						user_active,
+						user_warehouse,
 						menu_adm_warehouse,
 						menu_adm_warehouse_loc,
 						menu_adm_users,
@@ -146,6 +149,7 @@ if ($login->isUserLoggedIn() == true) {
 						:iuser_description,
 						:iuser_password_hash,
 						:iuser_active,
+						:iuser_warehouse,
 						:imenu_adm_warehouse,
 						:imenu_adm_warehouse_loc,
 						:imenu_adm_users,
@@ -183,6 +187,7 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':iuser_password_hash',	'$2y$10$D.mv5xg21s4Yi79a98UjUeCJk3/VEmKMu91yYDIiwOVxKZL.AmRqO',		PDO::PARAM_STR);
 
 					$stmt->bindValue(':iuser_active',			$user_active,			PDO::PARAM_INT);
+					$stmt->bindValue(':iuser_warehouse',		$user_warehouse,		PDO::PARAM_INT);
 
 
 					$stmt->bindValue(':imenu_adm_warehouse',			$adm_warehouses,		PDO::PARAM_INT);

@@ -214,6 +214,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_user_desc',				obje.data.description);
 					set_Element_Value_By_ID('id_user_email',			obje.data.email);
 					set_Element_Value_By_ID('id_user_active',			obje.data.active);
+					set_Element_Value_By_ID('id_warehouse',				obje.data.warehouse);
 
 					//	ACL
 					set_Element_Value_By_ID('id_product_search',		obje.data.menu_prod_search);
@@ -270,6 +271,7 @@ if ($login->isUserLoggedIn() == true)
 				user_lastname_js	:	get_Element_Value_By_ID('id_user_lastname'),
 				user_desc_js		:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js		:	get_Element_Value_By_ID('id_user_email'),
+				user_warehouse_js	:	get_Element_Value_By_ID('id_warehouse'),
 				user_active_js		:	get_Element_Value_By_ID('id_user_active')
 
 			},
@@ -364,6 +366,7 @@ if ($login->isUserLoggedIn() == true)
 				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
 				user_active_js			:	get_Element_Value_By_ID('id_user_active'),
+				user_warehouse_js		:	get_Element_Value_By_ID('id_warehouse'),
 
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
@@ -414,6 +417,68 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		// Get all warehouses for the selectbox
+		function get_all_warehouses()
+		{
+
+			$.post('ajax_get_all_warehouses.php', { 
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					// jQuery - remove all entries
+					$('#id_warehouse').empty();
+
+
+					// The first entry
+					var opt = document.createElement('Option');
+					document.getElementById('id_warehouse').options.add(opt);
+					opt.value = 0;
+					opt.text = '-----';
+
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+
+							var opt = document.createElement('Option');
+							document.getElementById('id_warehouse').options.add(opt);
+							opt.value = obje.data[i].warehouse_id;
+							opt.text = obje.data[i].warehouse_name;
+
+						}
+
+					}
+
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert('server problem');
+					});
+
+		}
+
+
+
+
 
 
 	</script>
@@ -453,7 +518,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_users();'>
+<body onLoad='get_all_users(); get_all_warehouses();'>
 
 
 <?php
@@ -586,7 +651,23 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>';
+						</div>
+						
+						
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['warehouse'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_warehouse">
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+						';
 
 
 
