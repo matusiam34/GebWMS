@@ -182,6 +182,69 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		// Get all warehouses for the selectbox
+		function get_all_warehouses()
+		{
+
+			$.post('ajax_get_all_warehouses.php', { 
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					// jQuery - remove all entries
+					$('#id_warehouse').empty();
+
+
+					// The first entry
+					var opt = document.createElement('Option');
+					document.getElementById('id_warehouse').options.add(opt);
+					opt.value = 0;
+					opt.text = '-----';
+
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+
+							var opt = document.createElement('Option');
+							document.getElementById('id_warehouse').options.add(opt);
+							opt.value = obje.data[i].warehouse_id;
+							opt.text = obje.data[i].warehouse_name;
+
+						}
+
+					}
+
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						alert('server problem');
+					});
+
+		}
+
+
+
+
+
 
 	</script>
 
@@ -255,6 +318,13 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
+
+
+		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
+
+
 		$product_id		=	0;
 
 
@@ -290,6 +360,11 @@ if ($login->isUserLoggedIn() == true)
 			$sql	.=	' prod_code = :iprod_code ';
 			
 		}
+
+		//	The warehouse filter here... Keep in mind that the product needs to exist in the warehouse that the operator is in.
+		//	This is because I have things like physical_qty and allocated_qty etc etc
+		$sql	.=	' AND prod_warehouse = :iuser_warehouse ';
+
 		
 		
 		$columns_html	=	'';
@@ -321,8 +396,12 @@ if ($login->isUserLoggedIn() == true)
 			}
 			else
 			{
-				$stmt->bindValue(':iprod_code',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
 			}
+
+
+			$stmt->bindValue(':iuser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
+
 
 
 

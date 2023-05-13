@@ -4,6 +4,7 @@
 
 	<header>
 
+		<warehouse>1</warehouse>
 		<customer_code>C093</customer_code>
 		<order_number>TS491644</order_number>
 		<order_type>100</order_type>
@@ -27,12 +28,12 @@
 
 	<items>
 		<item_code>NUT550</item_code>
-		<item_qty>700</item_qty>
+		<item_qty>3</item_qty>
 	</items>
 
 	<items>
 		<item_code>NUT350</item_code>
-		<item_qty>200</item_qty>
+		<item_qty>6</item_qty>
 	</items>
 
 

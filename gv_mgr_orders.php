@@ -91,10 +91,10 @@ if ($login->isUserLoggedIn() == true)
 					$(this).addClass('highlighted');
 
 					// 1 = ID
-					// 2 = Warehouse Code / Name
-					// 3 = Order Number
-					// 4 = Number of Lines in the order
-					$('#id_hidden').val($(this).find('td:nth-child(3)').text()); 
+					//     Warehouse Code / Name	:	this has been removed !
+					// 2 = Order Number
+					// 3 = Number of Lines in the order
+					$('#id_hidden').val($(this).find('td:nth-child(2)').text()); 
 					get_order();
 			});
 
@@ -235,6 +235,11 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
+		
+
+		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
 
 		$orders_arr			=	array();		//	all orders here
 
@@ -250,7 +255,6 @@ if ($login->isUserLoggedIn() == true)
 			geb_order_header.ordhdr_status,
 			geb_order_header.ordhdr_pick_operator,
 			users.user_name,
-			geb_warehouse.wh_code,
 			COUNT(*) as linesPerOrder
 
 
@@ -261,8 +265,11 @@ if ($login->isUserLoggedIn() == true)
 			INNER JOIN geb_order_details ON geb_order_header.ordhdr_order_number = geb_order_details.orddet_ordhdr_ordnum
 
 			LEFT JOIN users ON geb_order_header.ordhdr_pick_operator = users.user_id
-			LEFT JOIN geb_warehouse ON geb_order_header.ordhdr_warehouse_uid = geb_warehouse.wh_pkey
 
+
+			WHERE
+			
+			geb_order_header.ordhdr_warehouse_uid = :suser_warehouse
 
 			GROUP BY geb_order_header.ordhdr_uid, geb_order_header.ordhdr_order_number
 			
@@ -276,14 +283,16 @@ if ($login->isUserLoggedIn() == true)
 		{
 
 /*
+			//	Get only orders that are status = Ready (lib_functions.php)
+			$stmt->bindValue(':sorder_ready_status',	$order_status_reverse_arr['R'],		PDO::PARAM_STR);
+
 			WHERE
 
 			geb_order_header.ordhdr_status = :sorder_ready_status
 */
 
 
-			//	Get only orders that are status = Ready (lib_functions.php)
-//			$stmt->bindValue(':sorder_ready_status',	$order_status_reverse_arr['R'],		PDO::PARAM_STR);
+			$stmt->bindValue(':suser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
 			$stmt->execute();
 
 
@@ -308,7 +317,6 @@ if ($login->isUserLoggedIn() == true)
 									<thead>
 										<tr>
 											<th class="manager_class">UID</th>
-											<th class="manager_class">' . $mylang['warehouse'] . '</th>
 											<th class="manager_class">' . $mylang['order'] . '</th>
 											<th class="manager_class">' . $mylang['type'] . '</th>
 											<th class="manager_class">' . $mylang['status'] . '</th>
@@ -351,7 +359,6 @@ if ($login->isUserLoggedIn() == true)
 
 										echo	'<tr>';
 										echo	'<td>' . leave_numbers_only($order_line['ordhdr_uid']) . '</td>';
-										echo	'<td>' . trim($order_line['wh_code']) . '</td>';
 										echo	'<td>' . trim($order_line['ordhdr_order_number']) . '</td>';
 										echo	'<td>' . $order_type_str . '</td>';
 										echo	'<td>' . $order_status_str . '</td>';

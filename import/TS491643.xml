@@ -4,7 +4,7 @@
 
 	<header>
 
-		<warehouse>100</warehouse>
+		<warehouse>1</warehouse>
 		<customer_code>F150</customer_code>
 		<order_number>TS491643</order_number>
 		<order_type>100</order_type>
@@ -25,17 +25,13 @@
 
 	<items>
 		<item_code>NUT550</item_code>
-		<item_qty>170</item_qty>
+		<item_qty>8</item_qty>
 	</items>
 
 	<items>
 		<item_code>NUT350</item_code>
-		<item_qty>200</item_qty>
+		<item_qty>7</item_qty>
 	</items>
 
-	<items>
-		<item_code>KINDCARD8</item_code>
-		<item_qty>64</item_qty>
-	</items>
 
 </order>

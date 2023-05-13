@@ -1,5 +1,19 @@
 <?php
 
+/*
+
+
+	Note:
+	
+	-	The warehouse ID is actively being used to show only products and locations related to the corresponding location.
+
+
+
+
+*/
+
+
+
 
 // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
 // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
@@ -167,6 +181,9 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
+		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
+
 		$products_arr	=	array();	//	store all found products right here! this is combined with the LIKE in the SELECT
 										//	statement because I want to provide the operator with a better search functionality
 
@@ -203,6 +220,13 @@ if ($login->isUserLoggedIn() == true)
 		}
 		
 		
+		//	The warehouse filter here... Keep in mind that the product needs to exist in the warehouse that the operator is in.
+		//	This is because I have things like physical_qty and allocated_qty etc etc
+		$sql	.=	' AND prod_warehouse = :iuser_warehouse ';
+		
+		
+		
+		
 		$columns_html	=	'';
 		$details_html	=	'';
 
@@ -213,15 +237,18 @@ if ($login->isUserLoggedIn() == true)
 
 			if ($is_barcode)
 			{
-				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_each_bar',		$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_case_bar',		$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
-				//	Can't have this if I am using the LIKE in the query
+				//	Can't have this if I am using the LIKE in the query. I need to revist this at some point...
+				//	Maybe totally remove it.. no idea for now. Works so I am going to leave it be.
 				//$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
 			}
 
+
+			$stmt->bindValue(':iuser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
 
 
 			$stmt->execute();

@@ -38,7 +38,7 @@ if ($login->isUserLoggedIn() == true) {
 		if 
 		(
 
-			(is_it_enabled($_SESSION['menu_adm_users']))
+			(is_it_enabled($_SESSION['menu_mgr_orders']))
 
 		)
 		{
@@ -77,12 +77,12 @@ if ($login->isUserLoggedIn() == true) {
 
 					orddet_ordhdr_ordnum = :sorder_number
 
-					ORDER BY orddet_uid
+					ORDER BY prod_code
 
 				'))
 				{
 
-					$stmt->bindValue(':sorder_number',	$order_number,		PDO::PARAM_STR);
+					$stmt->bindValue(':sorder_number',	$order_number,	PDO::PARAM_STR);
 					$stmt->execute();
 
 					// My result array before encoded via json !

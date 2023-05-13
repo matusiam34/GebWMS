@@ -295,6 +295,10 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
+		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
+
 		$product_id	=	0;	// for the stock update / insert. Whatever it will be.
 
 
@@ -310,22 +314,29 @@ if ($login->isUserLoggedIn() == true)
 
 			WHERE
 
-			prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar
+			(prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar)
+
+			AND
+
+			prod_warehouse = :iprod_warehouse
 
 		';
+
 
 
 		$columns_html	=	'';
 		$details_html	=	'';
 
 
-
-
 		if ($stmt = $db->prepare($sql))
 		{
 
-			$stmt->bindValue(':iprod_each_bar',	$product_barcode,	PDO::PARAM_STR);
-			$stmt->bindValue(':iprod_case_bar',	$product_barcode,	PDO::PARAM_STR);
+			$stmt->bindValue(':iprod_each_bar',		$product_barcode,		PDO::PARAM_STR);
+			$stmt->bindValue(':iprod_case_bar',		$product_barcode,		PDO::PARAM_STR);
+			$stmt->bindValue(':iprod_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
+
+
+
 			$stmt->execute();
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))

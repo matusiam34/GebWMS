@@ -46,6 +46,8 @@ if ($login->isUserLoggedIn() == true) {
 		{
 
 
+			//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+			$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
 
 
 			$product_uid			= leave_numbers_only($_POST['product_uid_js']);
@@ -98,12 +100,17 @@ if ($login->isUserLoggedIn() == true) {
 
 				prod_pkey	 =	:uprod_pkey
 
+				AND
+
+				prod_warehouse = :iuser_warehouse
+
 
 				'))
 
 
 				{
 
+					$stmt->bindValue(':iuser_warehouse',		$user_warehouse_uid,		PDO::PARAM_INT);
 					$stmt->bindValue(':iprod_code',				$product_code,				PDO::PARAM_STR);
 					$stmt->bindValue(':iprod_desc',				$product_description,		PDO::PARAM_STR);
 					$stmt->bindValue(':iprod_category',			$product_category,			PDO::PARAM_STR);

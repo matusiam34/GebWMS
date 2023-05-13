@@ -169,11 +169,87 @@ if ($login->isUserLoggedIn() == true)
 
 				$user_lang		=	trim($_SESSION['user_language']);
 
+				//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+				$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
+
+
+				//	Get the warehouse code here (it will be a string usually) and jam it in to some tiny table.
+				//	Maybe other things can be placed in it later on.
+				$info_table_html	=	'';
+
+
+		$sql	=	'
+
+
+			SELECT
+
+			wh_code
+
+			FROM 
+
+			geb_warehouse
+
+			WHERE
+
+			wh_pkey = :swh_uid
+
+			AND
+
+			wh_disabled = 0
+
+
+
+		';
+
+
+
+		if ($stmt = $db->prepare($sql))
+		{
+
+			$stmt->bindValue(':swh_uid',	$user_warehouse_uid,	PDO::PARAM_INT);
+			$stmt->execute();
+
+
+			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+			{
+
+				$info_table_html	=	'<table class="is-fullwidth table is-bordered">';
+
+					$info_table_html	.=	'<tr>';
+						$info_table_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['warehouse'] . ':</td>';
+						$info_table_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
+					$info_table_html	.=	'</tr>';
+
+				$info_table_html	.=	'</table>';
+
+			}
+
+		}
+		// show an error if the query has an error
+		else
+		{
+			//	echo 'Location Query failed!';	//	need a better way for this page. no urgent issue
+		}
+
+
+
+
+
+
+
+
+
+
+
 
 				echo	'<div class="columns">';
 
 				echo	'<div class="column is-3">';
 
+
+
+				echo	$info_table_html;
 
 
 				echo	'<div class="field" style="'. $box_size_str . '">

@@ -69,9 +69,10 @@ foreach ($files_arr as $order_file)
 
 	$order_header_arr	=	array(
 
-		'customer_code'		=>	trim($order_xml->header->customer_code),
-		'order_number'		=>	trim($order_xml->header->order_number),
-		'order_type'		=>	trim($order_xml->header->order_type),
+		'warehouse'				=>	trim($order_xml->header->warehouse),
+		'customer_code'			=>	trim($order_xml->header->customer_code),
+		'order_number'			=>	trim($order_xml->header->order_number),
+		'order_type'			=>	trim($order_xml->header->order_type),
 
 		'billing_address1'		=>	trim($order_xml->header->billing_address1),
 		'billing_address2'		=>	trim($order_xml->header->billing_address2),
@@ -105,6 +106,8 @@ foreach ($files_arr as $order_file)
 
 
 
+	echo 'Order for warehouse : ' . $order_header_arr['warehouse'];
+	echo '<br>';
 
 	echo '<table style="text-align: left;">';
 
@@ -299,6 +302,7 @@ foreach ($files_arr as $order_file)
 			geb_order_header
 			
 			(
+				ordhdr_warehouse_uid,
 				ordhdr_type,
 				ordhdr_enter_date,
 				ordhdr_order_number,
@@ -320,6 +324,7 @@ foreach ($files_arr as $order_file)
 			VALUES
 
 			(
+				:iordhdr_warehouse_uid,
 				:iordhdr_type,
 				:iordhdr_enter_date,
 				:iordhdr_order_number,
@@ -345,6 +350,7 @@ foreach ($files_arr as $order_file)
 			{
 
 
+				$stmt->bindValue(':iordhdr_warehouse_uid',		$order_header_arr['warehouse'],				PDO::PARAM_INT);
 				$stmt->bindValue(':iordhdr_type',				$order_header_arr['order_type'],			PDO::PARAM_INT);
 				$stmt->bindValue(':iordhdr_enter_date',			date('Y-m-d H:s:i'),						PDO::PARAM_STR);
 				$stmt->bindValue(':iordhdr_order_number',		$order_header_arr['order_number'],			PDO::PARAM_STR);

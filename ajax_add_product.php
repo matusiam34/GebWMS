@@ -55,16 +55,19 @@ if ($login->isUserLoggedIn() == true) {
 		{
 
 
+			//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+			$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
 
-			$product_code			= trim($_POST['product_code_js']);
-			$product_description 	= trim($_POST['product_description_js']);
-			$product_category		= trim($_POST['product_category_js']);
-			$each_barcode			= trim($_POST['each_barcode_js']);
-			$each_weight			= trim($_POST['each_weight_js']);
-			$case_barcode			= trim($_POST['case_barcode_js']);
-			$case_qty				= leave_numbers_only($_POST['case_qty_js']);	// should be a number....?
-			$pall_qty				= leave_numbers_only($_POST['pall_qty_js']);	// should be a number....?
-			$disabled_or_not		= leave_numbers_only($_POST['disabled_js']);	// should be a number....?
+
+			$product_code			=	trim($_POST['product_code_js']);
+			$product_description 	=	trim($_POST['product_description_js']);
+			$product_category		=	trim($_POST['product_category_js']);
+			$each_barcode			=	trim($_POST['each_barcode_js']);
+			$each_weight			=	trim($_POST['each_weight_js']);
+			$case_barcode			=	trim($_POST['case_barcode_js']);
+			$case_qty				=	leave_numbers_only($_POST['case_qty_js']);	// should be a number....?
+			$pall_qty				=	leave_numbers_only($_POST['pall_qty_js']);	// should be a number....?
+			$disabled_or_not		=	leave_numbers_only($_POST['disabled_js']);	// should be a number....?
 
 
 			if (strlen($product_code)	<	2)	{
@@ -93,6 +96,11 @@ if ($login->isUserLoggedIn() == true) {
 		//
 		// Seek out for duplicate entry !
 		//
+		//
+		//	Since this is a multi-warehouse / location system you need to check if the duplicate entry lives in
+		//	the same warehouse! Two identical product codes can exist but they HAVE TO BE in different warehouses.
+		//
+		//
 		$sql	=	'
 
 			SELECT
@@ -104,6 +112,10 @@ if ($login->isUserLoggedIn() == true) {
 			WHERE
 
 			prod_code = :iprod_name
+			
+			AND
+			
+			prod_warehouse = :iuser_warehouse
 
 		';
 
@@ -111,7 +123,9 @@ if ($login->isUserLoggedIn() == true) {
 		if ($stmt = $db->prepare($sql))
 		{
 
-			$stmt->bindValue(':iprod_name',		$product_code,		PDO::PARAM_STR);
+			$stmt->bindValue(':iprod_name',			$product_code,			PDO::PARAM_STR);
+			$stmt->bindValue(':iuser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
+
 			$stmt->execute();
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -141,6 +155,7 @@ if ($login->isUserLoggedIn() == true) {
 					geb_product
 					
 					(
+						prod_warehouse,
 						prod_code,
 						prod_desc,
 						prod_category,
@@ -155,6 +170,7 @@ if ($login->isUserLoggedIn() == true) {
 					VALUES
 
 					(
+						:iprod_warehouse,
 						:iprod_code,
 						:iprod_desc,
 						:iprod_category,
@@ -171,6 +187,7 @@ if ($login->isUserLoggedIn() == true) {
 
 					{
 
+						$stmt->bindValue(':iprod_warehouse',		$user_warehouse_uid,		PDO::PARAM_INT);
 						$stmt->bindValue(':iprod_code',				$product_code,				PDO::PARAM_STR);
 						$stmt->bindValue(':iprod_desc',				$product_description,		PDO::PARAM_STR);
 						$stmt->bindValue(':iprod_category',			$product_category,			PDO::PARAM_STR);

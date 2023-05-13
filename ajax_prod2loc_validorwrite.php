@@ -67,9 +67,6 @@ if ($login->isUserLoggedIn() == true)
 		if (is_it_enabled($_SESSION['menu_prod2loc']))
 		{
 
-
-
-
 			//
 			// Data I receive to process the request
 			//
@@ -82,7 +79,16 @@ if ($login->isUserLoggedIn() == true)
 			$loc_barcode			=	leave_numbers_only($_POST['loc_barcode_js']);
 
 
-			$valid_or_write	=	leave_numbers_only($_POST['validorwrite_js']);
+			$valid_or_write			=	leave_numbers_only($_POST['validorwrite_js']);
+
+
+			//	This could be over the TOP since prod_id is the UID of the product... still... not taking any chances!
+			//	More checks are better, right?
+			//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+			$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
+
+
 
 			// Before anything check if there is any option selected (0: validate; 1: update location)
 
@@ -90,13 +96,13 @@ if ($login->isUserLoggedIn() == true)
 
 
 			// some variables to help me out to validate the entire process
-			$product_found	=	false;
+			$product_found		=	false;
 
 
 
 			// Grab product details based on the UID and barcode.
-			$prod_stock_unit		=	$stock_unit_type_reverse_arr['E'];	// by default assume EACH!
-			$loc_data_arr			=	array();	// every entry from the location will be stored here
+			$prod_stock_unit	=	$stock_unit_type_reverse_arr['E'];	// by default assume EACH!
+			$loc_data_arr		=	array();	// every entry from the location will be stored here
 
 
 			// THese two are like more serious error and they will show up as an alert (the ugly one)
@@ -141,13 +147,19 @@ if ($login->isUserLoggedIn() == true)
 
 				prod_pkey = :iprod_uid
 
+				AND
+
+				prod_warehouse = :iprod_warehouse
 
 			'))
 			{
 
-				$stmt->bindValue(':iprod_each_bar',	$prod_barcode,		PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',	$prod_barcode,		PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_uid',		$prod_id,			PDO::PARAM_INT);
+				$stmt->bindValue(':iprod_each_bar',		$prod_barcode,			PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_case_bar',		$prod_barcode,			PDO::PARAM_STR);
+				$stmt->bindValue(':iprod_uid',			$prod_id,				PDO::PARAM_INT);
+				$stmt->bindValue(':iprod_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
+
+
 				$stmt->execute();
 
 				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -462,15 +474,20 @@ if ($login->isUserLoggedIn() == true)
 
 										WHERE
 
-										prod_pkey	 =	:iprod_id
+										prod_pkey			=	:iprod_id
+
+										AND
+
+										prod_warehouse		=	:iprod_warehouse
 
 
 										'))
 
 										{
 
-											$stmt->bindValue(':iphy_qty',	$prod_qty,		PDO::PARAM_INT);
-											$stmt->bindValue(':iprod_id',	$prod_id,		PDO::PARAM_INT);
+											$stmt->bindValue(':iphy_qty',			$prod_qty,				PDO::PARAM_INT);
+											$stmt->bindValue(':iprod_id',			$prod_id,				PDO::PARAM_INT);
+											$stmt->bindValue(':iprod_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
 											$stmt->execute();
 
 
@@ -627,7 +644,7 @@ if ($login->isUserLoggedIn() == true)
 
 										WHERE
 
-										prod_pkey	 =	:iprod_id
+										prod_pkey			=	:iprod_id
 
 
 										'))

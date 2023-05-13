@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<order>
+
+	<header>
+
+		<warehouse>2</warehouse>
+		<customer_code>K122</customer_code>
+		<order_number>TS491645</order_number>
+		<order_type>100</order_type>
+
+
+		<billing_address1>Metal Rings Ltd</billing_address1>
+		<billing_address2>42 Grange Road</billing_address2>
+		<billing_address3>NORWICH</billing_address3>
+		<billing_address4>NR73 5NR</billing_address4>
+		<billing_address5></billing_address5>
+
+		<shipping_address1>Metal Rings Ltd</shipping_address1>
+		<shipping_address2>73 Queens Road</shipping_address2>
+		<shipping_address3>SALISBURY</shipping_address3>
+		<shipping_address4>SP33 0ZE</shipping_address4>
+		<shipping_address5></shipping_address5>
+
+
+
+
+	</header>
+
+
+	<items>
+		<item_code>NUT550</item_code>
+		<item_qty>9</item_qty>
+	</items>
+
+	<items>
+		<item_code>NUT350</item_code>
+		<item_qty>5</item_qty>
+	</items>
+
+
+</order>
