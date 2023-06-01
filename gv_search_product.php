@@ -497,7 +497,7 @@ if ($login->isUserLoggedIn() == true)
 
 						//	Important feature right here!
 						//	If the user does not have access to the location search than do not
-						//	provide the links to it here! Logic! :)
+						//	provide the link to it here! Logic! :)
 						//	By default just provide with the location code.
 
 						$loc_details_code_str	=	' (' . $loc_details_arr[0] . ')';

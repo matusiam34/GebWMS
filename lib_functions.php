@@ -8,6 +8,10 @@
  */
 
 
+
+//	20/05/2023:	
+
+
 //	Set the language here.
 //	This has been updated (19 Nov 2022) to allow the operator to set the language in the My Account page :)
 //	To add your own language just copy one of the existing php files (lang folder) and start translating.
@@ -89,9 +93,11 @@ $loc_types_codes_reverse_arr	=	array(
 //	GebWMS supports different location functions. As of 24/04/2023 there will be:
 //	-	Pickface (usually bottom of the rack),
 //	-	Bulk (usually above pickface to keep product that will be used to replenish the pickface stock)
-//	-	Goods IN (one location per warehouse). This by default needs to be a multi location as products will be stored here
+//	-	Goods IN (one location per warehouse). This by default needs to be a mixed location as products will be stored here
 //		before they get labels and get moved to somewhere (potentially bulk location or emply pallet spaces)
-
+//
+//	18/05/2023:	Another location to consider would be some kind of general storage, damages and returns????!!?!?
+//
 
 
 $loc_functions_arr	=	array(
@@ -311,6 +317,49 @@ function decode_loc($loc_func, $loc_type, $loc_blkd, $function_codes_arr, $type_
 //
 //	END of: Warehouse Specific functions
 //
+
+
+
+
+
+
+
+//
+//	Warehouse SQL functions (Hmmm... Good or bad idea?)
+//
+
+function update_order_status($db, $status_code, $order_uid)
+{
+	
+	
+}
+
+
+
+
+
+//
+//	END of: Warehouse SQL functions
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -70,7 +70,7 @@ if ($login->isUserLoggedIn() == true) {
 					FROM 
 
 					geb_order_details
-					
+
 					INNER JOIN geb_product ON geb_order_details.orddet_prod_pkey = geb_product.prod_pkey
 
 					WHERE
@@ -178,6 +178,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 					//	Add another section with a button or two...
+					//	Allocate button should only exist if nothing has been allocated?!?! Or I need a different criteria!?!?
 					$items_ordered	.=	'<div class="columns">
 
 										<div class="column is-3">

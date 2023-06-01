@@ -253,6 +253,14 @@ foreach ($files_arr as $order_file)
 			//	I will be introducing more checks before doing any of the inserting... so this query
 			//	will happen in one way or another. 
 
+			//
+			//	18/05/2023:	Since I am supporting multiple warehouses I need to make sure that the import routine 
+			//				grabs products that correspond to the warehouse provided in the import file.
+			//
+			//
+
+
+
 			$sql	=	'
 
 
@@ -270,6 +278,10 @@ foreach ($files_arr as $order_file)
 				AND
 
 				prod_disabled = 0
+				
+				AND
+				
+				prod_warehouse = :swarehouse_uid
 
 			';
 
@@ -277,6 +289,7 @@ foreach ($files_arr as $order_file)
 			if ($stmt = $db->prepare($sql))
 			{
 
+				$stmt->bindValue(':swarehouse_uid',		$order_header_arr['warehouse'],		PDO::PARAM_INT);
 				$stmt->execute();
 
 				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -454,8 +467,8 @@ foreach ($files_arr as $order_file)
 
 }	//	order loop end!
 
-					// make sure to commit all of the changes to the DATABASE !
-					$db->commit();
+	// make sure to commit all of the changes to the DATABASE !
+	$db->commit();
 
 
 

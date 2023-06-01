@@ -287,36 +287,50 @@ if ($login->isUserLoggedIn() == true)
 		$orders_arr			=	array();		//	all orders here
 
 
+
+/*
+CREATE TABLE "geb_stock_allocation" (
+	"stk_alloc_pkey"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"stk_alloc_order_uid"	INTEGER,
+	"stk_alloc_prod_pkey"	INTEGER,
+	"stk_alloc_qty"	INTEGER,
+	"stk_alloc_operator"	INTEGER,
+	"stk_alloc_date"	TEXT,
+	"stk_alloc_disabled"	INTEGER DEFAULT 0
+);
+*/
+
 		//	Only show orders with the order_status = Ready
 		$sql	=	'
 
 			SELECT
 
-			geb_order_header.ordhdr_uid,
 			geb_order_header.ordhdr_order_number,
-			geb_order_header.ordhdr_type,
-			geb_order_header.ordhdr_status,
-			geb_order_header.ordhdr_pick_operator,
-			users.user_name,
-			COUNT(*) as linesPerOrder
+			geb_product.prod_code,
+			geb_stock_allocation.stk_alloc_qty,
+			geb_stock_allocation.stk_alloc_date,
+			users.user_name
 
 
 			FROM 
 
-			geb_order_header
+			geb_stock_allocation
 
-			INNER JOIN geb_order_details ON geb_order_header.ordhdr_order_number = geb_order_details.orddet_ordhdr_ordnum
+			INNER JOIN geb_product ON geb_stock_allocation.stk_alloc_prod_pkey = geb_product.prod_pkey
+			INNER JOIN geb_order_header ON geb_stock_allocation.stk_alloc_order_uid = geb_order_header.ordhdr_uid
 
-			LEFT JOIN users ON geb_order_header.ordhdr_pick_operator = users.user_id
+			LEFT JOIN users ON geb_stock_allocation.stk_alloc_operator = users.user_id
 
 
 			WHERE
+			
+			geb_product.prod_warehouse = :suser_warehouse
 
+			AND
+			
 			geb_order_header.ordhdr_warehouse_uid = :suser_warehouse
 
-			GROUP BY geb_order_header.ordhdr_uid, geb_order_header.ordhdr_order_number
 
-			ORDER BY geb_order_header.ordhdr_order_number, geb_order_header.ordhdr_enter_date
 
 		';
 
@@ -324,15 +338,6 @@ if ($login->isUserLoggedIn() == true)
 
 		if ($stmt = $db->prepare($sql))
 		{
-
-/*
-			//	Get only orders that are status = Ready (lib_functions.php)
-			$stmt->bindValue(':sorder_ready_status',	$order_status_reverse_arr['R'],		PDO::PARAM_STR);
-
-			WHERE
-
-			geb_order_header.ordhdr_status = :sorder_ready_status
-*/
 
 
 			$stmt->bindValue(':suser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
@@ -359,12 +364,11 @@ if ($login->isUserLoggedIn() == true)
 									<table class="table is-fullwidth is-hoverable is-scrollable" style="table-layout:fixed;" id="curr_table">
 									<thead>
 										<tr>
-											<th class="manager_class">UID</th>
-											<th class="manager_class">' . $mylang['order'] . '</th>
-											<th class="manager_class">' . $mylang['type'] . '</th>
-											<th class="manager_class">' . $mylang['status'] . '</th>
-											<th class="manager_class">' . $mylang['entries'] . '</th>
-											<th class="manager_class">' . $mylang['picker'] . '</th>
+											<th class="manager_class">' . $mylang['order_number'] . '</th>
+											<th class="manager_class">' . $mylang['product'] . '</th>
+											<th class="manager_class">' . $mylang['allocated_qty'] . '</th>
+											<th class="manager_class">' . $mylang['date'] . '</th>
+											<th class="manager_class">' . $mylang['user'] . '</th>
 										</tr>
 									</thead>
 
@@ -375,37 +379,15 @@ if ($login->isUserLoggedIn() == true)
 									foreach ($orders_arr as $order_line)
 									{
 
-										//	ordhdr_type...
-										//
-										//	'100'		=>	'Imported',
-										//	'110'		=>	'Place Order'
-
-
-										$order_type_cde	=	leave_numbers_only($order_line['ordhdr_type']);
-										$order_type_str	=	$order_type_arr[$order_type_cde] . ' (' . $order_type_cde . ')';
-
-
-
-										//	ordhdr_status entry... lib_functions
-										//'10'	=>	'On Hold',
-										//'20'	=>	'Ready',
-										//'30'	=>	'Started',
-										//'40'	=>	'Paused',
-										//'50'	=>	'Complete (short)',
-										//'60'	=>	'Complete',
-										//'70'	=>	'Cancelled',
-
-
-										$order_status_cde	=	leave_numbers_only($order_line['ordhdr_status']);
-										$order_status_str	=	$order_status_arr[$order_status_cde] . ' (' . $order_status_cde . ')';
+										//	Display_date can be adjusted in lib_functions to display things differently. Changes are global :)
+										$alloc_date		=	display_date( trim($order_line['stk_alloc_date']), $date_display_style);
 
 
 										echo	'<tr>';
-										echo	'<td>' . leave_numbers_only($order_line['ordhdr_uid']) . '</td>';
 										echo	'<td>' . trim($order_line['ordhdr_order_number']) . '</td>';
-										echo	'<td>' . $order_type_str . '</td>';
-										echo	'<td>' . $order_status_str . '</td>';
-										echo	'<td>' . $order_line['linesPerOrder'] . '</td>';
+										echo	'<td>' . trim($order_line['prod_code']) . '</td>';
+										echo	'<td>' . trim($order_line['stk_alloc_qty']) . '</td>';
+										echo	'<td>' . $alloc_date . '</td>';
 										echo	'<td>' . trim($order_line['user_name']) . '</td>';
 										echo	'</tr>';
 									}
@@ -418,11 +400,11 @@ if ($login->isUserLoggedIn() == true)
 
 								</div>';
 
-
+/*
 				echo	'<div class="control">
 							<input id="id_hidden" class="input is-normal" type="hidden" value="0">
 						</div>';
-
+*/
 
 
 				echo		'</div>';	//	column close

@@ -938,6 +938,7 @@ echo	$user_details_html;
 
 				<option value="32768">X</option>
 				<option value="49152">E</option>
+				<option value="53248">EU</option>
 
 			</select>
 		</div>

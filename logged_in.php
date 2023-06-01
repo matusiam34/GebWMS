@@ -297,6 +297,19 @@ echo	'<div class="container box has-background-light">';
 								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $orders_link . '">' . $mylang['orders'] . '</a>
 							</div>
 						</div>';
+
+
+				$orders_link		=	"location.href='gv_mgr_stock_allocation.php'";
+
+
+				echo	'<div class="field">
+							<div class="control">
+								<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $orders_link . '">' . $mylang['allocated_stock'] . '</a>
+							</div>
+						</div>';
+
+
+
 			}
 
 

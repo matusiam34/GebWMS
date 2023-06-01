@@ -89,6 +89,7 @@ $mylang = array(
 'orders'					=>	'Zamówienia',
 'ordered'					=>	'Zamówione',
 'customer'					=>	'Klient',
+'date'						=>	'Data',
 'entered_date'				=>	'Data wprowadzenia',
 'order_type'				=>	'Typ zamówienia',
 'order_status'				=>	'Status zamówienia',
