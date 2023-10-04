@@ -1,0 +1,424 @@
+/* Any custom things added by Matt to the system...
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/*
+    background-color: #009879;
+	//	interesting green...
+*/
+
+/*		Main color of the GebWMS?!		*/
+
+.gebwms_class {
+	background-color: #8D6E63; /*#795548;*/
+	color: white;
+}
+
+
+/*	The standard brown. Need to clean up this color code mess some time soon			*/
+.general_class {
+	background-color: #8D6E63; /*#795548;*/
+	color: white;
+}
+
+
+/*	A hack for the select dropdown to change the color of the arrow thingo. Yellow seems to work fine me thinks!	*/
+.select.is-yellow:after {
+  border-color: #FFDD57 !important;
+}
+
+/*
+
+	GebWMS needs admin, manager, supervisor, operator colors...
+
+ */
+
+
+/*	red		*/
+.admin_class {
+	background-color: #ef5350; /*#f44336;*/
+	color: white;
+}
+
+/*	blue	*/
+.manager_class {
+	background-color: #42A5F5; /*#2196F3;*/
+	color: white !important;
+}
+
+/*  brown   */
+.inventory_class {
+	background-color: #8D6E63;
+	color: white;
+}
+
+
+
+
+/*  Alert dialog box classes                  */
+
+
+/*
+//
+// Tip: to integrate this plugin seamlessly into your application, use these styles as a starting
+// point to build your own stylish alerts and confirmations!
+//
+*/
+
+/* Modal */
+.alertable {
+  position: fixed;
+  z-index: 9999;
+  top: 36vh;
+  left: calc(50% - 170px);
+  width: 340px;
+  background: white;
+  border-radius: 4px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+/* Overlay */
+.alertable-overlay {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, .5);
+}
+
+/* Message */
+.alertable-message {
+  margin-bottom: 20px;
+}
+
+/* Prompt */
+.alertable-prompt {
+  margin-bottom: 20px;
+}
+
+.alertable-input {
+  width: 100%;
+  border-radius: 4px;
+  box-shadow: none;
+  border: solid 1px #ccc;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  padding: 6px 12px;
+  display: block;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+/* Button group */
+.alertable-buttons {
+  text-align: center;
+}
+
+
+/* Cancel button */
+.alertable-cancel {
+  border: solid 1px #ddd;
+  background: white;
+  font-family: inherit;
+  font-size: inherit;
+  color: #888;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.alertable-cancel:hover,
+.alertable-cancel:focus,
+.alertable-cancel:active {
+  background-color: #f2f2f2;
+}
+
+
+
+
+.alert_error_btn_class {
+	background-color: #ef5350;
+	color: white; !important;
+}
+
+.alert_error_text_class {
+	color: #ef5350; !important;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.alert_info_btn_class {
+	background-color: #42A5F5;
+	color: white; !important;
+}
+
+.alert_info_text_class {
+	color: #111; !important;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+
+
+/*  !!! END OF ALERT CLASSES !!!   */
+
+
+
+/*	green:	confirm buttons etc	*/
+.green_class {
+	background-color: #66BB6A;
+	color: white;
+}
+
+/*	red: same as admin_class; abort and cancel buttons etc	*/
+.red_class {
+	background-color: #ef5350;
+	color: white;
+}
+
+/*  Notifications use this for errors!  */
+.red_modal_class {
+    text-align: center;
+    font-weight: bold;
+	color: #ef5350;
+}
+
+
+
+/*	yellow: just for the logout button?		*/
+.yellow_class {
+	background-color: #FFDD57;
+	color: #FF3860;
+}
+
+
+
+
+
+
+/*	Error Message from AJAX		*/
+.ajax_err_msg_class {
+	background-color: #ef5350;
+	color: white;
+	font-size:14px;
+}
+
+
+/*	All good message from AJAX		*/
+.ajax_good_msg_class {
+	background-color: #66BB6A;
+	color: white;
+	font-size: 14px;
+}
+
+
+
+
+
+/*
+
+
+	Stuff from previous project. Need to see what I need or could use for GebWMS
+
+
+*/
+
+
+.welcome_image {
+  width: 46%;
+  min-width: 200px;
+  max-width: 220px;
+  height: auto;
+}
+
+/*
+
+.production_class {
+	background-color: #42A5F5;
+	color: white;
+}
+
+
+.sales_class {
+	background-color: #66BB6A;
+	color: white;
+}
+*/
+
+
+
+.is-bold {
+	font-weight:bold;
+}
+
+
+.table-has-border {
+	border:1px solid;
+}
+
+
+/*	Has border?			*/
+.it-has-border {
+	border:1px solid;
+}
+
+
+
+
+	/* Other supporting div "spacers"	*/
+	.break_line_block		{	display: block; height: 0px;	}
+	.blank_space_1px		{	display: block; height: 1px;	}
+	.blank_space_2px		{	display: block; height: 2px;	}
+	.blank_space_3px		{	display: block; height: 3px;	}
+	.blank_space_5px		{	display: block; height: 5px;	}
+	.blank_space_6px		{	display: block; height: 6px;	}
+	.blank_space_10px		{	display: block; height: 10px;	}
+	.blank_space_12px		{	display: block; height: 12px;	}   /*  Top header in all pages!    */
+	.blank_space_16px		{	display: block; height: 16px;	}
+	.blank_space_20px		{	display: block; height: 20px;	}
+	.blank_space_24px		{	display: block; height: 24px;	}
+	.blank_space_30px		{	display: block; height: 30px;	}
+	.blank_space_40px		{	display: block; height: 40px;	}
+	.blank_space_50px		{	display: block; height: 50px;	}
+	.blank_space_60px		{	display: block; height: 60px;	}
+	.blank_space_text_bar	{	display: block; height: 3px;	}
+
+
+
+
+/*	Call me lazy... but it works just fine!			*/
+
+
+    .iconBackArrow
+    {
+		background-image: url(../images/icon_back.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconBackArrow:hover
+    {
+		background-image: url(../images/icon_back_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconHome
+    {
+		background-image: url(../images/icon_home.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconHome:hover
+    {
+		background-image: url(../images/icon_home_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconSearch
+    {
+		background-image: url(../images/icon_search.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconSearch:hover
+    {
+		background-image: url(../images/icon_search_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+
+    .iconAdd10
+    {
+		background-image: url(../images/icon_add10.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconAdd10:hover
+    {
+		background-image: url(../images/icon_add10_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconAdd
+    {
+		background-image: url(../images/icon_add.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconAdd:hover
+    {
+		background-image: url(../images/icon_add_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+
+    .iconMinus
+    {
+		background-image: url(../images/icon_minus.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconMinus:hover
+    {
+		background-image: url(../images/icon_minus_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
+    .iconRefresh
+    {
+		background-image: url(../images/icon_refresh.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconRefresh:hover
+    {
+		background-image: url(../images/icon_refresh_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+     }
+
+
