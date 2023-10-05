@@ -27,7 +27,9 @@ $mylang = array(
 'yes'						=>	'Yes',
 
 'barcode_already_exists'	=>	'Barcode already exists!',
-'location_already_exists'	=>	'Location already exists in this warehouse',
+'location_already_exists'	=>	'Location already exists in this warehouse!',
+'category_already_exists'	=>	'This category already exists!',
+'select_category_first'		=>	'Select category A first!',
 
 
 

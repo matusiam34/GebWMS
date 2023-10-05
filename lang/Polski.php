@@ -28,6 +28,9 @@ $mylang = array(
 
 'barcode_already_exists'	=>	'Ten kod kreskowy już istnieje!',
 'location_already_exists'	=>	'Lokalizacja już istnieje w tym magazynie!',
+'category_already_exists'	=>	'Ta kategoria już istnieje!',
+'select_category_first'		=>	'Najpierw wybierz kategorię A!',
+
 
 
 //

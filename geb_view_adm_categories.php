@@ -70,30 +70,52 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-			// Triggers a function every time the row in the table departmentList is clicked !
-			$('#warehouse_table').on('click', 'tr', function()
+			// Triggers a function every time the row in the table id_category_a_table is clicked !
+			$('#id_category_a_table').on('click', 'tr', function()
 			{
 					// When user clicks on anything it gets selected !
-					$('.highlighted').removeClass('highlighted');
-					$(this).addClass('highlighted');
+					$('.highlightedA').removeClass('highlightedA');
+					$(this).addClass('highlightedA');
 
 					// 1 = ID
-					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
+					$('#id_hidden_cata').val($(this).find('td:nth-child(1)').text()); 
 
-					// Get all the details from the table...
-					get_one_warehouse_data();
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+
+					// Get all the details about the category and populate it to the second table!
+					get_one_category_a_data();
+					get_all_category_b();
 
 			});
+
+
+			// Triggers a function every time the row in the table id_category_b_table is clicked !
+			$('#id_category_b_table').on('click', 'tr', function()
+			{
+					// When user clicks on anything it gets selected !
+					$('.highlightedB').removeClass('highlightedB');
+					$(this).addClass('highlightedB');
+
+					// 1 = ID
+					$('#id_hidden_catb').val($(this).find('td:nth-child(1)').text()); 
+
+					// Get all the details about the category!
+					get_one_category_b_data();
+
+			});
+
+
 
 
 		});
 
 
 
-		function get_all_warehouses()
+		function get_all_category_a()
 		{
 
-			$.post('geb_ajax_warehouse.php', { 
+			$.post('geb_ajax_category.php', { 
 
 				action_code_js				:	0
 
@@ -108,8 +130,8 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					$('#warehouse_table > tbody').empty();
-					$('#warehouse_table > tbody').append(obje.html);
+					$('#id_category_a_table > tbody').empty();
+					$('#id_category_a_table > tbody').append(obje.html);
 
 				}
 				else
@@ -119,20 +141,144 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101555', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105555', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
 
 
-		function get_one_warehouse_data()
+
+		function get_all_category_b()
 		{
 
+			$.post('geb_ajax_category.php', { 
 
-			$.post('geb_ajax_warehouse.php', { 
+				action_code_js		:	1,
+				cata_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
 
-				action_code_js			:	1,
-				warehouse_uid_js		:	get_Element_Value_By_ID('id_hidden')
+			},
+
+			function(output)
+			{
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					$('#id_category_b_table > tbody').empty();
+					$('#id_category_b_table > tbody').append(obje.html);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105555', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+		//	Add category A
+		function add_category_a()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	4,
+				cata_name_js		:	get_Element_Value_By_ID('id_cata_name'),
+				cata_status_js		:	get_Element_Value_By_ID('id_cata_status')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_cata_name',		'');
+					set_Element_Value_By_ID('id_cata_status',	0);
+					set_Element_Value_By_ID('id_hidden_cata',	0);
+
+					//	Refresh the list
+					$('#id_category_b_table > tbody').empty();
+					get_all_category_a();
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+		//	Add category B
+		function add_category_b()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	5,
+				cata_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
+				catb_name_js		:	get_Element_Value_By_ID('id_catb_name'),
+				catb_status_js		:	get_Element_Value_By_ID('id_catb_status')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+					//	Refresh the list
+					get_all_category_b();
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+		function get_one_category_a_data()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	2,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
 
 			},
 			function(output)
@@ -145,9 +291,8 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					set_Element_Value_By_ID('id_warehouse_name',			obje.data.wh_code);
-					set_Element_Value_By_ID('id_warehouse_description',		obje.data.wh_desc);
-					set_Element_Value_By_ID('id_warehouse_status',			obje.data.wh_disabled);
+					set_Element_Value_By_ID('id_cata_name',		obje.data.cat_name);
+					set_Element_Value_By_ID('id_cata_status',	obje.data.cat_disabled);
 
 				}
 				else
@@ -165,6 +310,43 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		function get_one_category_b_data()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	3,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
+
+			},
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catb_name',		obje.data.cat_name);
+					set_Element_Value_By_ID('id_catb_status',	obje.data.cat_disabled);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
 		//	Add warehouse
 		function add_warehouse()
 		{
@@ -173,7 +355,6 @@ if ($login->isUserLoggedIn() == true)
 
 				action_code_js				:	2,
 				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
 				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
 
 			},
@@ -216,7 +397,6 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js				:	3,
 				warehouse_uid_js			:	get_Element_Value_By_ID('id_hidden'),
 				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
 				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
 
 			},
@@ -261,6 +441,9 @@ if ($login->isUserLoggedIn() == true)
 
 	.category_a_table { height: 320px; overflow-y: scroll;}
 
+	.category_b_table { height: 320px; overflow-y: scroll;}
+
+
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
 
 	table th
@@ -271,7 +454,12 @@ if ($login->isUserLoggedIn() == true)
 	}
 
 	/*      For changing the colour of the clicked row in the table         */
-	.highlighted {
+	.highlightedA {
+			color: #261F1D !important;
+			background-color: #E5C37E !important;
+	}
+
+	.highlightedB {
 			color: #261F1D !important;
 			background-color: #E5C37E !important;
 	}
@@ -282,7 +470,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_warehouses();'>
+<body onLoad='get_all_category_a();'>
 
 
 <?php
@@ -322,13 +510,12 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-	// Table Header
 	$layout_details_html	.=	'
 
 					<div class="column is-4">
 
 						<div class="category_a_table it-has-border">
-							<table class="table is-fullwidth is-hoverable is-scrollable" id="warehouse_table">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="id_category_a_table">
 								<thead>
 									<tr>
 										<th>UID</th>
@@ -344,16 +531,16 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['category'] . ' (A):</p>
 							<div class="control">
-								<input id="id_warehouse_name" class="input is-normal" type="text" placeholder="COV">
+								<input id="id_cata_name" class="input is-normal" type="text" placeholder="Houseware">
 							</div>
 						</div>
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['status'] . ':</p>
+							<p class="help">' . $mylang['status'] . ' (A):</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-									<select id="id_warehouse_status">
+									<select id="id_cata_status">
 
 										<option value="0">' . $mylang['active'] . '</option>
 										<option value="1">' . $mylang['disabled'] . '</option>
@@ -368,17 +555,19 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_warehouse();">' . $mylang['save'] . '</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_cata();">' . $mylang['save'] . ' (A)</button>
 							</div>
 						</div>
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_warehouse();">' . $mylang['add'] . '</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_a();">' . $mylang['add'] . ' (A)</button>
 							</div>
 						</div>
 
+
+						<input id="id_hidden_cata" class="input is-normal" type="hidden">
 
 					</div>';
 
@@ -388,44 +577,71 @@ if ($login->isUserLoggedIn() == true)
 	$layout_details_html	.=	'
 
 
-					<div class="column is-2">
-
-
-
-
-					</div>
-
-
 					<div class="column is-4">
 
 
+						<div class="category_b_table it-has-border">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="id_category_b_table">
+								<thead>
+									<tr>
+										<th>UID</th>
+										<th>' . $mylang['category'] . ' (B)</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['category'] . ' (B):</p>
+							<div class="control">
+								<input id="id_catb_name" class="input is-normal" type="text" placeholder="Buckets">
+							</div>
+						</div>
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['status'] . ' (B):</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_catb_status">
+
+										<option value="0">' . $mylang['active'] . '</option>
+										<option value="1">' . $mylang['disabled'] . '</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_catb();">' . $mylang['save'] . ' (B)</button>
+							</div>
+						</div>
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_b();">' . $mylang['add'] . ' (B)</button>
+							</div>
+						</div>
+
+						<input id="id_hidden_catb" class="input is-normal" type="hidden">
 
 					</div>
 
 
-
-					<div class="column is-2">
-
-
-
-
 						';
 
 
 
 
-
-		//	Update button section?!
-		$layout_details_html	.=	'
-
-
-
-						';
-
-
-	$layout_details_html	.=	'
-
-					</div>';
 
 
 
@@ -439,8 +655,7 @@ echo	$layout_details_html;
 
 
 
-//	Place it in a better space maybe? Not urgent.
-echo	'<input id="id_hidden" class="input is-normal" type="hidden">';
+
 
 
 		echo '</div>';
