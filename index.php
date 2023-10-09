@@ -11,7 +11,7 @@ $login = new Login();
 if ($login->isUserLoggedIn() == true)
 {    
 	// load the supporting functions....
-	require_once('lib_functions.php');
+	require_once('lib_system.php');
 
 ?>
 

@@ -17,7 +17,6 @@
 */
 
 
-
 // load the login class
 require_once('lib_login.php');
 
@@ -42,7 +41,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		// load the supporting functions....
-		require_once('lib_functions.php');
+		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
 
@@ -50,7 +49,7 @@ if ($login->isUserLoggedIn() == true) {
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
 
-		//	Get all locations. The action code for this is 0
+		//	Get all users. The action code for this is 0
 		if ($action_code == 0)
 		{
 
@@ -190,6 +189,9 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_users				=	leave_numbers_only($_POST['adm_users_js']);
 				$adm_warehouses			=	leave_numbers_only($_POST['adm_warehouses_js']);
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
+				$adm_categories			=	leave_numbers_only($_POST['adm_categories_js']);
+
+
 
 
 				if (strlen($user_username) >= 2)	//	I am allowing the username to be min 2 characters
@@ -266,6 +268,7 @@ if ($login->isUserLoggedIn() == true) {
 								menu_adm_warehouse,
 								menu_adm_warehouse_loc,
 								menu_adm_users,
+								menu_adm_category,
 								menu_prod_search,
 								menu_location_search,
 								menu_goodsin,
@@ -288,6 +291,7 @@ if ($login->isUserLoggedIn() == true) {
 								:imenu_adm_warehouse,
 								:imenu_adm_warehouse_loc,
 								:imenu_adm_users,
+								:imenu_adm_category,
 								:imenu_prod_search,
 								:imenu_location_search,
 								:imenu_goodsin,
@@ -313,6 +317,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':imenu_adm_warehouse',		$adm_warehouses,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_adm_warehouse_loc',	$adm_wh_locations,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_adm_users',			$adm_users,			PDO::PARAM_INT);
+							$stmt->bindValue(':imenu_adm_category',			$adm_categories,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_prod_search',			$product_search,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_location_search',		$location_search,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_goodsin',				$goodsin,			PDO::PARAM_INT);
@@ -387,7 +392,14 @@ if ($login->isUserLoggedIn() == true) {
 				$user_uid			=	leave_numbers_only($_POST['user_uid_js']);		// remove anything that is not a number
 
 
-				if ($user_uid > 0)
+				if
+				(
+					($user_uid > 0)
+
+					AND
+
+					(is_numeric($user_uid) == true)
+				)
 				{
 
 					if (strlen($user_username) >= 2)	//	I am allowing the username to be min 2 characters
@@ -428,7 +440,7 @@ if ($login->isUserLoggedIn() == true) {
 
 								if
 								(
-									($row['user_id'] <> $user_uid)
+									( leave_numbers_only($row['user_id']) <> $user_uid)
 
 									AND
 
@@ -557,11 +569,19 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_users				=	leave_numbers_only($_POST['adm_users_js']);
 				$adm_warehouses			=	leave_numbers_only($_POST['adm_warehouses_js']);
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
+				$adm_categories			=	leave_numbers_only($_POST['adm_categories_js']);
 
 				$user_uid				=	leave_numbers_only($_POST['user_uid_js']);		// remove anything that is not a number
 
 
-				if ($user_uid > 0)
+				if
+				(
+					($user_uid > 0)
+
+					AND
+
+					(is_numeric($user_uid) == true)
+				)
 				{
 
 
@@ -579,6 +599,7 @@ if ($login->isUserLoggedIn() == true) {
 						menu_adm_warehouse			=		:umenu_adm_warehouse,
 						menu_adm_warehouse_loc		=		:umenu_adm_warehouse_loc,
 						menu_adm_users				=		:umenu_adm_users,
+						menu_adm_category			=		:umenu_adm_category,
 						menu_prod_search			=		:umenu_prod_search,
 						menu_location_search		=		:umenu_location_search,
 						menu_goodsin				=		:umenu_goodsin,
@@ -600,6 +621,7 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':umenu_adm_warehouse',			$adm_warehouses,		PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_adm_warehouse_loc',		$adm_wh_locations,		PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_adm_users',				$adm_users,				PDO::PARAM_INT);
+						$stmt->bindValue(':umenu_adm_category',				$adm_categories,		PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_prod_search',				$product_search,		PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_location_search',			$location_search,		PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_goodsin',					$goodsin,				PDO::PARAM_INT);

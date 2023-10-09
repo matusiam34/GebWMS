@@ -14,7 +14,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once('lib_functions.php');
+	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
 	if (is_it_enabled($_SESSION['menu_adm_category']))
@@ -177,7 +177,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105555', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105556', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -222,7 +222,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105557', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -265,7 +265,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105558', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -302,7 +302,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105559', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -340,22 +340,24 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105560', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
 
 
 
-		//	Add warehouse
-		function add_warehouse()
+
+		//	Update category A details
+		function update_category_a()
 		{
 
-			$.post('geb_ajax_warehouse.php', { 
+			$.post('geb_ajax_category.php', { 
 
-				action_code_js				:	2,
-				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
+				action_code_js		:	6,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
+				cat_name_js			:	get_Element_Value_By_ID('id_cata_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_cata_status')
 
 			},
 
@@ -368,50 +370,14 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
+
+					set_Element_Value_By_ID('id_cata_name',		'');
+					set_Element_Value_By_ID('id_cata_status',	0);
+					set_Element_Value_By_ID('id_hidden_cata',	0);
 					//	Refresh the list
-					get_all_warehouses();	// repopulate the table
+					$('#id_category_b_table > tbody').empty();
+					get_all_category_a();
 
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
-
-
-
-		//	Update warehouse details
-		function update_warehouse()
-		{
-
-			$.post('geb_ajax_warehouse.php', { 
-
-				action_code_js				:	3,
-				warehouse_uid_js			:	get_Element_Value_By_ID('id_hidden'),
-				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
-
-			},
-
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-					//	Refresh the list of warehouses!
-					get_all_warehouses();
 					$.alertable.info(obje.control, obje.msg).always(function() {	});
 
 				}
@@ -422,7 +388,54 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101558', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+						$.alertable.error('105561', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+					});
+
+		}
+
+
+
+
+		//	Update category B details
+		function update_category_b()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	7,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb'),
+				cat_name_js			:	get_Element_Value_By_ID('id_catb_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_catb_status')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
+					//	Refresh the list
+					get_all_category_b();
+
+					$.alertable.info(obje.control, obje.msg).always(function() {	});
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg).always(function() {	});
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105562', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
 					});
 
 		}
@@ -549,23 +562,40 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>
+						</div>';
 
+
+
+
+if (can_user_update($_SESSION['menu_adm_category']))
+{	
+
+	$layout_details_html	.=	'
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_cata();">' . $mylang['save'] . ' (A)</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_category_a();">' . $mylang['save'] . ' (A)</button>
 							</div>
-						</div>
+						</div>';
+}
 
+
+if (can_user_add($_SESSION['menu_adm_category']))
+{	
+
+	$layout_details_html	.=	'
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
 								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_a();">' . $mylang['add'] . ' (A)</button>
 							</div>
-						</div>
+						</div>';
 
+}
+
+
+$layout_details_html	.=	'
 
 						<input id="id_hidden_cata" class="input is-normal" type="hidden">
 
@@ -615,33 +645,42 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>
+						</div>';
 
+
+if (can_user_update($_SESSION['menu_adm_category']))
+{
+
+	$layout_details_html	.=	'
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_catb();">' . $mylang['save'] . ' (B)</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_category_b();">' . $mylang['save'] . ' (B)</button>
 							</div>
-						</div>
+						</div>';
+}
 
+
+if (can_user_add($_SESSION['menu_adm_category']))
+{
+
+	$layout_details_html	.=	'
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
 								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_b();">' . $mylang['add'] . ' (B)</button>
 							</div>
-						</div>
+						</div>';
+}
 
+$layout_details_html	.=	'
 						<input id="id_hidden_catb" class="input is-normal" type="hidden">
 
 					</div>
 
 
 						';
-
-
-
-
 
 
 

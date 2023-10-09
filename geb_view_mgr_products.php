@@ -14,7 +14,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once('lib_functions.php');
+	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
 	if (is_it_enabled($_SESSION['menu_mgr_products']))
@@ -102,12 +102,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
-
-
-
-
 		// Add product!
 		function add_product()
 		{
@@ -135,9 +129,7 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-
-					
-
+					$.alertable.info(obje.control, obje.msg);
 				}
 				else
 				{
@@ -146,7 +138,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('106555', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -185,7 +177,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('106556', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -226,7 +218,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101557', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('106557', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -270,7 +262,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('101558', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+						$.alertable.error('106558', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
 					});
 
 		}
@@ -382,7 +374,6 @@ if ($login->isUserLoggedIn() == true)
 		{
 			// Search for a product by name
 			$sql	.=	' prod_code = :iprod_code ';
-			
 		}
 
 
@@ -548,7 +539,13 @@ if ($login->isUserLoggedIn() == true)
 			$columns_html	.=	'</div>';
 
 
-			// Third column.. buttons?
+			$columns_html	.=	'<div class="column is-3">';
+			$columns_html	.=	'</div>';
+
+
+
+
+			// Fouth column.. buttons?
 			$columns_html	.=	'<div class="column is-3">';
 
 

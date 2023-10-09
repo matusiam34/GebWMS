@@ -3,17 +3,6 @@
 
 
 
-define("min_priv", 0);		// for compatibility so far...
-
-// Brand new stuff for ACL, 3 Oct 2022
-
-define("super_priv", 1);	// Supervisor
-define("manager_priv", 2);	// Manager
-define("admin_priv", 3);	// Administrator
-
-
-
-
 /*
 	sqlite_or_mariadb is a simple variable that changes from one database type to another.
 
@@ -24,17 +13,6 @@ define("admin_priv", 3);	// Administrator
 
 define("sqlite_or_mariadb", 0);	// set to sqlite for small installations !!
 
-/*
-	db_debug is a simple setting.
-	Either each DB connection will execute (1) :
-
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-	or NOT (0). Simple as that.
-
-*/
-
-define("db_debug", 1);	// enable debug ! Useful as it throws the error messages at the user which screenshot and send it to me
 
 /*	
 	Extra folder is needed to adjust the depth of the folder. For exaple :
@@ -57,12 +35,12 @@ $application_folder		=	"my";
 
 
 /*
+
 	db_name is a variable used in the entire application ! It is critical to get this right
 	as it does save the time to mess around with the path settings to the database !
-
 	When you move the database to a different place make sure to alter this path as well !! 
-*/
 
+*/
 
 //define("db_name", "/" . $application_folder . "/wdrive/db/auto.sqlite");
 //define("db_name", "/var/www/html/db/gebwms.db");

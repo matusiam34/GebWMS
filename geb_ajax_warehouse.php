@@ -50,7 +50,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		// load the supporting functions....
-		require_once('lib_functions.php');
+		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
 
@@ -211,15 +211,11 @@ if ($login->isUserLoggedIn() == true) {
 			if
 			(
 
-				(
-					is_it_enabled($_SESSION['menu_adm_warehouse'])
-				)
+				(is_it_enabled($_SESSION['menu_adm_warehouse']))
 
 				AND
 
-				(
-					can_user_add($_SESSION['menu_adm_warehouse'])
-				)
+				(can_user_add($_SESSION['menu_adm_warehouse']))
 
 			)
 			{

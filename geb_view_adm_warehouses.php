@@ -14,7 +14,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once('lib_functions.php');
+	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
 	if (is_it_enabled($_SESSION['menu_adm_warehouse']))

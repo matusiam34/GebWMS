@@ -13,10 +13,10 @@
 	1	:	Get B categories!
 	2	:	Get one category A entry data!
 	3	:	Get one Category B entry data!
-
 	4	:	Add Category A!
-
 	5	:	Add Category B!
+	6	:	Update Category A!
+	7	:	Update Category B!
 
 
 */
@@ -47,7 +47,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		// load the supporting functions....
-		require_once('lib_functions.php');
+		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
 
@@ -55,7 +55,7 @@ if ($login->isUserLoggedIn() == true) {
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
 
-		//	Get category A. The action code for this is 0
+		//	Get categories. The action code for this is 0
 		if
 		(
 			($action_code == 0)		//	Get all category A in HTML table form.
@@ -327,7 +327,7 @@ if ($login->isUserLoggedIn() == true) {
 					}
 					else
 					{
-						$message_id		=	101200;
+						$message_id		=	105200;
 						$message2op		=	$mylang['category_already_exists'];
 					}
 
@@ -336,7 +336,7 @@ if ($login->isUserLoggedIn() == true) {
 				else
 				{
 					//	Name is null = tell the user that they need to do better!
-					$message_id		=	101201;
+					$message_id		=	105201;
 					$message2op		=	$mylang['name_to_short'];
 				}
 
@@ -483,7 +483,7 @@ if ($login->isUserLoggedIn() == true) {
 						}
 						else
 						{
-							$message_id		=	101200;
+							$message_id		=	105202;
 							$message2op		=	$mylang['category_already_exists'];
 						}
 
@@ -492,7 +492,7 @@ if ($login->isUserLoggedIn() == true) {
 					else
 					{
 						// Category A UID is 0... No go!
-						$message_id		=	101201;
+						$message_id		=	105203;
 						$message2op		=	$mylang['select_category_first'];
 					}
 
@@ -501,7 +501,7 @@ if ($login->isUserLoggedIn() == true) {
 				else
 				{
 					//	Name is null = tell the user that they need to do better!
-					$message_id		=	101201;
+					$message_id		=	105204;
 					$message2op		=	$mylang['name_to_short'];
 				}
 
@@ -512,9 +512,19 @@ if ($login->isUserLoggedIn() == true) {
 		}	//	Action 5 end!
 
 
-		//	Update one warehouse!
 
-		else if ($action_code == 7)
+		//	Update category!
+
+		else if
+		(
+			($action_code == 6)		//	Update category A
+		
+			OR
+		
+			($action_code == 7)		//	Update category B
+		)
+
+
 		{
 
 			//	Only an Admin of this system can update a group!
@@ -530,21 +540,30 @@ if ($login->isUserLoggedIn() == true) {
 			)
 			{
 
-				$warehouse_uid			=	leave_numbers_only($_POST['warehouse_uid_js']);	// this should be a number
-				$warehouse_name			=	trim($_POST['warehouse_name_js']);	//	has to have a value
-				$warehouse_description	=	trim($_POST['warehouse_description_js']);	//	optional
-				$warehouse_status		=	leave_numbers_only($_POST['warehouse_status_js']);	// this should be a number and has to be a value!
+
+				$cat_uid			=	leave_numbers_only($_POST['cat_uid_js']);	// this should be a number and has to be a value!
+				$cat_name			=	trim($_POST['cat_name_js']);	//	has to have a value
+				$cat_status			=	leave_numbers_only($_POST['cat_status_js']);	// this should be a number and has to be a value!
 
 
-				if ($warehouse_uid >= 0)
+				if
+				(
+
+					($cat_uid > 0)
+
+					AND
+
+					(is_numeric($cat_uid) == true)
+
+				)
 				{
 
-					if (strlen($warehouse_name) >= 1)	//	I am allowing the name of the warehouse to be 1 character long! Maybe they have WH A,B and C
+					if (strlen($cat_name) >= 1)
 					{
 
 
 						//	Here check if the name already maybe exists. If so ==>> notify the user!
-						$match_uid	=	$warehouse_uid;
+						$found_match	=	0;
 
 						$sql	=	'
 
@@ -552,11 +571,11 @@ if ($login->isUserLoggedIn() == true) {
 
 							*
 
-							FROM  geb_warehouse
+							FROM  geb_category
 
 							WHERE
 
-							wh_code = :iwarehouse_name
+							cat_name = :scat_name
 
 						';
 
@@ -564,12 +583,24 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':iwarehouse_name',	$warehouse_name,	PDO::PARAM_STR);
+							$stmt->bindValue(':scat_name',		$cat_name,		PDO::PARAM_STR);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 							{
-								$match_uid	=	leave_numbers_only($row['wh_pkey']);
+
+								if
+								(
+									($row['cat_pkey'] <> $cat_uid)
+
+									AND
+
+									(strcmp(trim($row['cat_name']), $cat_name) === 0)
+								)
+								{
+									$found_match++;
+								}
+
 							}
 
 						}
@@ -580,7 +611,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-						if ($match_uid == $warehouse_uid)	//	hack	Maybe duplicates can be found in a more elegant way. DNC!
+						if (($found_match	== 0))	//	hack	Maybe duplicates can be found in a more elegant way. DNC!
 						{
 
 							$db->beginTransaction();
@@ -589,17 +620,16 @@ if ($login->isUserLoggedIn() == true) {
 
 									UPDATE
 
-									geb_warehouse
+									geb_category
 
 									SET
 
-									wh_code		=	:uwh_code,
-									wh_desc		=	:uwh_desc,
-									wh_disabled	=	:uwh_disabled
+									cat_name		=	:ucat_name,
+									cat_disabled	=	:ucat_disabled
 
 									WHERE
 
-									wh_pkey	 =	:uwh_pkey
+									cat_pkey	 =	:ucat_pkey
 
 							';
 
@@ -607,10 +637,9 @@ if ($login->isUserLoggedIn() == true) {
 							if ($stmt = $db->prepare($sql))
 							{
 
-								$stmt->bindValue(':uwh_code',			$warehouse_name,			PDO::PARAM_STR);
-								$stmt->bindValue(':uwh_desc',			$warehouse_description,		PDO::PARAM_STR);
-								$stmt->bindValue(':uwh_disabled',		$warehouse_status,			PDO::PARAM_INT);
-								$stmt->bindValue(':uwh_pkey',			$warehouse_uid,				PDO::PARAM_INT);
+								$stmt->bindValue(':ucat_name',			$cat_name,			PDO::PARAM_STR);
+								$stmt->bindValue(':ucat_disabled',		$cat_status,		PDO::PARAM_INT);
+								$stmt->bindValue(':ucat_pkey',			$cat_uid,			PDO::PARAM_INT);
 								$stmt->execute();
 								$db->commit();
 
@@ -622,22 +651,22 @@ if ($login->isUserLoggedIn() == true) {
 						}
 						else
 						{
-							$message_id		=	101202;
-							$message2op		=	$mylang['warehouse_already_exists'];
+							$message_id		=	105205;
+							$message2op		=	$mylang['category_already_exists'];
 						}
 
 
 					}
 					else
 					{
-						$message_id		=	101203;
+						$message_id		=	105206;
 						$message2op		=	$mylang['name_to_short'];
 					}
 
 				}
 				else
 				{
-					$message_id		=	101204;
+					$message_id		=	105207;
 					$message2op		=	$mylang['incorrect_uid'];
 				}
 
@@ -657,7 +686,7 @@ if ($login->isUserLoggedIn() == true) {
 	{
 		$db->rollBack();
 		$message2op		=	$e->getMessage();
-		$message_id		=	101666;
+		$message_id		=	105666;
 	}
 
 
@@ -683,13 +712,14 @@ if ($login->isUserLoggedIn() == true) {
 		case 5:	//	Add Category B!
 		print_message($message_id, $message2op);
 		break;
-
-
-		case 20:	//	Get all active warehouses!
-		print_message_data_payload($message_id, $message2op, $data_results);
+		case 6:	//	Update category A!
+		print_message($message_id, $message2op);
+		break;
+		case 7:	//	Update category B!
+		print_message($message_id, $message2op);
 		break;
 		default:
-		print_message(101945, 'X2X');
+		print_message(105945, 'X2X');
 	}
 
 

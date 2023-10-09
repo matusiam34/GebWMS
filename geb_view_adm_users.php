@@ -67,7 +67,7 @@ if ($login->isUserLoggedIn() == true)
 {    
 
 	// load the supporting functions....
-	require_once('lib_functions.php');
+	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
 	if (is_it_enabled($_SESSION['menu_adm_users']))
@@ -224,6 +224,8 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_adm_users',				obje.data.menu_adm_users);
 					set_Element_Value_By_ID('id_adm_warehouses',		obje.data.menu_adm_warehouse);
 					set_Element_Value_By_ID('id_adm_wh_locations',		obje.data.menu_adm_warehouse_loc);
+					set_Element_Value_By_ID('id_adm_categories',		obje.data.menu_adm_category);
+
 
 
 				}
@@ -305,7 +307,8 @@ if ($login->isUserLoggedIn() == true)
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
 				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
-				user_uid_js				:	get_Element_Value_By_ID('id_hidden'),
+				adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories'),
+				user_uid_js				:	get_Element_Value_By_ID('id_hidden')
 
 
 			},
@@ -360,7 +363,8 @@ if ($login->isUserLoggedIn() == true)
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
-				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations')
+				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
+				adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories')
 
 
 			},
@@ -376,6 +380,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 					//	Some info to let the user know that changes have been applied?
 					get_all_users();	// repopulate the table
+					$.alertable.info(obje.control, obje.msg);
 
 				}
 				else
@@ -627,7 +632,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Product Search:</p>
+	<p class="help">' . $mylang['product_search'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -645,7 +650,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Location Search:</p>
+	<p class="help">' . $mylang['location_search'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -680,7 +685,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">GOODS IN:</p>
+	<p class="help">' . $mylang['goodsin'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -699,7 +704,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Product2Location:</p>
+	<p class="help">' . $mylang['prod2location'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -716,7 +721,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Recent Activity:</p>
+	<p class="help">' . $mylang['recent_activity'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -747,7 +752,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Products:</p>
+	<p class="help">' . $mylang['my_account'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -782,7 +787,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">My Account:</p>
+	<p class="help">' . $mylang['my_account'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -801,7 +806,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Users:</p>
+	<p class="help">' . $mylang['users'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -822,7 +827,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Warehouses:</p>
+	<p class="help">' . $mylang['warehouses'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -843,7 +848,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">Warehouse Locations:</p>
+	<p class="help">' . $mylang['warehouse_locations'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
@@ -859,7 +864,30 @@ echo	$user_details_html;
 		</div>
 	  </div>
 	</div>
-</div>';
+</div>
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['categories'] . ':</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_admin . '" id="id_adm_categories">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+				<option value="57344">EA</option>
+				<option value="61440">EAU</option>
+				<option value="53248">EU</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+';
 
 
 

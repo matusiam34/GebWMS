@@ -46,6 +46,7 @@ $mylang = array(
 'logged_in_as'				=>	'Zalogowany jako',
 'main_dashboard'			=>	'Główny Pulpit',
 'product_search'			=>	'Wyszukiwarka Produktów',
+'location_search'			=>	'Wyszukiwarka Lokalizacji',
 'description'				=>	'Opis',
 'status'					=>	'Status',
 'physical_qty'				=>	'Fizyczna ilość',

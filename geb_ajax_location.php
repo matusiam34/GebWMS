@@ -41,7 +41,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		// load the supporting functions....
-		require_once('lib_functions.php');
+		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
 
@@ -547,19 +547,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-/*
-									//	if the warehouse code matches and location name matches = the operator is trying to add the same
-									//	location name to the same warehouse. It is a NO NO!
-									if (($row['loc_wh_pkey'] == $warehouse) AND ($row['loc_code'] == $location))
-									{
-										$found_match	=	1;	//	Trying to add identical location name in the same warehouse! Not cool!
-									}
-									else if  (($row['loc_barcode'] == $barcode))
-									{
-										$found_match	=	2;	//	The barcode you entered is already allocated to a location!
-									}
-	*/								
-									//$found_match	=	2;
 								}
 
 
