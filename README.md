@@ -1,18 +1,17 @@
 # GebWMS
+GebWMS is envisioned as a compact yet feature-rich warehouse and inventory management system tailored for smaller-scale operations. Notably, GebWMS distinguishes itself by being a self-contained solution, devoid of cloud-based dependencies.
 
-GebWMS aims to be a tiny and feature rich warehouse / inventory management system for smaller operations, but most importantly GebWMS is a system that does not live in the clouds. FYI: Geb is an Egyptian God of Earth.
+The primary objectives of this project encompass:
 
-Here are the main goals of the project:
+Development from the ground up as a self-hosted solution, avoiding reliance on cloud infrastructure.
+Hardware agnosticism, meaning compatibility with any device capable of running a contemporary web browser.
+Freedom from vendor lock-ins or licensing fees, ensuring perpetual free usage.
+Absence of constraints on the number of locations, daily transactions, SKUs, and similar parameters.
 
-- build from ground up to be a self-hosted solution aka not cloud based,
-- be hardware agnostic which basically means that as long as the device can run a modern-ish web browser you are good to go,
-- no vendor lock-ins or licenses required,
-- no limits on the amount of locations, daily transactions, SKUs etc
+This project is open-source and is likely to soon be available in the form of a downloadable virtual machine, simplifying deployment and obviating the complexities typically associated with implementation.
 
-GebWMS will never compete with the established big boy enterprise systems that are available on the market today. The goal is to provide a solution for businesses that need something entry level (that can be installed within the business = none of that cloud stuff) and do not have £50k+ to casually spend on a tool to manage their inventory.
+It is essential to emphasize that GebWMS does not aspire to compete with established enterprise systems prevalent in the current market. Instead, its mission is to cater to businesses seeking an entry-level inventory management solution that can be deployed within their premises, without the reliance on cloud-based infrastructure, and without the need for substantial financial investment (e.g., £50k+).
 
-I am not using any MVC framework here as I am not sure if it is worth adding such a massive overhead for a tiny system like this. Unless you have some kind of lightweight recommendation. For my CSS needs I am using Bulma since it is easy to use and tiny.
+More information can be found here:
 
-I keep a register of all the changes and added features here (including screen grabs for your amusement):
-
-http://db4you.co.uk/gebwms
+https://gebsystems.com/?page_id=65
