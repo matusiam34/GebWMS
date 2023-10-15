@@ -8,14 +8,14 @@
 /*		Main color of the GebWMS?!		*/
 
 .gebwms_class {
-	background-color: #8D6E63; /*#795548;*/
+	background-color: #8D6E63;
 	color: white;
 }
 
 
 /*	The standard brown. Need to clean up this color code mess some time soon			*/
 .general_class {
-	background-color: #8D6E63; /*#795548;*/
+	background-color: #8D6E63;
 	color: white;
 }
 
@@ -34,14 +34,14 @@
 
 /*	red		*/
 .admin_class {
-	background-color: #ef5350; /*#f44336;*/
+	background-color: #ef5350;
 	color: white;
 }
 
 /*	blue	*/
 .manager_class {
-	background-color: #42A5F5; /*#2196F3;*/
-	color: white !important;
+	background-color: #42A5F5;
+	color: white;
 }
 
 /*  brown   */
@@ -49,8 +49,6 @@
 	background-color: #8D6E63;
 	color: white;
 }
-
-
 
 
 /*  Alert dialog box classes                  */
@@ -421,4 +419,30 @@
 		background-size: 24px;
      }
 
+
+
+   .iconUser
+    {
+		background-image: url(/images/icon_user.png);
+		background-size: 24px;
+		background-repeat: no-repeat;
+        background-position: center;
+	}
+
+
+   .iconLock
+    {
+		background-image: url(/images/icon_lock.png);
+		background-size: 24px;
+		background-repeat: no-repeat;
+        background-position: center;
+	}
+
+    .iconLogin
+    {
+		background-image: url(/images/icon_login.png);
+		background-size: 24px;
+		background-repeat: no-repeat;
+        background-position: center;
+	}
 

@@ -4,6 +4,10 @@ $mylang = array(
 
 'server_error'				=>	'Server error! Contact GebWMS system administrator!',
 'success'					=>	'Success!',
+'none'						=>	'None',
+'min_qty'					=>	'Min Qty',
+'max_qty'					=>	'Max Qty',
+
 
 'each'						=>	'EACH(s)',
 'case'						=>	'CASE(s)',
@@ -30,6 +34,7 @@ $mylang = array(
 'location_already_exists'	=>	'Location already exists in this warehouse!',
 'category_already_exists'	=>	'This category already exists!',
 'select_category_first'		=>	'Select category A first!',
+'product_already_exists'	=>	'Product already exists!',
 
 
 
@@ -126,7 +131,8 @@ $mylang = array(
 'permissions_error'			=>	'Permissions error!',
 'warehouse_already_exists'	=>	'Warehouse already exists!',
 'user_already_exists'		=>	'User already exists!',
-'name_to_short'				=>	'Name to short!',	//	used when adding a warehouse and the name does not meet minimal character lenght, product codes etc
+'name_too_short'			=>	'Name too short!',	//	used when adding a warehouse and the name does not meet minimal character lenght, product codes etc
+'barcode_too_short'			=>	'Barcode too short!',
 'incorrect_uid'				=>	'Incorrect UID!',
 
 

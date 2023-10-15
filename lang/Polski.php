@@ -4,6 +4,10 @@ $mylang = array(
 
 'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'success'					=>	'Powiodło się!',
+'none'						=>	'Brak',
+'min_qty'					=>	'Minimalna ilość',
+'max_qty'					=>	'Maksymalna ilość',
+
 
 'each'						=>	'JEDNOSTEK',
 'case'						=>	'SKRZYŃ',
@@ -30,6 +34,7 @@ $mylang = array(
 'location_already_exists'	=>	'Lokalizacja już istnieje w tym magazynie!',
 'category_already_exists'	=>	'Ta kategoria już istnieje!',
 'select_category_first'		=>	'Najpierw wybierz kategorię A!',
+'product_already_exists'	=>	'Ten product już istnieje!',
 
 
 
@@ -115,6 +120,7 @@ $mylang = array(
 'cancel'					=>	'Anuluj',
 'save'						=>	'Zapisz',
 
+
 //	Error Messages and Messages
 'a_OK'						=>	'Wszystko OK!',
 'could_not_get_data'		=>	'Nie można uzyskać danych!',
@@ -123,7 +129,8 @@ $mylang = array(
 'permissions_error'			=>	'Błąd uprawnień!',
 'warehouse_already_exists'	=>	'Magazyn już istnieje!',
 'user_already_exists'		=>	'Użytkownik już istnieje!',
-'name_to_short'				=>	'Nazwa za krótka!',	//	uzywana w wielu miejscach gdzie np: nazwa magazynu jest pusta lub nazwa produktu za krotka itp
+'name_too_short'			=>	'Nazwa za krótka!',	//	uzywana w wielu miejscach gdzie np: nazwa magazynu jest pusta lub nazwa produktu za krotka itp
+'barcode_too_short'			=>	'Kod kreskowy za krótki!',
 'incorrect_uid'				=>	'Niepoprawny UID!',
 
 

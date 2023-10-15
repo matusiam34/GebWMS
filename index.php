@@ -222,8 +222,8 @@ if ($login->isUserLoggedIn() == true)
 									<a class="button is-normal is-fullwidth manager_class is-bold" onclick="' . $products_link . '">' . $mylang['products'] . '</a>
 								</div>
 							</div>';
-				}
 
+				}
 
 
 			echo '</div>';

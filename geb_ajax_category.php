@@ -9,8 +9,14 @@
 
  
 	//	Action code breakdown
-	0	:	Get A categories!
-	1	:	Get B categories!
+
+	//	Special ones as I can specify if they are HTML or just an array by providing an additional variable called action_format
+	//	Format	:	0	(HTML) Default option!
+	//	Format	:	1	(Array)
+	0	:	Get A categories!	+	action_format = 0: HTML; 1:  Array
+	1	:	Get B categories!	+	action_format = 0: HTML; 1:  Array
+
+
 	2	:	Get one category A entry data!
 	3	:	Get one Category B entry data!
 	4	:	Add Category A!
@@ -52,17 +58,39 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
+
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
+		$action_format		=	0;	//	by default provide HTML for actions that have the ability to provide different formats.
+		$action_disabled	=	1;	//	by default provide EVERYTHING!
+
+
+		//	if it is set grab it!
+		if (isset($_POST["action_format_js"]))
+		{
+			$action_format		=	leave_numbers_only($_POST['action_format_js']);	// this should be a number
+		}
+
+		//	if it is set grab it!
+		if (isset($_POST["action_disabled_js"]))
+		{
+			$action_disabled		=	leave_numbers_only($_POST['action_disabled_js']);	// this should be a number
+		}
+
+
+
+
+
+
 
 
 		//	Get categories. The action code for this is 0
 		if
 		(
-			($action_code == 0)		//	Get all category A in HTML table form.
+			($action_code == 0)		//	Get all category A in HTML table form (action_format by default is 0)
 		
 			OR
 		
-			($action_code == 1)		//	Get all category B in HTML table form.
+			($action_code == 1)		//	Get all category B in HTML table form (action_format by default is 0)
 		)
 		{
 
@@ -89,8 +117,15 @@ if ($login->isUserLoggedIn() == true) {
 				}
 				else if ($action_code == 1)
 				{
-					$cata_uid	=	leave_numbers_only($_POST['cata_uid_js']);				// this should be a number
+					$cata_uid	=	leave_numbers_only($_POST['cata_uid_js']);				//	this should be a number
 					$sql		.=	'	cat_a = 0	AND		cat_b	=	:scata_uid	';		//	category B
+				}
+
+
+				//	Get all categories that are active. Otherwise get EVERYTHING!
+				if ($action_disabled == 0)
+				{
+					$sql	.=	'	AND cat_disabled = 0	';
 				}
 
 
@@ -115,14 +150,9 @@ if ($login->isUserLoggedIn() == true) {
 						$data_results[]	=	$row;
 					}
 
-					if
-					(
-						($action_code == 0)		//	Get all category A in HTML table form.
-					
-						OR
-					
-						($action_code == 1)		//	Get all category B in HTML table form.
-					)
+
+					//	Only generate the HTML output when action_format is equal to 0!
+					if ($action_format == 0)
 					{
 
 						foreach ($data_results as $item)
@@ -141,6 +171,7 @@ if ($login->isUserLoggedIn() == true) {
 
 					}
 
+
 					$message_id		=	0;	//	all went well
 
 				}
@@ -150,7 +181,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		//	Get details of category!!
+		//	Get details of a single category!!
 		else if 
 		(
 			($action_code == 2)	//	Get category A details
@@ -196,7 +227,6 @@ if ($login->isUserLoggedIn() == true) {
 					// drop it into the final array...
 					$data_results	=	$row;
 				}
-					$message2op		=	$cat_uid;
 
 				$message_id		=	0;	//	all went well
 			}
@@ -337,7 +367,7 @@ if ($login->isUserLoggedIn() == true) {
 				{
 					//	Name is null = tell the user that they need to do better!
 					$message_id		=	105201;
-					$message2op		=	$mylang['name_to_short'];
+					$message2op		=	$mylang['name_too_short'];
 				}
 
 
@@ -502,7 +532,7 @@ if ($login->isUserLoggedIn() == true) {
 				{
 					//	Name is null = tell the user that they need to do better!
 					$message_id		=	105204;
-					$message2op		=	$mylang['name_to_short'];
+					$message2op		=	$mylang['name_too_short'];
 				}
 
 
@@ -660,7 +690,7 @@ if ($login->isUserLoggedIn() == true) {
 					else
 					{
 						$message_id		=	105206;
-						$message2op		=	$mylang['name_to_short'];
+						$message2op		=	$mylang['name_too_short'];
 					}
 
 				}
@@ -695,11 +725,29 @@ if ($login->isUserLoggedIn() == true) {
 
 	switch ($action_code) {
 		case 0:	//	Grab all category A
-		print_message_html_payload($message_id, $message2op, $html_results);
+			if ($action_format == 0)		//	HTML
+			{
+			print_message_html_payload($message_id, $message2op, $html_results);
+			}
+			else
+				if ($action_format == 1)	//	Array
+				{
+					print_message_data_payload($message_id, $message2op, $data_results);
+				}
 		break;
+
 		case 1:	//	Grab all category B that corresponds to category A
-		print_message_html_payload($message_id, $message2op, $html_results);
+			if ($action_format == 0)		//	HTML
+			{
+			print_message_html_payload($message_id, $message2op, $html_results);
+			}
+			else
+				if ($action_format == 1)	//	Array
+				{
+					print_message_data_payload($message_id, $message2op, $data_results);
+				}
 		break;
+
 		case 2:	//	Get one Category A entry data
 		print_message_data_payload($message_id, $message2op, $data_results);
 		break;

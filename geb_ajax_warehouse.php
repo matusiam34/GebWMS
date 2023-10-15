@@ -326,7 +326,7 @@ if ($login->isUserLoggedIn() == true) {
 				{
 					//	Name is null = tell the user that they need to do better!
 					$message_id		=	101201;
-					$message2op		=	$mylang['name_to_short'];
+					$message2op		=	$mylang['name_too_short'];
 				}
 
 
@@ -455,7 +455,7 @@ if ($login->isUserLoggedIn() == true) {
 					else
 					{
 						$message_id		=	101203;
-						$message2op		=	$mylang['name_to_short'];
+						$message2op		=	$mylang['name_too_short'];
 					}
 
 				}

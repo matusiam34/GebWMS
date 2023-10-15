@@ -54,8 +54,7 @@
 
 				<div class="column is-5-tablet is-4-desktop is-3-widescreen">
 
-					<form method="post" action="index.php" name="loginform" class="box">
-
+					<form method="post" action="index.php" name="loginform" class="box has-background-light">
 
 						<div class="container">
 							<figure class="image center">
@@ -68,23 +67,29 @@
 						<div class="blank_space_24px"></div>
 
 
-						<div class="field">
-						  <label for="" class="label">Username</label>
-						  <div class="control">
-							<input id="login_input_username" type="text" placeholder="e.g. mateusz" name="user_name" class="input" required>
-						  </div>
+						<div class="field has-addons">
+							<p class="control is-fullwidth">
+								<div class="iconUser" style="width:50px;"></div>
+								<input id="login_input_username" type="text" placeholder="mateusz" name="user_name" class="input" required>
+							</p>
 						</div>
 
-						<div class="field">
-						  <label for="" class="label">Password</label>
-						  <div class="control">
-							<input id="login_input_password" type="password" placeholder="*******" name="user_password" class="input" required>
-						  </div>
+						<div class="blank_space_10px"></div>
+
+
+						<div class="field has-addons">
+							<p class="control is-fullwidth">
+								<div class="iconLock" style="width:50px;"></div>
+								<input id="login_input_password" type="password" placeholder="*******" name="user_password" class="input" required>
+							</p>
 						</div>
+
+						<div class="blank_space_10px"></div>
+
 
 						<div class="has-text-centered">
 							<div class="field">
-								<input type="submit" class="button gebwms_class is-centered"  name="login" value="Login" />
+								<input type="submit" class="button is-centered iconLogin gebwms_class is-fullwidth" name="login" value="" />
 							</div>
 						</div>
 

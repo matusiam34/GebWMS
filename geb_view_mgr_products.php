@@ -79,19 +79,9 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-			// Triggers a function every time the row in the table departmentList is clicked !
-			$('#warehouse_table').on('click', 'tr', function()
-			{
-					// When user clicks on anything it gets selected !
-					$('.highlighted').removeClass('highlighted');
-					$(this).addClass('highlighted');
-
-					// 1 = ID
-					$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
-
-					// Get all the details from the table...
-					get_one_warehouse_data();
-
+			// When the operator selects a new category A = fetch the related category B entries!
+			$('#id_category_a').change(function() {
+				get_all_category_b();
 			});
 
 
@@ -100,22 +90,86 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		// Get category B based on category A
+		function get_all_category_b()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	1,
+				action_format_js	:	1,
+				action_disabled_js	:	0,
+				cata_uid_js			:	get_Element_Value_By_ID('id_category_a')
+
+			},
+
+			function(output)
+			{
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
 
 
-		// Add product!
+					// jQuery - remove all entries
+					$('#id_category_b').empty();
+
+					// The first entry
+					var opt = document.createElement('Option');
+					document.getElementById('id_category_b').options.add(opt);
+					opt.value = 0;
+					opt.text = '<?php	echo $mylang['none'];	?>';
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							var opt = document.createElement('Option');
+							document.getElementById('id_category_b').options.add(opt);
+							opt.value = obje.data[i].cat_pkey;
+							opt.text = obje.data[i].cat_name;
+						}
+
+					}
+
+				}
+				else
+				{
+					alert(obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+		// Add product to the system
 		function add_product()
 		{
 
 			$.post('geb_ajax_product.php', { 
 
+				action_code_js			:	2,
+
 				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
 				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
-				product_category_js		:	get_Element_Value_By_ID('id_product_category'),
+				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
+				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
 				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
 				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
 				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
 				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
-				pall_qty_js				:	get_Element_Value_By_ID('id_pall_qty'),
+				min_qty_js				:	get_Element_Value_By_ID('id_min_qty'),
+				max_qty_js				:	get_Element_Value_By_ID('id_max_qty'),
 				disabled_js				:	get_Element_Value_By_ID('id_disabled')
 
 			},
@@ -145,56 +199,31 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_one_warehouse_data()
+
+
+
+
+
+
+		//	Update product details
+		function update_product()
 		{
 
+			$.post('geb_ajax_product.php', { 
 
-			$.post('geb_ajax_warehouse.php', { 
-
-				action_code_js			:	1,
-				warehouse_uid_js		:	get_Element_Value_By_ID('id_hidden')
-
-			},
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-
-					set_Element_Value_By_ID('id_warehouse_name',			obje.data.wh_code);
-					set_Element_Value_By_ID('id_warehouse_description',		obje.data.wh_desc);
-					set_Element_Value_By_ID('id_warehouse_status',			obje.data.wh_disabled);
-
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('106556', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
-
-
-		//	Add warehouse
-		function add_warehouse()
-		{
-
-			$.post('geb_ajax_warehouse.php', { 
-
-				action_code_js				:	2,
-				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
-				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
+				action_code_js			:	3,
+				product_uid_js			:	get_Element_Value_By_ID('id_hidden'),
+				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
+				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
+				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
+				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
+				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
+				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
+				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
+				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
+				min_qty_js				:	get_Element_Value_By_ID('id_min_qty'),
+				max_qty_js				:	get_Element_Value_By_ID('id_max_qty'),
+				disabled_js				:	get_Element_Value_By_ID('id_disabled')
 
 			},
 
@@ -207,51 +236,6 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					//	Refresh the list
-					get_all_warehouses();	// repopulate the table
-
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('106557', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
-
-
-
-		//	Update warehouse details
-		function update_warehouse()
-		{
-
-			$.post('geb_ajax_warehouse.php', { 
-
-				action_code_js				:	3,
-				warehouse_uid_js			:	get_Element_Value_By_ID('id_hidden'),
-				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
-				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
-				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
-
-			},
-
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-					//	Refresh the list of warehouses!
-					get_all_warehouses();
 					$.alertable.info(obje.control, obje.msg).always(function() {	});
 
 				}
@@ -341,6 +325,10 @@ if ($login->isUserLoggedIn() == true)
 	try
 	{
 
+
+		//	NOTE:	query all of the categories and store them in an array. Populate the corresponding entries from there! JD!
+
+
 		//	Start with no product ID.
 		$product_id		=	0;
 
@@ -385,12 +373,17 @@ if ($login->isUserLoggedIn() == true)
 		$prod_pkey			=	0;
 		$prod_code			=	"";
 		$prod_desc			=	"";
-		$prod_category		=	"";
+		$prod_category_a	=	0;
+		$prod_category_b	=	0;
 		$prod_each_barcode	=	"";
 		$prod_each_weight	=	"";
 		$prod_case_barcode	=	"";
 		$prod_case_qty		=	0;
+		$prod_min_qty		=	0;
+		$prod_max_qty		=	0;
 		$prod_disabled		=	0;	// active!
+
+		$category_arr		=	array();	//	store all categories here!
 
 
 		if ($stmt = $db->prepare($sql))
@@ -417,14 +410,109 @@ if ($login->isUserLoggedIn() == true)
 				$prod_pkey				=	leave_numbers_only($row['prod_pkey']);
 				$prod_code				=	trim($row['prod_code']);
 				$prod_desc				=	trim($row['prod_desc']);
-				$prod_category			=	trim($row['prod_category']);
+				$prod_category_a		=	leave_numbers_only($row['prod_category_a']);
+				$prod_category_b		=	leave_numbers_only($row['prod_category_b']);
 				$prod_each_barcode		=	trim($row['prod_each_barcode']);	// barcodes could contain letters?!?!?!
 				$prod_each_weight		=	trim($row['prod_each_weight']);
 				$prod_case_barcode		=	trim($row['prod_case_barcode']);	// barcodes could contain letters?!?!?!
 				$prod_case_qty			=	leave_numbers_only($row['prod_case_qty']);
+				$prod_min_qty			=	leave_numbers_only($row['prod_min_qty']);
+				$prod_max_qty			=	leave_numbers_only($row['prod_max_qty']);
 				$prod_disabled			=	leave_numbers_only($row['prod_disabled']);
 
 			}
+
+
+
+
+			//	Here grab the live categories into one array!
+			$sql	=	'
+
+
+					SELECT
+
+					cat_pkey,
+					cat_name,
+					cat_a,
+					cat_b
+
+					FROM
+
+					geb_category
+
+					WHERE
+
+					cat_disabled = 0
+
+			';
+
+
+			if ($stmt = $db->prepare($sql))
+			{
+
+				$stmt->execute();
+
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					// drop it into the final array...
+					$category_arr[]	=	$row;
+				}
+
+			}
+
+
+
+			//	Generate Category A HTML for the selectbox.
+			$category_a_html	=	'<option value="0"';
+			if ($prod_category_a == 0)	{	$category_a_html	.=	' selected';	}
+			$category_a_html	.=	'>' . $mylang['none'] . '</option>';
+
+
+			foreach ($category_arr as $category_item)
+			{
+				//	For category A only deal with ones that have 1 in the cat_a comlumn since that indicates that they are category A (Level 1 etc)
+				if ($category_item['cat_a'] == 1)
+				{
+					//	Figure out if any of the items here are the category the product has = if so highlight it!
+					$category_a_html	.=	'<option value="' . leave_numbers_only($category_item['cat_pkey']) . '"';
+					if ($prod_category_a == leave_numbers_only($category_item['cat_pkey']))	{	$category_a_html	.=	' selected';	}
+					$category_a_html	.=	'>' . $category_item['cat_name'] . '</option>';
+				}
+			}
+
+
+
+
+			//	Generate Category B HTML for the selectbox based on the Category A... if that exists for a particular product.
+			$category_b_html	=	'<option value="0"';
+			if ($prod_category_b == 0)	{	$category_b_html	.=	' selected';	}
+			$category_b_html	.=	'>' . $mylang['none'] . '</option>';
+
+
+
+			foreach ($category_arr as $category_item)
+			{
+	
+				//	Grab entries that are cat_b so they have the cat_a column equal to 0 + cat_b equals to the cat_pkey of the category A
+				if
+				(
+
+					($category_item['cat_a'] == 0)
+
+					AND
+
+					($category_item['cat_b'] == $prod_category_a)
+
+				)
+				{
+					//	Figure out if any of the items here are the category the product has = if so highlight it!
+					$category_b_html	.=	'<option value="' . leave_numbers_only($category_item['cat_pkey']) . '"';
+					if ($prod_category_b == leave_numbers_only($category_item['cat_pkey']))	{	$category_b_html	.=	' selected';	}
+					$category_b_html	.=	'>' . $category_item['cat_name'] . '</option>';
+				}
+			}
+
+
 
 
 
@@ -455,6 +543,7 @@ if ($login->isUserLoggedIn() == true)
 </div>
 
 
+
 <div class="field" style="'. $box_size_str .'">
 	<p class="help">' . $mylang['description'] . ':</p>
 	<div class="control">
@@ -463,26 +552,33 @@ if ($login->isUserLoggedIn() == true)
 </div>
 
 
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['category'] . ':</p>
-	<div class="control">
-		<input id="id_product_category" class="input is-normal" type="text" placeholder="GARDENWARE" value="'. $prod_category. '" name="id_product_category">
-	</div>
-</div>
 
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['status'] . ':</p>
+<div class="field" style="' . $box_size_str . '">
+	<p class="help">' .	$mylang['category'] . ' (A)</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-fullwidth">
-			<select id="id_disabled" name="id_disabled">' . $status_html . '
+			<select id="id_category_a">' . $category_a_html . '
 			</select>
 		</div>
 	  </div>
 	</div>
 </div>
+
+
+
+<div class="field" style="' . $box_size_str . '">
+	<p class="help">' .	$mylang['category'] . ' (B)</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_category_b">' . $category_b_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
 
 ';
 
@@ -540,6 +636,53 @@ if ($login->isUserLoggedIn() == true)
 
 
 			$columns_html	.=	'<div class="column is-3">';
+
+
+			$columns_html	.=	'
+
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['min_qty'] . ':</p>
+	<div class="control">
+		<input id="id_min_qty" class="input is-normal" type="text" placeholder="20" value="'. $prod_min_qty . '" name="id_min_qty">
+	</div>
+</div>
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['max_qty'] . ':</p>
+	<div class="control">
+		<input id="id_max_qty" class="input is-normal" type="text" placeholder="100" value="'. $prod_max_qty . '" name="id_max_qty">
+	</div>
+</div>
+
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['status'] . ':</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_disabled" name="id_disabled">' . $status_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+';
+
+
+
+
+
+
+
 			$columns_html	.=	'</div>';
 
 
@@ -561,7 +704,7 @@ if (can_user_add($_SESSION['menu_mgr_products']))
 	<div class="field" style="'. $box_size_str .'">
 		<p class="help">&nbsp;</p>
 		<div class="control">
-			<button class="button manager_class is-fullwidth"  onclick="add_item();">' . $mylang['add'] . '</button>
+			<button class="button manager_class is-fullwidth"  onclick="add_product();">' . $mylang['add'] . '</button>
 		</div>
 	</div>';
 }
@@ -574,7 +717,7 @@ if (can_user_update($_SESSION['menu_mgr_products']))
 	<div class="field" style="'. $box_size_str .'">
 		<p class="help">&nbsp;</p>
 		<div class="control">
-			<button class="button manager_class is-fullwidth"  onclick="update_item();">' . $mylang['update'] . '</button>
+			<button class="button manager_class is-fullwidth"  onclick="update_product();">' . $mylang['update'] . '</button>
 		</div>
 	</div>';
 }
@@ -587,7 +730,7 @@ $details_html	.=	'
 <div class="field" style="'. $box_size_str .'">
 	<p class="help">&nbsp;</p>
 	<div class="control">
-		<input id="id_hidden" class="input is-normal" type="text" value="' . $prod_pkey . '">
+		<input id="id_hidden" class="input is-normal" type="hidden" value="' . $prod_pkey . '">
 	</div>
 </div>';
 
