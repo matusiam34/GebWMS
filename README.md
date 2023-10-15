@@ -7,4 +7,4 @@ It is essential to emphasize that GebWMS does not aspire to compete with establi
 
 More information can be found here:
 
-https://gebsystems.com/?page_id=65
+https://gebsystems.com/gebwms
