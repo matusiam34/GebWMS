@@ -371,6 +371,8 @@ class Login
 
 				//	Language that the user has set! Default is English... however there will be few available to select... later on...
 				$_SESSION['user_language']					=	$result_row->user_language;
+				//	Warehouse that the user can operate in. Can be all!
+				$_SESSION['user_warehouse']					=	$result_row->user_warehouse;
 
 
 

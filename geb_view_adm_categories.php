@@ -82,7 +82,14 @@ if ($login->isUserLoggedIn() == true)
 
 					set_Element_Value_By_ID('id_catb_name',		'');
 					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
 
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+
+					//	Empty Category C table
+					$('#id_category_c_table > tbody').empty();
 					// Get all the details about the category and populate it to the second table!
 					get_one_category_a_data();
 					get_all_category_b();
@@ -102,8 +109,24 @@ if ($login->isUserLoggedIn() == true)
 
 					// Get all the details about the category!
 					get_one_category_b_data();
-
+					get_all_category_c();
 			});
+
+
+			// Triggers a function every time the row in the table id_category_b_table is clicked !
+			$('#id_category_c_table').on('click', 'tr', function()
+			{
+					// When user clicks on anything it gets selected !
+					$('.highlightedC').removeClass('highlightedC');
+					$(this).addClass('highlightedC');
+
+					// 1 = ID
+					$('#id_hidden_catc').val($(this).find('td:nth-child(1)').text()); 
+
+					// Get all the details about the category!
+					get_one_category_c_data();
+			});
+
 
 
 
@@ -123,7 +146,6 @@ if ($login->isUserLoggedIn() == true)
 
 			function(output)
 			{
-
 				// Parse the json  !!
 				var obje = jQuery.parseJSON(output);
 
@@ -154,7 +176,7 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	1,
-				cata_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
 
 			},
 
@@ -183,6 +205,159 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
+		function get_all_category_c()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	2,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
+
+			},
+
+			function(output)
+			{
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					$('#id_category_c_table > tbody').empty();
+					$('#id_category_c_table > tbody').append(obje.html);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105557', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+
+
+
+		function get_one_category_a_data()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	5,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
+
+			},
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_cata_name',		obje.data.cat_a_name);
+					set_Element_Value_By_ID('id_cata_status',	obje.data.cat_a_disabled);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105558', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+		function get_one_category_b_data()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	6,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
+
+			},
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catb_name',		obje.data.cat_b_name);
+					set_Element_Value_By_ID('id_catb_status',	obje.data.cat_b_disabled);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105559', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+
+		function get_one_category_c_data()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	7,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc')
+
+			},
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catc_name',		obje.data.cat_c_name);
+					set_Element_Value_By_ID('id_catc_status',	obje.data.cat_c_disabled);
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105560', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
 
 		//	Add category A
 		function add_category_a()
@@ -190,7 +365,7 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js		:	4,
+				action_code_js		:	10,
 				cata_name_js		:	get_Element_Value_By_ID('id_cata_name'),
 				cata_status_js		:	get_Element_Value_By_ID('id_cata_status')
 
@@ -210,8 +385,17 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_cata_status',	0);
 					set_Element_Value_By_ID('id_hidden_cata',	0);
 
-					//	Refresh the list
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
+
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+
+					//	Empty list B and C
 					$('#id_category_b_table > tbody').empty();
+					$('#id_category_c_table > tbody').empty();
 					get_all_category_a();
 
 				}
@@ -222,7 +406,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105557', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105561', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -235,10 +419,10 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js		:	5,
-				cata_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
-				catb_name_js		:	get_Element_Value_By_ID('id_catb_name'),
-				catb_status_js		:	get_Element_Value_By_ID('id_catb_status')
+				action_code_js			:	11,
+				cat_master_uid_js		:	get_Element_Value_By_ID('id_hidden_cata'),
+				cat_name_js				:	get_Element_Value_By_ID('id_catb_name'),
+				cat_status_js			:	get_Element_Value_By_ID('id_catb_status')
 
 			},
 
@@ -254,6 +438,13 @@ if ($login->isUserLoggedIn() == true)
 
 					set_Element_Value_By_ID('id_catb_name',		'');
 					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
+
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+
+					$('#id_category_c_table > tbody').empty();
 					//	Refresh the list
 					get_all_category_b();
 
@@ -265,22 +456,27 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105558', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105562', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
 
 
 
-		function get_one_category_a_data()
+
+		//	Add category C
+		function add_category_c()
 		{
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js		:	2,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
+				action_code_js			:	12,
+				cat_master_uid_js		:	get_Element_Value_By_ID('id_hidden_catb'),
+				cat_name_js				:	get_Element_Value_By_ID('id_catc_name'),
+				cat_status_js			:	get_Element_Value_By_ID('id_catc_status')
 
 			},
+
 			function(output)
 			{
 
@@ -291,8 +487,12 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 
-					set_Element_Value_By_ID('id_cata_name',		obje.data.cat_name);
-					set_Element_Value_By_ID('id_cata_status',	obje.data.cat_disabled);
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+
+					//	Refresh the list
+					get_all_category_c();
 
 				}
 				else
@@ -302,45 +502,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105559', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
-
-
-		function get_one_category_b_data()
-		{
-
-			$.post('geb_ajax_category.php', { 
-
-				action_code_js		:	3,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
-
-			},
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-
-					set_Element_Value_By_ID('id_catb_name',		obje.data.cat_name);
-					set_Element_Value_By_ID('id_catb_status',	obje.data.cat_disabled);
-
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('105560', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('105563', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -354,7 +516,7 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js		:	6,
+				action_code_js		:	15,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
 				cat_name_js			:	get_Element_Value_By_ID('id_cata_name'),
 				cat_status_js		:	get_Element_Value_By_ID('id_cata_status')
@@ -374,8 +536,15 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_cata_name',		'');
 					set_Element_Value_By_ID('id_cata_status',	0);
 					set_Element_Value_By_ID('id_hidden_cata',	0);
-					//	Refresh the list
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
 					$('#id_category_b_table > tbody').empty();
+					$('#id_category_c_table > tbody').empty();
+					//	Refresh the list
 					get_all_category_a();
 
 					$.alertable.info(obje.control, obje.msg).always(function() {	});
@@ -388,10 +557,12 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105561', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+						$.alertable.error('105564', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
 					});
 
 		}
+
+
 
 
 
@@ -402,7 +573,7 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js		:	7,
+				action_code_js		:	16,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb'),
 				cat_name_js			:	get_Element_Value_By_ID('id_catb_name'),
 				cat_status_js		:	get_Element_Value_By_ID('id_catb_status')
@@ -422,6 +593,11 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_catb_name',		'');
 					set_Element_Value_By_ID('id_catb_status',	0);
 					set_Element_Value_By_ID('id_hidden_catb',	0);
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+					$('#id_category_c_table > tbody').empty();
+
 					//	Refresh the list
 					get_all_category_b();
 
@@ -435,10 +611,57 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('105562', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+						$.alertable.error('105565', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
 					});
 
 		}
+
+
+
+		//	Update category C details
+		function update_category_c()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	17,
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc'),
+				cat_name_js			:	get_Element_Value_By_ID('id_catc_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_catc_status')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
+					//	Refresh the list
+					get_all_category_c();
+
+					$.alertable.info(obje.control, obje.msg).always(function() {	});
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg).always(function() {	});
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('105566', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+					});
+
+		}
+
 
 
 
@@ -455,6 +678,8 @@ if ($login->isUserLoggedIn() == true)
 	.category_a_table { height: 320px; overflow-y: scroll;}
 
 	.category_b_table { height: 320px; overflow-y: scroll;}
+
+	.category_c_table { height: 320px; overflow-y: scroll;}
 
 
 	/*	The sticky header... not perfect but works for now !! Not sure if I wanna use it here... hmmm...	*/
@@ -473,6 +698,11 @@ if ($login->isUserLoggedIn() == true)
 	}
 
 	.highlightedB {
+			color: #261F1D !important;
+			background-color: #E5C37E !important;
+	}
+
+	.highlightedC {
 			color: #261F1D !important;
 			background-color: #E5C37E !important;
 	}
@@ -522,7 +752,7 @@ if ($login->isUserLoggedIn() == true)
 	$layout_details_html	.=	'<div class="columns">';
 
 
-
+	//	Details of Category C
 	$layout_details_html	.=	'
 
 					<div class="column is-4">
@@ -566,6 +796,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+if (can_user_add($_SESSION['menu_adm_category']))
+{	
+
+	$layout_details_html	.=	'
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_a();">' . $mylang['add'] . ' (A)</button>
+							</div>
+						</div>';
+
+}
+
+
 
 if (can_user_update($_SESSION['menu_adm_category']))
 {	
@@ -581,19 +825,6 @@ if (can_user_update($_SESSION['menu_adm_category']))
 }
 
 
-if (can_user_add($_SESSION['menu_adm_category']))
-{	
-
-	$layout_details_html	.=	'
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_a();">' . $mylang['add'] . ' (A)</button>
-							</div>
-						</div>';
-
-}
-
 
 $layout_details_html	.=	'
 
@@ -603,7 +834,7 @@ $layout_details_html	.=	'
 
 
 
-	// Details
+	// Details of Category B
 	$layout_details_html	.=	'
 
 
@@ -648,6 +879,20 @@ $layout_details_html	.=	'
 						</div>';
 
 
+
+if (can_user_add($_SESSION['menu_adm_category']))
+{
+
+	$layout_details_html	.=	'
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_b();">' . $mylang['add'] . ' (B)</button>
+							</div>
+						</div>';
+}
+
+
 if (can_user_update($_SESSION['menu_adm_category']))
 {
 
@@ -662,18 +907,6 @@ if (can_user_update($_SESSION['menu_adm_category']))
 }
 
 
-if (can_user_add($_SESSION['menu_adm_category']))
-{
-
-	$layout_details_html	.=	'
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_b();">' . $mylang['add'] . ' (B)</button>
-							</div>
-						</div>';
-}
-
 $layout_details_html	.=	'
 						<input id="id_hidden_catb" class="input is-normal" type="hidden">
 
@@ -681,6 +914,105 @@ $layout_details_html	.=	'
 
 
 						';
+
+
+
+
+
+
+	// Details of Category C
+	$layout_details_html	.=	'
+
+
+					<div class="column is-4">
+
+
+						<div class="category_b_table it-has-border">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="id_category_c_table">
+								<thead>
+									<tr>
+										<th>UID</th>
+										<th>' . $mylang['category'] . ' (C)</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['category'] . ' (C):</p>
+							<div class="control">
+								<input id="id_catc_name" class="input is-normal" type="text" placeholder="">
+							</div>
+						</div>
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['status'] . ' (C):</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_catc_status">
+
+										<option value="0">' . $mylang['active'] . '</option>
+										<option value="1">' . $mylang['disabled'] . '</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>';
+
+
+
+if (can_user_add($_SESSION['menu_adm_category']))
+{
+
+	$layout_details_html	.=	'
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_category_c();">' . $mylang['add'] . ' (C)</button>
+							</div>
+						</div>';
+}
+
+
+
+if (can_user_update($_SESSION['menu_adm_category']))
+{
+
+	$layout_details_html	.=	'
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="update_category_c();">' . $mylang['save'] . ' (C)</button>
+							</div>
+						</div>';
+}
+
+
+$layout_details_html	.=	'
+						<input id="id_hidden_catc" class="input is-normal" type="hidden">
+
+					</div>
+
+
+						';
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

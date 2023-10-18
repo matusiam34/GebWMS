@@ -5,6 +5,7 @@ $mylang = array(
 'server_error'				=>	'Server error! Contact GebWMS system administrator!',
 'success'					=>	'Success!',
 'none'						=>	'None',
+'all'						=>	'All',
 'min_qty'					=>	'Min Qty',
 'max_qty'					=>	'Max Qty',
 

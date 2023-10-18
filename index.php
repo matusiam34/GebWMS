@@ -123,7 +123,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 					echo	'<div class="field">
-							<form action="gv_search_product.php" method="get">
+							<form action="geb_view_search_product.php" method="get">
 
 								<div class="field has-addons">
 

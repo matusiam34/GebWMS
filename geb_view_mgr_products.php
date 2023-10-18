@@ -82,8 +82,14 @@ if ($login->isUserLoggedIn() == true)
 			// When the operator selects a new category A = fetch the related category B entries!
 			$('#id_category_a').change(function() {
 				get_all_category_b();
+				emptySelectBox('id_category_c');
+				addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
 			});
 
+			// When the operator selects a new category B = fetch the related category C entries!
+			$('#id_category_b').change(function() {
+				get_all_category_c();
+			});
 
 		});
 
@@ -99,12 +105,13 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	1,
 				action_format_js	:	1,
 				action_disabled_js	:	0,
-				cata_uid_js			:	get_Element_Value_By_ID('id_category_a')
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_a')
 
 			},
 
 			function(output)
 			{
+
 				// Parse the json  !!
 				var obje = jQuery.parseJSON(output);
 
@@ -114,25 +121,15 @@ if ($login->isUserLoggedIn() == true)
 
 					var len = obje.data.length;
 
-
-					// jQuery - remove all entries
-					$('#id_category_b').empty();
-
-					// The first entry
-					var opt = document.createElement('Option');
-					document.getElementById('id_category_b').options.add(opt);
-					opt.value = 0;
-					opt.text = '<?php	echo $mylang['none'];	?>';
+					emptySelectBox('id_category_b');
+					addOption2SelectBox('id_category_b', 0, '<?php	echo $mylang['none'];	?>');	
 
 					if(len > 0)
 					{
 
 						for (var i = 0; i < len; i++)
 						{
-							var opt = document.createElement('Option');
-							document.getElementById('id_category_b').options.add(opt);
-							opt.value = obje.data[i].cat_pkey;
-							opt.text = obje.data[i].cat_name;
+							addOption2SelectBox('id_category_b', obje.data[i].cat_b_pkey, obje.data[i].cat_b_name);	
 						}
 
 					}
@@ -140,7 +137,7 @@ if ($login->isUserLoggedIn() == true)
 				}
 				else
 				{
-					alert(obje.msg);
+					$.alertable.info(obje.control, obje.msg);
 				}
 
 			}).fail(function() {
@@ -149,6 +146,61 @@ if ($login->isUserLoggedIn() == true)
 					});
 
 		}
+
+
+
+
+		// Get category C based on category B
+		function get_all_category_c()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	2,
+				action_format_js	:	1,
+				action_disabled_js	:	0,
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_b')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_category_c');
+					addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_category_c', obje.data[i].cat_c_pkey, obje.data[i].cat_c_name);	
+						}
+
+					}
+
+				}
+				else
+				{
+					$.alertable.info(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
 
 
 
@@ -164,6 +216,7 @@ if ($login->isUserLoggedIn() == true)
 				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
 				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
 				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
+				product_category_c_js	:	get_Element_Value_By_ID('id_category_c'),
 				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
 				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
 				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
@@ -199,12 +252,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
-
-
-
-
 		//	Update product details
 		function update_product()
 		{
@@ -217,6 +264,7 @@ if ($login->isUserLoggedIn() == true)
 				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
 				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
 				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
+				product_category_c_js	:	get_Element_Value_By_ID('id_category_c'),
 				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
 				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
 				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
@@ -237,7 +285,6 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 					$.alertable.info(obje.control, obje.msg).always(function() {	});
-
 				}
 				else
 				{
@@ -266,7 +313,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad=''>
+<body>
 
 
 <?php
@@ -375,6 +422,7 @@ if ($login->isUserLoggedIn() == true)
 		$prod_desc			=	"";
 		$prod_category_a	=	0;
 		$prod_category_b	=	0;
+		$prod_category_c	=	0;
 		$prod_each_barcode	=	"";
 		$prod_each_weight	=	"";
 		$prod_case_barcode	=	"";
@@ -412,6 +460,7 @@ if ($login->isUserLoggedIn() == true)
 				$prod_desc				=	trim($row['prod_desc']);
 				$prod_category_a		=	leave_numbers_only($row['prod_category_a']);
 				$prod_category_b		=	leave_numbers_only($row['prod_category_b']);
+				$prod_category_c		=	leave_numbers_only($row['prod_category_c']);
 				$prod_each_barcode		=	trim($row['prod_each_barcode']);	// barcodes could contain letters?!?!?!
 				$prod_each_weight		=	trim($row['prod_each_weight']);
 				$prod_case_barcode		=	trim($row['prod_case_barcode']);	// barcodes could contain letters?!?!?!
@@ -424,27 +473,30 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 			//	Here grab the live categories into one array!
 			$sql	=	'
 
 
-					SELECT
+					SELECT 
 
-					cat_pkey,
-					cat_name,
-					cat_a,
-					cat_b
+					cat_a_pkey,
+					cat_a_name,
+					cat_b_pkey,
+					cat_b_name,
+					cat_b_a_level,
+					cat_c_pkey,
+					cat_c_name,
+					cat_c_b_level
 
-					FROM
 
-					geb_category
+					FROM geb_category_a
 
-					WHERE
+					LEFT JOIN geb_category_b ON geb_category_a.cat_a_pkey = geb_category_b.cat_b_a_level
+					LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
 
-					cat_disabled = 0
 
 			';
+
 
 
 			if ($stmt = $db->prepare($sql))
@@ -461,56 +513,74 @@ if ($login->isUserLoggedIn() == true)
 			}
 
 
+			//	All looks a bit ugly.
+			$cat_a	=	array();
+			$cat_b	=	array();
+			$cat_c	=	array();
+
+			foreach ($category_arr as $category)
+			{
+				$cat_a[$category['cat_a_pkey']]	=	$category['cat_a_name'];
+				if	($category['cat_b_a_level']	==	$prod_category_a)	{	$cat_b[$category['cat_b_pkey']] = $category['cat_b_name'];	}
+				if	($category['cat_c_b_level']	==	$prod_category_b)	{	$cat_c[$category['cat_c_pkey']] = $category['cat_c_name'];	}
+			}
+
+
 
 			//	Generate Category A HTML for the selectbox.
 			$category_a_html	=	'<option value="0"';
 			if ($prod_category_a == 0)	{	$category_a_html	.=	' selected';	}
 			$category_a_html	.=	'>' . $mylang['none'] . '</option>';
 
-
-			foreach ($category_arr as $category_item)
+			foreach ($cat_a as $key => $value)
 			{
-				//	For category A only deal with ones that have 1 in the cat_a comlumn since that indicates that they are category A (Level 1 etc)
-				if ($category_item['cat_a'] == 1)
+				if (strlen($value) > 0)
 				{
-					//	Figure out if any of the items here are the category the product has = if so highlight it!
-					$category_a_html	.=	'<option value="' . leave_numbers_only($category_item['cat_pkey']) . '"';
-					if ($prod_category_a == leave_numbers_only($category_item['cat_pkey']))	{	$category_a_html	.=	' selected';	}
-					$category_a_html	.=	'>' . $category_item['cat_name'] . '</option>';
+					$category_a_html	.=	'<option value="' . $key . '"';
+					if ($key == $prod_category_a)	{	$category_a_html	.=	' selected';	}
+					$category_a_html	.=	'>' . $value . '</option>';
 				}
 			}
 
 
-
-
-			//	Generate Category B HTML for the selectbox based on the Category A... if that exists for a particular product.
+			//	Generate Category B HTML for the selectbox.
 			$category_b_html	=	'<option value="0"';
 			if ($prod_category_b == 0)	{	$category_b_html	.=	' selected';	}
 			$category_b_html	.=	'>' . $mylang['none'] . '</option>';
 
-
-
-			foreach ($category_arr as $category_item)
+			foreach ($cat_b as $key => $value)
 			{
-	
-				//	Grab entries that are cat_b so they have the cat_a column equal to 0 + cat_b equals to the cat_pkey of the category A
-				if
-				(
-
-					($category_item['cat_a'] == 0)
-
-					AND
-
-					($category_item['cat_b'] == $prod_category_a)
-
-				)
+				if (strlen($value) > 0)
 				{
-					//	Figure out if any of the items here are the category the product has = if so highlight it!
-					$category_b_html	.=	'<option value="' . leave_numbers_only($category_item['cat_pkey']) . '"';
-					if ($prod_category_b == leave_numbers_only($category_item['cat_pkey']))	{	$category_b_html	.=	' selected';	}
-					$category_b_html	.=	'>' . $category_item['cat_name'] . '</option>';
+					$category_b_html	.=	'<option value="' . $key . '"';
+					if ($key == $prod_category_b)	{	$category_b_html	.=	' selected';	}
+					$category_b_html	.=	'>' . $value . '</option>';
 				}
 			}
+
+
+			//	Generate Category C HTML for the selectbox.
+			$category_c_html	=	'<option value="0"';
+			if ($prod_category_c == 0)	{	$category_c_html	.=	' selected';	}
+			$category_c_html	.=	'>' . $mylang['none'] . '</option>';
+
+			foreach ($cat_c as $key => $value)
+			{
+				if (strlen($value) > 0)
+				{
+					$category_c_html	.=	'<option value="' . $key . '"';
+					if ($key == $prod_category_c)	{	$category_c_html	.=	' selected';	}
+					$category_c_html	.=	'>' . $value . '</option>';
+				}
+			}
+
+
+
+
+
+
+
+
 
 
 
@@ -520,19 +590,20 @@ if ($login->isUserLoggedIn() == true)
 
 			$columns_html	.=	'<div class="column is-3">';
 
-				// do a little check for the Status selectbox...
-				// Note: ugly but works for now.
-				$status_html	=	'<option value="0"';
-				if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
-				$status_html	.=	'>' . $mylang['active'] . '</option>';
+			// do a little check for the Status selectbox...
+			// Note: ugly but works for now.
+			$status_html	=	'<option value="0"';
+			if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
+			$status_html	.=	'>' . $mylang['active'] . '</option>';
 
-				$status_html	.=	'<option value="1"';
-				if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
-				$status_html	.=	'>' . $mylang['disabled'] . '</option>';
+			$status_html	.=	'<option value="1"';
+			if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
+			$status_html	.=	'>' . $mylang['disabled'] . '</option>';
 
 
 			// General product info
 			$details_html	=	'
+
 
 
 <div class="field" style="'. $box_size_str .'">
@@ -578,6 +649,21 @@ if ($login->isUserLoggedIn() == true)
 	  </div>
 	</div>
 </div>
+
+
+
+<div class="field" style="' . $box_size_str . '">
+	<p class="help">' .	$mylang['category'] . ' (C)</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_category_c">' . $category_c_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
 
 
 ';

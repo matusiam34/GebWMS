@@ -252,6 +252,7 @@ if ($login->isUserLoggedIn() == true) {
 				$product_description	=	trim($_POST['product_description_js']);	//	this should be text
 				$product_category_a		=	leave_numbers_only($_POST['product_category_a_js']);	//	this should be a number
 				$product_category_b		=	leave_numbers_only($_POST['product_category_b_js']);	//	this should be a number
+				$product_category_c		=	leave_numbers_only($_POST['product_category_c_js']);	//	this should be a number
 				$each_barcode			=	trim($_POST['each_barcode_js']);	//	this should be text
 				$each_weight			=	trim($_POST['each_weight_js']);	//	this should be text
 				$case_barcode			=	trim($_POST['case_barcode_js']);	//	this should be text
@@ -419,6 +420,7 @@ if ($login->isUserLoggedIn() == true) {
 									prod_desc,
 									prod_category_a,
 									prod_category_b,
+									prod_category_c,
 									prod_each_barcode,
 									prod_each_weight,
 									prod_case_barcode,
@@ -435,6 +437,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iprod_desc,
 									:iprod_category_a,
 									:iprod_category_b,
+									:iprod_category_c,
 									:iprod_each_barcode,
 									:iprod_each_weight,
 									:iprod_case_barcode,
@@ -455,6 +458,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iprod_desc',				$product_description,		PDO::PARAM_STR);
 							$stmt->bindValue(':iprod_category_a',		$product_category_a,		PDO::PARAM_INT);
 							$stmt->bindValue(':iprod_category_b',		$product_category_b,		PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_category_c',		$product_category_c,		PDO::PARAM_INT);
 							$stmt->bindValue(':iprod_each_barcode',		$each_barcode,				PDO::PARAM_STR);
 							$stmt->bindValue(':iprod_each_weight',		$each_weight,				PDO::PARAM_STR);
 							$stmt->bindValue(':iprod_case_barcode',		$case_barcode,				PDO::PARAM_STR);
@@ -554,6 +558,7 @@ if ($login->isUserLoggedIn() == true) {
 				$product_description	=	trim($_POST['product_description_js']);	//	this should be text
 				$product_category_a		=	leave_numbers_only($_POST['product_category_a_js']);	//	this should be a number
 				$product_category_b		=	leave_numbers_only($_POST['product_category_b_js']);	//	this should be a number
+				$product_category_c		=	leave_numbers_only($_POST['product_category_c_js']);	//	this should be a number
 				$each_barcode			=	trim($_POST['each_barcode_js']);	//	this should be text
 				$each_weight			=	trim($_POST['each_weight_js']);	//	this should be text
 				$case_barcode			=	trim($_POST['case_barcode_js']);	//	this should be text
@@ -736,6 +741,7 @@ if ($login->isUserLoggedIn() == true) {
 									prod_desc			=	:uprod_desc,
 									prod_category_a		=	:uprod_category_a,
 									prod_category_b		=	:uprod_category_b,
+									prod_category_c		=	:uprod_category_c,
 									prod_each_barcode	=	:uprod_each_barcode,
 									prod_each_weight	=	:uprod_each_weight,
 									prod_case_barcode	=	:uprod_case_barcode,
@@ -760,6 +766,7 @@ if ($login->isUserLoggedIn() == true) {
 								$stmt->bindValue(':uprod_desc',				$product_description,		PDO::PARAM_STR);
 								$stmt->bindValue(':uprod_category_a',		$product_category_a,		PDO::PARAM_INT);
 								$stmt->bindValue(':uprod_category_b',		$product_category_b,		PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_category_c',		$product_category_c,		PDO::PARAM_INT);
 								$stmt->bindValue(':uprod_each_barcode',		$each_barcode,				PDO::PARAM_STR);
 								$stmt->bindValue(':uprod_each_weight',		$each_weight,				PDO::PARAM_STR);
 								$stmt->bindValue(':uprod_case_barcode',		$case_barcode,				PDO::PARAM_STR);
@@ -829,30 +836,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 					}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

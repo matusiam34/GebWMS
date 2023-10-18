@@ -135,7 +135,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// A little gap at the top to make it look better a notch.
-	echo '<div style="height:12px"></div>';
+	echo '<div class="blank_space_12px"></div>';
 
 
 	echo '<section class="section is-paddingless">';
@@ -166,12 +166,88 @@ if ($login->isUserLoggedIn() == true)
 	</nav>';
 
 
-				$user_lang		=	trim($_SESSION['user_language']);
+		$user_lang		=	trim($_SESSION['user_language']);
+
+
+		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+		$warehouse_name			=	$mylang['all'];
+
+
+		//	Run the query only if it is NOT all warehouses!
+		if ($user_warehouse_uid > 0)
+		{
+
+
+			$sql	=	'
+
+
+				SELECT
+
+				wh_code
+
+				FROM 
+
+				geb_warehouse
+
+				WHERE
+
+				wh_pkey = :swh_uid
+
+				AND
+
+				wh_disabled = 0
+
+			';
+
+
+
+			if ($stmt = $db->prepare($sql))
+			{
+
+				$stmt->bindValue(':swh_uid',	$user_warehouse_uid,	PDO::PARAM_INT);
+				$stmt->execute();
+
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					$warehouse_name		=	trim($row['wh_code']);
+				}
+
+			}
+			// show an error if the query has an error
+			else
+			{
+
+			}
+
+
+		}
+
+		//	Get the warehouse code here (it will be a string usually) and jam it in to some tiny table.
+		//	Maybe other things can be placed in it later on.
+		$info_table_html	=	'';
+
+		$info_table_html	=	'<table class="is-fullwidth table is-bordered">';
+
+			$info_table_html	.=	'<tr>';
+				$info_table_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['warehouse'] . ':</td>';
+				$info_table_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $warehouse_name . '</td>';
+			$info_table_html	.=	'</tr>';
+
+		$info_table_html	.=	'</table>';
+
+
+
+
+
 
 
 				echo	'<div class="columns">';
 
 				echo	'<div class="column is-3">';
+
+				echo	$info_table_html;
+
 
 				echo	'<div class="field" style="'. $box_size_str . '">
 							<p class="help">' . $mylang['language'] . ':</p>

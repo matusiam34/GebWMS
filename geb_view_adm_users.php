@@ -205,6 +205,7 @@ if ($login->isUserLoggedIn() == true)
 
 					set_Element_Value_By_ID('id_user_desc',				obje.data.user_description);
 					set_Element_Value_By_ID('id_user_email',			obje.data.user_email);
+					set_Element_Value_By_ID('id_user_warehouse',		obje.data.user_warehouse);
 					set_Element_Value_By_ID('id_user_active',			obje.data.user_active);
 
 					//	ACL
@@ -258,6 +259,7 @@ if ($login->isUserLoggedIn() == true)
 				user_lastname_js		:	get_Element_Value_By_ID('id_user_lastname'),
 				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
+				user_warehouse_js		:	get_Element_Value_By_ID('id_user_warehouse'),
 				user_active_js			:	get_Element_Value_By_ID('id_user_active')
 
 			},
@@ -353,6 +355,7 @@ if ($login->isUserLoggedIn() == true)
 				user_lastname_js		:	get_Element_Value_By_ID('id_user_lastname'),
 				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
+				user_warehouse_js		:	get_Element_Value_By_ID('id_user_warehouse'),
 				user_active_js			:	get_Element_Value_By_ID('id_user_active'),
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
@@ -398,6 +401,63 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+
+		// Get all warehouses for the selectbox
+		function get_all_warehouses()
+		{
+
+			$.post('geb_ajax_warehouse.php', { 
+
+				action_code_js		:	20
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_user_warehouse');
+					addOption2SelectBox('id_user_warehouse', 0, '<?php	echo $mylang['all'];	?>');	
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_user_warehouse', obje.data[i].wh_pkey, obje.data[i].wh_code);	
+						}
+
+					}
+
+				}
+				else
+				{
+					$.alertable.info(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+
+
+
+
 	</script>
 
 
@@ -435,7 +495,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_users();'>
+<body onLoad='get_all_users(); get_all_warehouses();'>
 
 
 <?php
@@ -553,6 +613,21 @@ if ($login->isUserLoggedIn() == true)
 
 					<div class="column is-2">
 
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['warehouse'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_user_warehouse">
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['status'] . ':</p>
 							<div class="field is-narrow">
@@ -569,6 +644,8 @@ if ($login->isUserLoggedIn() == true)
 							  </div>
 							</div>
 						</div>
+
+
 
 
 						';

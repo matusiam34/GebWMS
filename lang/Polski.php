@@ -5,12 +5,13 @@ $mylang = array(
 'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'success'					=>	'Powiodło się!',
 'none'						=>	'Brak',
+'all'						=>	'Wszystkie',
 'min_qty'					=>	'Minimalna ilość',
 'max_qty'					=>	'Maksymalna ilość',
 
 
 'each'						=>	'JEDNOSTEK',
-'case'						=>	'SKRZYŃ',
+'case'						=>	'SKRZYŃ',	//	Paczka!
 
 'single'					=>	'Pojedynczy',
 'multi'						=>	'Wielo',

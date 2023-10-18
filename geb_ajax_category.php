@@ -13,16 +13,25 @@
 	//	Special ones as I can specify if they are HTML or just an array by providing an additional variable called action_format
 	//	Format	:	0	(HTML) Default option!
 	//	Format	:	1	(Array)
+
 	0	:	Get A categories!	+	action_format = 0: HTML; 1:  Array
 	1	:	Get B categories!	+	action_format = 0: HTML; 1:  Array
+	2	:	Get C categories!	+	action_format = 0: HTML; 1:  Array
 
 
-	2	:	Get one category A entry data!
-	3	:	Get one Category B entry data!
-	4	:	Add Category A!
-	5	:	Add Category B!
-	6	:	Update Category A!
-	7	:	Update Category B!
+	5	:	Get one category A entry data!
+	6	:	Get one Category B entry data!
+	7	:	Get one Category C entry data!
+
+
+	10	:	Add Category A!
+	11	:	Add Category B!
+	12	:	Add Category C!
+
+
+	15	:	Update Category A!
+	16	:	Update Category B!
+	17	:	Update Category C!
 
 
 */
@@ -79,10 +88,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-
-
-
-
 		//	Get categories. The action code for this is 0
 		if
 		(
@@ -91,10 +96,18 @@ if ($login->isUserLoggedIn() == true) {
 			OR
 		
 			($action_code == 1)		//	Get all category B in HTML table form (action_format by default is 0)
+
+			OR
+		
+			($action_code == 2)		//	Get all category C in HTML table form (action_format by default is 0)
 		)
 		{
 
-				$cata_uid	=	0;
+				$which_cat	=	'a';
+				if		($action_code == 1)	{	$which_cat	=	'b';	}
+				elseif	($action_code == 2)	{	$which_cat	=	'c';	}
+				
+				$cat_uid	=	0;
 
 				$sql	=	'
 
@@ -105,40 +118,56 @@ if ($login->isUserLoggedIn() == true) {
 
 						FROM
 
-						geb_category
-						
-						WHERE
+						geb_category_' . $which_cat . '
+
+
 				';
 
 
 				if ($action_code == 0)
 				{
-					$sql	.=	'	cat_a = 1	';					//	category A
+					//	Do not need any criteria by default to get all category A entries!
+					//	WHERE statement only needed if disabled flag is = 0... So...
 				}
 				else if ($action_code == 1)
 				{
-					$cata_uid	=	leave_numbers_only($_POST['cata_uid_js']);				//	this should be a number
-					$sql		.=	'	cat_a = 0	AND		cat_b	=	:scata_uid	';		//	category B
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
+					$sql		.=	'	WHERE	cat_b_a_level	=	:scat_uid	';		//	category B
+				}
+				else if ($action_code == 2)
+				{
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
+					$sql		.=	'	WHERE	cat_c_b_level	=	:scat_uid	';		//	category C
 				}
 
 
 				//	Get all categories that are active. Otherwise get EVERYTHING!
 				if ($action_disabled == 0)
 				{
-					$sql	.=	'	AND cat_disabled = 0	';
+
+					if ($action_code == 0)
+					{
+						$sql	.=	'	WHERE	';
+					}
+					elseif (($action_code == 1) OR ($action_code == 2))
+					{
+						$sql	.=	'	AND	';
+					}
+
+					$sql	.=	'	cat_' . $which_cat . '_disabled = 0	';
 				}
 
 
-				$sql	.=	'	ORDER BY cat_disabled ASC, cat_name';
+				$sql	.=	'	ORDER BY cat_' . $which_cat . '_disabled ASC, cat_' . $which_cat . '_name';
 
 
 				if ($stmt = $db->prepare($sql))
 				{
 
 					
-					if ($action_code == 1)
+					if (($action_code == 1) OR ($action_code == 2))
 					{
-						$stmt->bindValue(':scata_uid',	$cata_uid,		PDO::PARAM_INT);
+						$stmt->bindValue(':scat_uid',	$cat_uid,		PDO::PARAM_INT);
 					}
 
 
@@ -159,13 +188,13 @@ if ($login->isUserLoggedIn() == true) {
 						{
 							$color_code	=	'';
 							
-							$disabled	=	leave_numbers_only($item['cat_disabled']);
+							$disabled	=	leave_numbers_only($item['cat_' . $which_cat . '_disabled']);
 							
 							if ($disabled == 1)	{		$color_code		=	'red_class';	}
 							
 							$html_results	.=	'<tr>';
-								$html_results	.=	'<td class="' . $color_code . '">' . leave_numbers_only($item['cat_pkey']) . '</td>';
-								$html_results	.=	'<td class="' . $color_code . '">' . trim($item['cat_name']) . '</td>';
+								$html_results	.=	'<td class="' . $color_code . '">' . leave_numbers_only($item['cat_' . $which_cat . '_pkey']) . '</td>';
+								$html_results	.=	'<td class="' . $color_code . '">' . trim($item['cat_' . $which_cat . '_name']) . '</td>';
 							$html_results	.=	'</tr>';
 						}
 
@@ -177,21 +206,28 @@ if ($login->isUserLoggedIn() == true) {
 				}
 
 
-		}	//	Action 0 and 1 end!
+		}	//	Action 0, 1 and 2 end!	Get all categories!
 
 
 
 		//	Get details of a single category!!
 		else if 
 		(
-			($action_code == 2)	//	Get category A details
+			($action_code == 5)	//	Get category A details
 		
 			OR
 		
-			($action_code == 3)	//	Get category B details
+			($action_code == 6)	//	Get category B details
+
+			OR
+		
+			($action_code == 7)	//	Get category C details
 		)
 		{
 
+			$which_cat	=	'a';
+			if 		($action_code == 6)	{	$which_cat	=	'b';	}
+			elseif	($action_code == 7)	{	$which_cat	=	'c';	}
 
 			//	Get the UID of the category entry.
 			$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);	//	this should be a number
@@ -205,11 +241,11 @@ if ($login->isUserLoggedIn() == true) {
 					
 					FROM
 
-					geb_category
+					geb_category_' . $which_cat . '
 
 					WHERE
 
-					cat_pkey = :scat_uid
+					cat_' . $which_cat . '_pkey = :scat_uid
 
 			';
 
@@ -239,9 +275,9 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		//	Add category B!
+		//	Add category A!
 
-		else if ($action_code == 4)
+		else if ($action_code == 10)
 		{
 
 			//	Only an Admin of this system can add!
@@ -285,11 +321,11 @@ if ($login->isUserLoggedIn() == true) {
 
 						*
 
-						FROM  geb_category
+						FROM  geb_category_a
 
 						WHERE
 
-						cat_name = :scata_name
+						cat_a_name = :scata_name
 
 					';
 
@@ -322,20 +358,18 @@ if ($login->isUserLoggedIn() == true) {
 								
 								INTO
 
-								geb_category
+								geb_category_a
 								
 								(
-									cat_name,
-									cat_a,
-									cat_disabled
+									cat_a_name,
+									cat_a_disabled
 								) 
 
 								VALUES
 
 								(
-									:icat_name,
-									:icat_a,
-									:icat_disabled
+									:icat_a_name,
+									:icat_a_disabled
 								)
 
 						';
@@ -344,9 +378,8 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':icat_name',			$cata_name,			PDO::PARAM_STR);
-							$stmt->bindValue(':icat_a',				1,					PDO::PARAM_INT);
-							$stmt->bindValue(':icat_disabled',		$cata_status,		PDO::PARAM_INT);
+							$stmt->bindValue(':icat_a_name',		$cata_name,		PDO::PARAM_STR);
+							$stmt->bindValue(':icat_a_disabled',	$cata_status,	PDO::PARAM_INT);
 							$stmt->execute();
 							$db->commit();
 
@@ -374,13 +407,20 @@ if ($login->isUserLoggedIn() == true) {
 
 			}
 			
-		}	//	Action 4 end!
+		}	//	Action 10 end!
 
 
 
-		//	Add category B!
+		//	Add category B and C!
 
-		else if ($action_code == 5)
+		else if 
+		(
+			($action_code == 11)	//	Add category B
+		
+			OR
+		
+			($action_code == 12)	//	Add category C
+		)
 		{
 
 			//	Only an Admin of this system can add!
@@ -400,31 +440,34 @@ if ($login->isUserLoggedIn() == true) {
 			)
 			{
 
-				$cata_uid			=	leave_numbers_only($_POST['cata_uid_js']);	// this should be a number and has to be a value!
-				$catb_name			=	trim($_POST['catb_name_js']);	//	has to have a value
-				$catb_status		=	leave_numbers_only($_POST['catb_status_js']);	// this should be a number and has to be a value!
+				$which_cat	=	'b';
+				$level		=	'b_a';
+				if 	($action_code == 12)	{	$which_cat	=	'c';	$level		=	'c_b';	}
+				
+				
+				$cat_master_uid		=	leave_numbers_only($_POST['cat_master_uid_js']);	// this should be a number and has to be a value!
+				$cat_name			=	trim($_POST['cat_name_js']);	//	has to have a value
+				$cat_status			=	leave_numbers_only($_POST['cat_status_js']);	// this should be a number and has to be a value!
 
-				if (strlen($catb_name) >= 1)	//	I am allowing the name of the category to be 1 character long!
+				if (strlen($cat_name) >= 1)	//	I am allowing the name of the category to be 1 character long!
 				{
 
 					
 					if
 					(
-						($cata_uid > 0)	//	the operator needs to select a category A first!
+						($cat_master_uid > 0)	//	the operator needs to select a category A first!
 					
 						AND
 
-						(is_numeric($cata_uid) == true)
+						(is_numeric($cat_master_uid) == true)
 					
 					)
 					{
 
 						$db->beginTransaction();
 
-
-						//	Check if an entry with the same name already exists or not. If so = notify the operator about it!
-
-						$found_a_match	=	false;
+						//	Detect duplicates!
+						$found_match	=	false;
 
 
 						//
@@ -436,15 +479,15 @@ if ($login->isUserLoggedIn() == true) {
 
 							*
 
-							FROM  geb_category
+							FROM  geb_category_' . $which_cat . '
 
 							WHERE
 
-							cat_b = :scata_uid
+							cat_' . $level . '_level = :scat_master_uid
 							
 							AND
 							
-							cat_name = :scatb_name
+							cat_' . $which_cat . '_name = :scat_name
 
 						';
 
@@ -452,13 +495,13 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':scata_uid',	$cata_uid,	PDO::PARAM_INT);
-							$stmt->bindValue(':scatb_name',	$catb_name,	PDO::PARAM_STR);
+							$stmt->bindValue(':scat_master_uid',	$cat_master_uid,	PDO::PARAM_INT);
+							$stmt->bindValue(':scat_name',			$cat_name,			PDO::PARAM_STR);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 							{
-								$found_a_match	=	true;
+								$found_match	=	true;
 							}
 
 						}
@@ -468,7 +511,7 @@ if ($login->isUserLoggedIn() == true) {
 						}
 
 
-						if (!$found_a_match)
+						if (!$found_match)
 						{
 
 							$sql	=	'
@@ -478,20 +521,20 @@ if ($login->isUserLoggedIn() == true) {
 									
 									INTO
 
-									geb_category
+									geb_category_' . $which_cat . '
 									
 									(
-										cat_name,
-										cat_b,
-										cat_disabled
+										cat_' . $which_cat . '_name,
+										cat_' . $level . '_level,
+										cat_' . $which_cat . '_disabled
 									) 
 
 									VALUES
 
 									(
-										:icat_name,
-										:icat_b,
-										:icat_disabled
+										:icat_' . $which_cat . '_name,
+										:icat_' . $level . '_level,
+										:icat_' . $which_cat . '_disabled
 									)
 
 							';
@@ -500,9 +543,9 @@ if ($login->isUserLoggedIn() == true) {
 							if ($stmt = $db->prepare($sql))
 							{
 
-								$stmt->bindValue(':icat_name',			$catb_name,			PDO::PARAM_STR);
-								$stmt->bindValue(':icat_b',				$cata_uid,			PDO::PARAM_INT);
-								$stmt->bindValue(':icat_disabled',		$catb_status,		PDO::PARAM_INT);
+								$stmt->bindValue(':icat_' . $which_cat . '_name',		$cat_name,			PDO::PARAM_STR);
+								$stmt->bindValue(':icat_' . $level . '_level',			$cat_master_uid,	PDO::PARAM_INT);
+								$stmt->bindValue(':icat_' . $which_cat . '_disabled',	$cat_status,		PDO::PARAM_INT);
 								$stmt->execute();
 								$db->commit();
 
@@ -547,11 +590,15 @@ if ($login->isUserLoggedIn() == true) {
 
 		else if
 		(
-			($action_code == 6)		//	Update category A
+			($action_code == 15)		//	Update category A
 		
 			OR
 		
-			($action_code == 7)		//	Update category B
+			($action_code == 16)		//	Update category B
+
+			OR
+		
+			($action_code == 17)		//	Update category C
 		)
 
 
@@ -591,7 +638,12 @@ if ($login->isUserLoggedIn() == true) {
 					if (strlen($cat_name) >= 1)
 					{
 
-
+						$which_cat	=	'a';
+						if 		($action_code == 16)	{	$which_cat	=	'b';	}
+						elseif	($action_code == 17)	{	$which_cat	=	'c';	}
+						
+						
+						
 						//	Here check if the name already maybe exists. If so ==>> notify the user!
 						$found_match	=	0;
 
@@ -601,11 +653,11 @@ if ($login->isUserLoggedIn() == true) {
 
 							*
 
-							FROM  geb_category
+							FROM  geb_category_' . $which_cat . '
 
 							WHERE
 
-							cat_name = :scat_name
+							cat_' . $which_cat . '_name = :scat_name
 
 						';
 
@@ -621,11 +673,11 @@ if ($login->isUserLoggedIn() == true) {
 
 								if
 								(
-									($row['cat_pkey'] <> $cat_uid)
+									($row['cat_' . $which_cat . '_pkey'] <> $cat_uid)
 
 									AND
 
-									(strcmp(trim($row['cat_name']), $cat_name) === 0)
+									(strcmp(trim($row['cat_' . $which_cat . '_name']), $cat_name) === 0)
 								)
 								{
 									$found_match++;
@@ -650,16 +702,16 @@ if ($login->isUserLoggedIn() == true) {
 
 									UPDATE
 
-									geb_category
+									geb_category_' . $which_cat . '
 
 									SET
 
-									cat_name		=	:ucat_name,
-									cat_disabled	=	:ucat_disabled
+									cat_' . $which_cat . '_name		=	:ucat_name,
+									cat_' . $which_cat . '_disabled	=	:ucat_disabled
 
 									WHERE
 
-									cat_pkey	 =	:ucat_pkey
+									cat_' . $which_cat . '_pkey	 =	:ucat_pkey
 
 							';
 
@@ -727,7 +779,7 @@ if ($login->isUserLoggedIn() == true) {
 		case 0:	//	Grab all category A
 			if ($action_format == 0)		//	HTML
 			{
-			print_message_html_payload($message_id, $message2op, $html_results);
+				print_message_html_payload($message_id, $message2op, $html_results);
 			}
 			else
 				if ($action_format == 1)	//	Array
@@ -739,7 +791,7 @@ if ($login->isUserLoggedIn() == true) {
 		case 1:	//	Grab all category B that corresponds to category A
 			if ($action_format == 0)		//	HTML
 			{
-			print_message_html_payload($message_id, $message2op, $html_results);
+				print_message_html_payload($message_id, $message2op, $html_results);
 			}
 			else
 				if ($action_format == 1)	//	Array
@@ -748,24 +800,53 @@ if ($login->isUserLoggedIn() == true) {
 				}
 		break;
 
-		case 2:	//	Get one Category A entry data
+		case 2:	//	Grab all category C that corresponds to category B
+			if ($action_format == 0)		//	HTML
+			{
+				print_message_html_payload($message_id, $message2op, $html_results);
+			}
+			else
+				if ($action_format == 1)	//	Array
+				{
+					print_message_data_payload($message_id, $message2op, $data_results);
+				}
+		break;
+
+
+		case 5:	//	Get one Category A entry data
 		print_message_data_payload($message_id, $message2op, $data_results);
 		break;
-		case 3:	//	Get one Category B entry data
+		case 6:	//	Get one Category B entry data
 		print_message_data_payload($message_id, $message2op, $data_results);
 		break;
-		case 4:	//	Add Category A!
+		case 7:	//	Get one Category C entry data
+		print_message_data_payload($message_id, $message2op, $data_results);
+		break;
+
+
+		case 10:	//	Add Category A!
 		print_message($message_id, $message2op);
 		break;
-		case 5:	//	Add Category B!
+		case 11:	//	Add Category B!
 		print_message($message_id, $message2op);
 		break;
-		case 6:	//	Update category A!
+		case 12:	//	Add Category C!
 		print_message($message_id, $message2op);
 		break;
-		case 7:	//	Update category B!
+
+
+		case 15:	//	Update category A!
 		print_message($message_id, $message2op);
 		break;
+		case 16:	//	Update category B!
+		print_message($message_id, $message2op);
+		break;
+		case 17:	//	Update category C!
+		print_message($message_id, $message2op);
+		break;
+
+
+
 		default:
 		print_message(105945, 'X2X');
 	}

@@ -15,6 +15,28 @@
 		}
 
 
+		function addOption2SelectBox(element_ID, element_value, element_text)
+		{
+
+			var selectBox = $("#" + element_ID);
+
+			selectBox.append($('<option>',
+			{
+				value: element_value,
+				text: element_text
+			}));
+
+		}
+
+		function emptySelectBox(element_ID)
+		{
+			$('#' + element_ID).empty();
+		}
+
+
+
+
+
 		// sets the focus of an element. Can be used on input fields etc
 		function set_Focus_On_Element_By_ID(element_ID)
 		{
