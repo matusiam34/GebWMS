@@ -1,5 +1,7 @@
 <?php
 
+//	NOTE TO SELF:	The insert and update action are nearly identical! Merge them into one as that will save on making changes to the checks!
+//					as I will not have to remember to apply them to the second or first one (update / insert)
 
 /*
 
@@ -108,8 +110,8 @@ if ($login->isUserLoggedIn() == true) {
 
 				if ($stmt = $db->prepare($sql))
 				{
-					$stmt->execute();
 
+					$stmt->execute();
 
 					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 					{
@@ -151,7 +153,6 @@ if ($login->isUserLoggedIn() == true) {
 				}
 
 		}	//	Action 0 end!
-
 
 		//	Get details of one!
 
@@ -217,9 +218,7 @@ if ($login->isUserLoggedIn() == true) {
 				}
 
 
-
-
-			}
+			}	//	Permissions check!
 			
 		}	//	Action 1 end!
 
@@ -519,7 +518,7 @@ if ($login->isUserLoggedIn() == true) {
 					}
 					elseif ($input_checks	==	4)
 					{
-						$message_id		=	106205;
+						$message_id		=	106206;
 						$message2op		=	'Case qty incorrect';//$mylang['barcode_to_short'];
 					}
 
@@ -865,7 +864,7 @@ if ($login->isUserLoggedIn() == true) {
 	{
 		$db->rollBack();
 		$message2op		=	$e->getMessage();
-		$message_id		=	102666;
+		$message_id		=	106666;
 	}
 
 
@@ -886,7 +885,7 @@ if ($login->isUserLoggedIn() == true) {
 		print_message($message_id, $message2op);
 		break;
 		default:
-		print_message(102945, 'X2X');
+		print_message(106945, 'X2X');
 	}
 
 

@@ -132,9 +132,9 @@ $loc_function_codes_arr	=	array(
 // Since I can accept EACH, CASE and PALLET I need to figure out how to mark it.
 $stock_unit_type_arr	=	array(
 
-	'3'	=>	$mylang['each'],
-	'5'	=>	$mylang['case'],
-//	'7'	=>	$mylang['pallet']
+	'1'	=>	$mylang['each'],
+	'3'	=>	$mylang['case'],
+//	'5'	=>	$mylang['pallet']
 
 );
 
@@ -143,9 +143,9 @@ $stock_unit_type_arr	=	array(
 // that can be set in one location. Maybe an ugly hack but will work for now.
 $stock_unit_type_reverse_arr	=	array(
 
-	'E'	=>	3,	//	"EACH"
-	'C'	=>	5,	//	"CASE"
-//	'P'	=>	7	//	"PALLET"
+	'E'	=>	1,	//	"EACH"
+	'C'	=>	3,	//	"CASE"
+//	'P'	=>	5	//	"PALLET"
 
 );
 

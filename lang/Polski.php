@@ -2,7 +2,6 @@
 
 $mylang = array(
 
-'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'success'					=>	'Powiodło się!',
 'none'						=>	'Brak',
 'all'						=>	'Wszystkie',
@@ -25,17 +24,24 @@ $mylang = array(
 'despatch'					=>	'Wysyłka',
 
 'active'					=>	'Aktywny',
+'enabled'					=>	'Włączony',
 'disabled'					=>	'Wyłączony',
 'suspended'					=>	'Zawieszony',
 
 'no'						=>	'No',
 'yes'						=>	'Yes',
 
+'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'barcode_already_exists'	=>	'Ten kod kreskowy już istnieje!',
+'invalid_barcode'			=>	'Nieprawidłowy kod kreskowy!',
 'location_already_exists'	=>	'Lokalizacja już istnieje w tym magazynie!',
 'category_already_exists'	=>	'Ta kategoria już istnieje!',
 'select_category_first'		=>	'Najpierw wybierz kategorię A!',
 'product_already_exists'	=>	'Ten product już istnieje!',
+'product_not_found'			=>	'Product nie znaleziony!',
+
+
+'products_found_with_the_same_barcode'		=>	'Znaleziono produkty z tym samym kodem kreskowym!',
 
 
 
@@ -130,7 +136,7 @@ $mylang = array(
 'permissions_error'			=>	'Błąd uprawnień!',
 'warehouse_already_exists'	=>	'Magazyn już istnieje!',
 'user_already_exists'		=>	'Użytkownik już istnieje!',
-'name_too_short'			=>	'Nazwa za krótka!',	//	uzywana w wielu miejscach gdzie np: nazwa magazynu jest pusta lub nazwa produktu za krotka itp
+'name_too_short'			=>	'Nazwa za krótka!',
 'barcode_too_short'			=>	'Kod kreskowy za krótki!',
 'incorrect_uid'				=>	'Niepoprawny UID!',
 

@@ -192,7 +192,7 @@ if ($login->isUserLoggedIn() == true)
 
 				if (is_it_enabled($_SESSION['menu_prod2loc']))
 				{
-					$bookin_prod2loc_link		=	"location.href='gv_move_prod2loc.php'";
+					$bookin_prod2loc_link		=	"location.href='geb_view_prod2loc.php'";
 
 					echo	'<div class="field">
 								<div class="control">

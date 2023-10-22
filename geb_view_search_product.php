@@ -84,6 +84,25 @@ if ($login->isUserLoggedIn() == true)
 				this.form.submit();
 			});
 
+			//	This copy to clipboard does feel a bit hack-ish...
+			$("#cpy_each_barcode").click(function() {
+
+				var text = $("#each_barcode").text();
+				var input = $("<input>");
+				$("body").append(input);
+				input.val(text).select();
+				document.execCommand('copy');
+				input.remove();
+
+			});
+
+
+
+
+
+
+
+
 		});
 
 
@@ -199,7 +218,17 @@ if ($login->isUserLoggedIn() == true)
 		if ($is_barcode)
 		{
 			// Search by barcode
-			$sql	.=	' prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar ';
+			$sql	.=	'
+			
+			prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar
+
+			OR
+
+			CASE
+				WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
+			END;
+
+			';
 		}
 		else
 		{
@@ -223,8 +252,9 @@ if ($login->isUserLoggedIn() == true)
 
 			if ($is_barcode)
 			{
-				$stmt->bindValue(':iprod_each_bar',		$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',		$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_each_bar',		$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_case_bar',		$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':smimic_bar',			$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
@@ -247,6 +277,20 @@ if ($login->isUserLoggedIn() == true)
 			if (count($products_arr) == 1)
 			{
 				//	Found one matching product. Just show it and be done with it!
+
+				$mimic_enabled	=	false;
+				$mimic_status	=	$mylang['disabled'];
+				
+				if (leave_numbers_only($products_arr[0]['prod_mimic']) == 1)
+				{
+					//	This product is Mimicked! Can have a seperate EACH barcode, CASE barcode with Case Qty!
+					//	Make sure that the operator knows about this!
+					$mimic_enabled	=	true;
+					$mimic_status	=	$mylang['enabled'];
+				}
+
+
+
 
 				$columns_html	.=	'<div class="columns">';
 
@@ -288,7 +332,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 						// Convert the product status into meaninful text.
 						$prod_status_id		=	leave_numbers_only($products_arr[0]['prod_disabled']);
 
@@ -296,6 +339,14 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['status'] . ':</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $product_status_arr[$prod_status_id] . '</td>';
 						$details_html	.=	'</tr>';
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;"> Mimic:</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $mimic_status . '</td>';
+						$details_html	.=	'</tr>';
+
+
+//$mimic_enabled
 
 /*
 						$details_html	.=	'<tr>';
@@ -333,10 +384,36 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<table class="is-fullwidth table is-bordered">';
 
 
-						$details_html	.=	'<tr>';
-							$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['each_barcode'] . ':</td>';
-							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['prod_each_barcode']) . '</td>';
-						$details_html	.=	'</tr>';
+					$barcode	=	'<div class="field has-addons" style="">';
+
+						$barcode	.=	'<p class="control is-expanded mt-2 ml-3" id="each_barcode">';
+						$barcode	.=	trim($products_arr[0]['prod_each_barcode']);
+						$barcode	.=	'</p>';
+
+
+						$barcode	.=	'<p class="control">';
+						$barcode	.=		'<button id="cpy_each_barcode" class="button inventory_class iconCopy" style="width:50px;"></button>';
+						$barcode	.=	'</p>';
+
+					$barcode	.=	'</div>';
+
+
+					$details_html	.=	'<tr>';
+						$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['each_barcode'] . ':</td>';
+						$details_html	.=	'<td style="background-color: ' . $backclrB . '; padding: 0px;">' . $barcode . '</td>';
+					$details_html	.=	'</tr>';
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 						$details_html	.=	'<tr>';

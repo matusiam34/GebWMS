@@ -417,7 +417,25 @@
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 24px;
-     }
+    }
+
+
+    .iconCopy
+    {
+		background-image: url(../images/icon_copy.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconCopy:hover
+    {
+		background-image: url(../images/icon_copy_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 20px;
+    }
 
 
 

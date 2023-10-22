@@ -2,7 +2,6 @@
 
 $mylang = array(
 
-'server_error'				=>	'Server error! Contact GebWMS system administrator!',
 'success'					=>	'Success!',
 'none'						=>	'None',
 'all'						=>	'All',
@@ -25,17 +24,26 @@ $mylang = array(
 'despatch'					=>	'Despatch',
 
 'active'					=>	'Active',
+'enabled'					=>	'Enabled',
 'disabled'					=>	'Disabled',
 'suspended'					=>	'Suspended',
+
 
 'no'						=>	'No',
 'yes'						=>	'Yes',
 
+'server_error'				=>	'Server error! Contact GebWMS system administrator!',
 'barcode_already_exists'	=>	'Barcode already exists!',
+'invalid_barcode'			=>	'Invalid barcode!',
 'location_already_exists'	=>	'Location already exists in this warehouse!',
 'category_already_exists'	=>	'This category already exists!',
 'select_category_first'		=>	'Select category A first!',
 'product_already_exists'	=>	'Product already exists!',
+'product_not_found'			=>	'Product not found!',
+
+
+'products_found_with_the_same_barcode'		=>	'Products founds with the same barcode!',
+
 
 
 
@@ -132,7 +140,7 @@ $mylang = array(
 'permissions_error'			=>	'Permissions error!',
 'warehouse_already_exists'	=>	'Warehouse already exists!',
 'user_already_exists'		=>	'User already exists!',
-'name_too_short'			=>	'Name too short!',	//	used when adding a warehouse and the name does not meet minimal character lenght, product codes etc
+'name_too_short'			=>	'Name too short!',
 'barcode_too_short'			=>	'Barcode too short!',
 'incorrect_uid'				=>	'Incorrect UID!',
 
