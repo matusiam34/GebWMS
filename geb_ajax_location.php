@@ -1,6 +1,11 @@
 <?php
 
 
+//	FIX the fact that I can update the warehose to ANY WAREHOUSE! The warehouse uid needs to be not 0!
+//	Same applies to adding! You can add a wh with uid = 0 aka ---- 
+
+//	Action 1 needs sanitization of the uid input and few others checks!
+
 /*
 
 	Error code for the script!
@@ -9,7 +14,7 @@
  
 	//	Action code breakdown
 	0	:	Get all locations (HTML format, disabled locations are included via SQL and marked with a greyish tint background)
-	1	:	Get one location info (disabled location and warehouses ARE included! So it will grab any location!)
+	1	:	Get one location info (disabled location and warehouses ARE included! So it will grab any location!) + HTML details for category selectboxes!
 	2	:	Add location!
 	3	:	Update location details!
 
@@ -111,34 +116,28 @@ if ($login->isUserLoggedIn() == true) {
 					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 					{
 
-						$tr_style	=	'';
+						//	<AI>
+						$tr_style = (leave_numbers_only($row['loc_disabled']) == 1) ? ' style="background-color: #d9d9d9;"' : '';
 
-						if (leave_numbers_only($row['loc_disabled']) == 1)
-						{
-							//	Location is disabled. Have a greyish hue background color!
-							$tr_style	=	' style="background-color: #d9d9d9;" ';
-						}
+						$html_results .= '<tr' . $tr_style . '>';
+						$html_results .= '<td>' . trim($row['loc_pkey']) . '</td>';
+						$html_results .= '<td>' . trim($row['wh_code']) . '</td>';
 
-						$html_results		.=	'<tr ' . $tr_style . '>';
-						$html_results		.=		'<td>'	.	trim($row['loc_pkey'])	.	'</td>';
-						$html_results		.=		'<td>'	.	trim($row['wh_code'])	.	'</td>';
+						$loc_details_arr = decode_loc
+						(
+							leave_numbers_only($row['loc_function']),
+							leave_numbers_only($row['loc_type']),
+							leave_numbers_only($row['loc_blocked']),
+							$loc_function_codes_arr,
+							$loc_type_codes_arr
+						);
 
+						$html_results .= '<td style="' . $loc_details_arr[1] . '">' . trim($row['loc_code']) . ' (' . $loc_details_arr[0] . ')</td>';
+						$html_results .= '<td>' . trim($row['loc_barcode']) . '</td>';
+						$html_results .= '<td>' . trim($row['loc_note']) . '</td>';
+						$html_results .= '</tr>';
 
-						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-						$loc_function			=	leave_numbers_only($row['loc_function']);
-						$loc_type				=	leave_numbers_only($row['loc_type']);
-						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
-
-						$loc_details_arr		=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
-
-
-						$html_results		.=		'<td style="'	.	$loc_details_arr[1]	.	'">'	.	trim($row['loc_code'])	.	' ('	.	$loc_details_arr[0]	.	')</td>';
-						$html_results		.=		'<td>'	.	trim($row['loc_barcode'])	.	'</td>';
-
-
-						// Convert the type of location type info into meaninful text.
-						$html_results		.=		'<td>'	.	trim($row['loc_note'])		.	'</td>';
-						$html_results		.=	'</tr>';
+						//	</AI>
 
 					}
 
@@ -161,6 +160,8 @@ if ($login->isUserLoggedIn() == true) {
 			)
 			{
 
+				$category_arr	=	array();
+
 				//	Get the UID of the location hopefully provided from the frontend.
 				$loc_uid	=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
 
@@ -177,9 +178,11 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_function,
 					geb_location.loc_type,
 					geb_location.loc_blocked,
+					geb_location.loc_cat_a,
+					geb_location.loc_cat_b,
+					geb_location.loc_cat_c,
 					geb_location.loc_note,
 					geb_location.loc_disabled
-
 
 					FROM  geb_location
 
@@ -203,21 +206,109 @@ if ($login->isUserLoggedIn() == true) {
 					$stmt->bindValue(':sloc',		$loc_uid,		PDO::PARAM_INT);
 					$stmt->execute();
 
-
 					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 					{
-						// drop it into the final array...
-						$data_results	=	$row;
+
+						$data_results	=	array(
+						
+							'wh_pkey'			=>	$row['wh_pkey'],
+							'loc_pkey'			=>	$row['loc_pkey'],
+							'loc_code'			=>	$row['loc_code'],
+							'loc_barcode'		=>	$row['loc_barcode'],
+							'loc_function'		=>	$row['loc_function'],
+							'loc_type'			=>	$row['loc_type'],
+							'loc_blocked'		=>	$row['loc_blocked'],
+							'loc_cat_a'			=>	$row['loc_cat_a'],
+							'loc_cat_b'			=>	$row['loc_cat_b'],
+							'loc_cat_c'			=>	$row['loc_cat_c'],
+							'loc_note'			=>	$row['loc_note'],
+							'loc_disabled'		=>	$row['loc_disabled']
+
+						);
+
+
 					}
 
+
+					//	Here grab the live categories into one array!
+					$sql	=	'
+
+
+							SELECT 
+
+							cat_a_pkey,
+							cat_a_name,
+							cat_b_pkey,
+							cat_b_name,
+							cat_b_a_level,
+							cat_c_pkey,
+							cat_c_name,
+							cat_c_b_level
+
+
+							FROM geb_category_a
+
+							LEFT JOIN geb_category_b ON geb_category_a.cat_a_pkey = geb_category_b.cat_b_a_level
+							LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
+
+
+					';
+
+
+					if ($stmt = $db->prepare($sql))
+					{
+
+						$stmt->execute();
+
+						while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+						{
+							// drop it into the final array...
+							$category_arr[]	=	$row;
+						}
+
+					}
+
+
+					// Generate HTML for Category A, B and C select box
+					$category_A_options = [];
+					$category_B_options = [];
+					$category_C_options = [];
+
+					// Populate category options arrays
+					foreach ($category_arr as $category)
+					{
+
+						$category_A_options[$category['cat_a_pkey']] = $category['cat_a_name'];
+
+						// Check if the current category B is associated with the selected category A
+						if ($category['cat_b_a_level'] == $data_results['loc_cat_a'])
+						{
+							$category_B_options[$category['cat_b_pkey']] = $category['cat_b_name'];
+						}
+
+						// Check if the current category C is associated with the selected category B
+						if ($category['cat_c_b_level'] == $data_results['loc_cat_b'])
+						{
+							$category_C_options[$category['cat_c_pkey']] = $category['cat_c_name'];
+						}
+
+					}
+
+
+					$data_results['cat_a_html']	=	generate_select_options($category_A_options, leave_numbers_only($data_results['loc_cat_a']), $mylang['none']);
+					$data_results['cat_b_html']	=	generate_select_options($category_B_options, leave_numbers_only($data_results['loc_cat_b']), $mylang['none']);
+					$data_results['cat_c_html']	=	generate_select_options($category_C_options, leave_numbers_only($data_results['loc_cat_c']), $mylang['none']);
+
 					$message_id		=	0;	//	all went well
+
+
+
 				}
 
 
 
+			}		//	Permissions check!
 
-			}
-			
 		}	//	Action 1 end!
 
 
@@ -538,8 +629,7 @@ if ($login->isUserLoggedIn() == true) {
 										
 									}	else if
 									(
-
-										($row['loc_barcode'] == $barcode)AND ($row['loc_pkey'] <> $loc_uid)
+										($row['loc_barcode'] == $barcode) AND ($row['loc_pkey'] <> $loc_uid)
 									)
 									{
 										$found_match	=	2;	//	The barcode you entered is already allocated to a location!

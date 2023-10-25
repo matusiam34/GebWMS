@@ -344,6 +344,35 @@ function update_order_status($db, $status_code, $order_uid)
 //
 
 
+// Define a function for generating select box options!
+function generate_select_options($options, $selectedValue, $defaultLabel)
+{
+
+	$html = '<option value="0"';
+
+	if ($selectedValue == 0)
+	{ 
+		$html .= ' selected'; 
+	}
+
+	$html .= '>' . $defaultLabel . '</option>';
+
+	foreach ($options as $key => $value)
+	{
+		if (strlen($value) > 0)
+		{
+			$html .= '<option value="' . $key . '"';
+			if ($key == $selectedValue)
+			{ 
+				$html .= ' selected'; 
+			}
+		
+			$html .= '>' . $value . '</option>';
+		}
+	}
+
+	return $html;
+}
 
 
 

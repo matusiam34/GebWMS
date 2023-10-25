@@ -277,7 +277,7 @@ if ($login->isUserLoggedIn() == true)
 
 				if (is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 				{
-					$warehouse_locations_link		=	"location.href='geb_view_adm_warehouse_locations.php'";
+					$warehouse_locations_link		=	"location.href='geb_view_adm_locations.php'";
 
 					echo	'<div class="field">
 								<div class="control">

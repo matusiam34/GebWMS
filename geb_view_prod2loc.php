@@ -167,6 +167,8 @@ alert(output);
 
 					//empty_Element_By_ID('product_details');
 					//append_HTML_to_Element_By_ID('product_details', obje.html);
+					$.alertable.info(obje.control, obje.msg);
+
 				}
 				else
 				{

@@ -137,7 +137,7 @@ if ($login->isUserLoggedIn() == true)
 				}
 				else
 				{
-					$.alertable.info(obje.control, obje.msg);
+					$.alertable.error(obje.control, obje.msg);
 				}
 
 			}).fail(function() {
@@ -191,7 +191,7 @@ if ($login->isUserLoggedIn() == true)
 				}
 				else
 				{
-					$.alertable.info(obje.control, obje.msg);
+					$.alertable.error(obje.control, obje.msg);
 				}
 
 			}).fail(function() {
@@ -513,76 +513,45 @@ if ($login->isUserLoggedIn() == true)
 			}
 
 
-			//	All looks a bit ugly.
-			$cat_a	=	array();
-			$cat_b	=	array();
-			$cat_c	=	array();
+			//
+			//	Some AI Generated code here... Because I have asked for some help!
+			//
+			//	<AI>
+			//
 
+			// Generate HTML for Category A, B and C
+			$category_A_options = [];
+			$category_B_options = [];
+			$category_C_options = [];
+
+			// Populate category options arrays
 			foreach ($category_arr as $category)
 			{
-				$cat_a[$category['cat_a_pkey']]	=	$category['cat_a_name'];
-				if	($category['cat_b_a_level']	==	$prod_category_a)	{	$cat_b[$category['cat_b_pkey']] = $category['cat_b_name'];	}
-				if	($category['cat_c_b_level']	==	$prod_category_b)	{	$cat_c[$category['cat_c_pkey']] = $category['cat_c_name'];	}
-			}
 
+				$category_A_options[$category['cat_a_pkey']] = $category['cat_a_name'];
 
-
-			//	Generate Category A HTML for the selectbox.
-			$category_a_html	=	'<option value="0"';
-			if ($prod_category_a == 0)	{	$category_a_html	.=	' selected';	}
-			$category_a_html	.=	'>' . $mylang['none'] . '</option>';
-
-			foreach ($cat_a as $key => $value)
-			{
-				if (strlen($value) > 0)
+				// Check if the current category B is associated with the selected category A
+				if ($category['cat_b_a_level'] == $prod_category_a)
 				{
-					$category_a_html	.=	'<option value="' . $key . '"';
-					if ($key == $prod_category_a)	{	$category_a_html	.=	' selected';	}
-					$category_a_html	.=	'>' . $value . '</option>';
+					$category_B_options[$category['cat_b_pkey']] = $category['cat_b_name'];
 				}
-			}
 
-
-			//	Generate Category B HTML for the selectbox.
-			$category_b_html	=	'<option value="0"';
-			if ($prod_category_b == 0)	{	$category_b_html	.=	' selected';	}
-			$category_b_html	.=	'>' . $mylang['none'] . '</option>';
-
-			foreach ($cat_b as $key => $value)
-			{
-				if (strlen($value) > 0)
+				// Check if the current category C is associated with the selected category B
+				if ($category['cat_c_b_level'] == $prod_category_b)
 				{
-					$category_b_html	.=	'<option value="' . $key . '"';
-					if ($key == $prod_category_b)	{	$category_b_html	.=	' selected';	}
-					$category_b_html	.=	'>' . $value . '</option>';
+					$category_C_options[$category['cat_c_pkey']] = $category['cat_c_name'];
 				}
+
 			}
 
-
-			//	Generate Category C HTML for the selectbox.
-			$category_c_html	=	'<option value="0"';
-			if ($prod_category_c == 0)	{	$category_c_html	.=	' selected';	}
-			$category_c_html	.=	'>' . $mylang['none'] . '</option>';
-
-			foreach ($cat_c as $key => $value)
-			{
-				if (strlen($value) > 0)
-				{
-					$category_c_html	.=	'<option value="' . $key . '"';
-					if ($key == $prod_category_c)	{	$category_c_html	.=	' selected';	}
-					$category_c_html	.=	'>' . $value . '</option>';
-				}
-			}
+			$category_a_html	=	generate_select_options($category_A_options, leave_numbers_only($prod_category_a), $mylang['none']);
+			$category_b_html	=	generate_select_options($category_B_options, leave_numbers_only($prod_category_b), $mylang['none']);
+			$category_c_html	=	generate_select_options($category_C_options, leave_numbers_only($prod_category_c), $mylang['none']);
 
 
-
-
-
-
-
-
-
-
+			//
+			//	</AI>
+			//
 
 
 
@@ -590,15 +559,22 @@ if ($login->isUserLoggedIn() == true)
 
 			$columns_html	.=	'<div class="column is-3">';
 
-			// do a little check for the Status selectbox...
-			// Note: ugly but works for now.
-			$status_html	=	'<option value="0"';
-			if ($prod_disabled == 0)	{	$status_html	.=	' selected';	}
-			$status_html	.=	'>' . $mylang['active'] . '</option>';
 
-			$status_html	.=	'<option value="1"';
-			if ($prod_disabled == 1)	{	$status_html	.=	' selected';	}
-			$status_html	.=	'>' . $mylang['disabled'] . '</option>';
+
+
+			$status_options =
+			[
+				0 => $mylang['active'],
+				1 => $mylang['disabled'],
+			];
+
+			$status_html = '';
+			foreach ($status_options as $value => $label)
+			{
+				$selected = ($prod_disabled == $value) ? ' selected' : '';
+				$status_html .= '"<option value="' . $value . '" ' . $selected . '>' . $label . ' </option>"';
+			}
+
 
 
 			// General product info

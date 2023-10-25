@@ -1,5 +1,7 @@
 <?php
 
+//	NOTE:	add qty info for mimics in the product details table. This will be very good to let the operator know that they have 
+//			encountered a mimic and could check the case qty if needed!
 
 /*
 
@@ -326,50 +328,21 @@ if ($login->isUserLoggedIn() == true)
 			)
 			{
 
-				//	Note to self:	First
+
+
+
+				//	This will get me everything about the location (that exists FOR SURE! unless wrong barcode is provided!
 				/*
-					SELECT
-
-					loc_pkey,
-					loc_wh_pkey,
-					loc_barcode,
-					
-					stk_pkey,
-					stk_loc_pkey,
-					stk_prod_pkey,
-					stk_qty
-
-					FROM 
-
-					geb_location
-					
-					LEFT JOIN geb_stock ON geb_location.loc_pkey = geb_stock.stk_loc_pkey
-
-					WHERE
-
-					geb_location.loc_barcode = '62631518'
-					
-					AND
-					
-					(geb_stock.stk_disabled IS NULL OR geb_stock.stk_disabled = 0)
+				Array ( [stk_pkey] => 22 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 6 )
+				Array ( [stk_pkey] => 21 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 10 )
+				Array ( [stk_pkey] => 25 [stk_loc_pkey] => 4 [stk_prod_pkey] => 9 [stk_qty] => 43 )
 				*/
 
 
-
-					//	This will get me everything about the location (that exists FOR SURE! unless wrong barcode is provided!
-					/*
-					Array ( [stk_pkey] => 22 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 6 )
-					Array ( [stk_pkey] => 21 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 10 )
-					Array ( [stk_pkey] => 25 [stk_loc_pkey] => 4 [stk_prod_pkey] => 9 [stk_qty] => 43 )
-					*/
-
-
-					//	This array will allow me to iterate and see if the product provided (the ID) matchest the stk_prod_pkey!
-					//	Based on that I will be able to see if the product gets a green light or not!
-					//	Most likely not to duplicate the action do the UPDATE / INSERT within this one with an extra flag!
-					//	This way I will have to write checks only once and not twice if anything changes!!!
-
-
+				//	This array will allow me to iterate and see if the product provided (the ID) matchest the stk_prod_pkey!
+				//	Based on that I will be able to see if the product gets a green light or not!
+				//	Most likely not to duplicate the action do the UPDATE / INSERT within this one with an extra flag!
+				//	This way I will have to write checks only once and not twice if anything changes!!!
 
 
 				
@@ -381,6 +354,7 @@ if ($login->isUserLoggedIn() == true)
 				//
 
 				$location_arr		=	array();	//	Location details stored here
+				$stock_arr			=	array();	//	Stock details within a location
 				$product_arr		=	array();	//	Product details stored here
 
 				$product_uid		=	0;	//	A query will obtain this using the provided product barcode!
@@ -390,10 +364,13 @@ if ($login->isUserLoggedIn() == true)
 
 				//	Used to determine what to show based on users warehouse settings.
 				//	Keep in mind that a value of 0 means ALL warehouses! So only apply a filter when the value is <> 0
+				//	Maybe also add a check to see it if even has been set????
 				$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
 
 
 				$input_checks	=	666;	//	0 means all good; by default it is 666 = BAD!
+
+
 
 				if
 				(
@@ -449,11 +426,19 @@ if ($login->isUserLoggedIn() == true)
 
 						WHERE
 
-						prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar
+						prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar
+
+						OR
+
+						CASE
+							WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
+						END;
+
 
 						AND
 						
 						prod_disabled = 0
+
 
 					';
 
@@ -461,8 +446,9 @@ if ($login->isUserLoggedIn() == true)
 					if ($stmt = $db->prepare($sql))
 					{
 
-						$stmt->bindValue(':iprod_each_bar',		$product_barcode,	PDO::PARAM_STR);
-						$stmt->bindValue(':iprod_case_bar',		$product_barcode,	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_each_bar',		$product_barcode,	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_case_bar',		$product_barcode,	PDO::PARAM_STR);
+						$stmt->bindValue(':smimic_bar',			$product_barcode,	PDO::PARAM_STR);
 
 						$stmt->execute();
 
@@ -473,6 +459,7 @@ if ($login->isUserLoggedIn() == true)
 						}
 
 
+//						$stmt->closeCursor();
 
 
 						if (count($product_arr) == 1)
@@ -486,23 +473,23 @@ if ($login->isUserLoggedIn() == true)
 
 
 							//	Figure out if it is an EACH or CASE unit!
-							$product_unit	=	0;	//	Wrong! Has to be at least 1 (each) or 3 (case)
+							//$product_unit	=	0;	//	Wrong! Has to be at least 1 (each) or 3 (case)
 
 							$product_unit	=	'';
 							if
 							(
-								(strcmp($product_barcode, trim($product['prod_each_barcode'])) === 0 )
+								(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
 								OR
-								(strcmp($product_barcode, trim($product['prod_each_barcode_mimic'])) === 0 )
+								(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
 							)
 							{
 								$product_unit	=	$mylang['each'];
 							}
 							elseif
 							(
-								(strcmp($product_barcode, trim($product['prod_case_barcode'])) === 0 )
+								(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
 								OR
-								(strcmp($product_barcode, trim($product['prod_case_barcode_mimic'])) === 0 )
+								(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
 							)
 							{
 								$product_unit	=	$mylang['case'];
@@ -518,8 +505,10 @@ if ($login->isUserLoggedIn() == true)
 
 								loc_pkey,
 								loc_wh_pkey,
-								loc_barcode,
-								
+								loc_function,
+								loc_type,
+								loc_blocked,
+
 								stk_pkey,
 								stk_loc_pkey,
 								stk_prod_pkey,
@@ -539,7 +528,12 @@ if ($login->isUserLoggedIn() == true)
 
 								AND
 
-								(geb_stock.stk_disabled IS NULL OR geb_stock.stk_disabled = 0)						
+								geb_location.loc_disabled = 0
+
+								AND
+
+								(geb_stock.stk_disabled IS NULL OR geb_stock.stk_disabled = 0)
+
 
 
 							';
@@ -547,8 +541,9 @@ if ($login->isUserLoggedIn() == true)
 							if ($user_warehouse_uid > 0)
 							{
 									//	Add a warehouse filter to the location!
-								$sql	=	' AND	geb_location.loc_wh_pkey = :swarehouse_uid	';
+								$sql	.=	' AND geb_location.loc_wh_pkey = :swarehouse_uid ';
 							}
+
 
 
 							if ($stmt = $db->prepare($sql))
@@ -563,50 +558,110 @@ if ($login->isUserLoggedIn() == true)
 									$stmt->bindValue(':swarehouse_uid',		$user_warehouse_uid,	PDO::PARAM_INT);
 								}
 
+
 								$stmt->execute();
+
+
+								$location_empty			=	true;
+								$product_ids_arr		=	array();	//	All IDs of the products in the location stored here!
 
 
 								while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 								{
 
-									$locationKey = trim($row['loc_barcode']);
-
 
 									// Check if the location already exists in the array, if not, create it
-									if (!isset($location_arr[$locationKey]))
+									if (!isset($location_arr[0]))
 									{
-										$location_arr[$locationKey] =
+										$location_arr[0] =
 										[
-											'loc_pkey' => $row['loc_pkey'],
-											'loc_wh_pkey' => $row['loc_wh_pkey'],
-											'loc_barcode' => $row['loc_barcode'],
-											'stock_info' => [],
+											'loc_pkey'		=>	$row['loc_pkey'],
+											'loc_wh_pkey'	=>	$row['loc_wh_pkey'],
+											'loc_function'	=>	$row['loc_function'],
+											'loc_type'		=>	$row['loc_type'],
+											'loc_blocked'	=>	$row['loc_blocked'],
+											'stock_info'	=>	[]
 										];
 
 									}
 
-										// Add stock information to the location's stock_info array
-										$location_arr[$locationKey]['stock_info'][] =
-										[
-											'stk_pkey' => $row['stk_pkey'],
-											'stk_loc_pkey' => $row['stk_loc_pkey'],
-											'stk_prod_pkey' => $row['stk_prod_pkey'],
-											'stk_unit' => $row['stk_unit'],
-											'stk_qty' => $row['stk_qty'],
-											'stk_mimic' => $row['stk_mimic'],
 
+									//	Only add if the location has a product allocated to it!
+									if (leave_numbers_only($row['stk_pkey']) > 0)
+									{
+										
+										$stock_arr[] =
+										// Add stock information to the location's stock_info array
+										[
+											'stk_pkey'		=>	$row['stk_pkey'],
+											'stk_loc_pkey'	=>	$row['stk_loc_pkey'],
+											'stk_prod_pkey' =>	$row['stk_prod_pkey'],
+											'stk_unit'		=>	$row['stk_unit'],
+											'stk_qty'		=>	$row['stk_qty'],
+											'stk_mimic'		=>	$row['stk_mimic']
 										];
+										array_push($product_ids_arr, leave_numbers_only($row['stk_prod_pkey']));
+									}
+
 
 
 								}
 
 
-								$message_id		=	0;	//	Everything went GREAT!
+//	Write a validation function for this verification if product can be inserted into location!
+
+
+
+
+
+
+
+//	'10'	=>	'SI',	//	"Single"
+//	'20'	=>	'MU',	//	"Multi"
+//	'30'	=>	'MX'	//	"Multi Mixed"
+
+
+
+
+
+
+								$product_ids_arr	=	array_unique($product_ids_arr);		//	Total number of products in location!
+								If (count($product_ids_arr) > 0)	{	$location_empty	=	false;		}
+
+
+								//	Here figure out if the location is suitable for this product.
+								//	Check:
+								//
+								//	-	if location is blocked,
+								//
+
+								$location_checks	=	666;	//	0 means all good; by default it is 666 = BAD!
+
+								if ($location_arr[0]['loc_blocked'] > 0)
+								{
+									//	Location has been blocked.
+									$message_id		=	20;
+									$message2op		=	'Location blocked!';
+								}
+								else
+								{
+									// Success! All checks are good so far!
+									$message_id = 0;
+								}
+
+
+
+
+
+
+//								$message_id		=	0;	//	Everything went GREAT!
 
 
 							}
-
-
+							else
+							{
+								//	SQL error of some kind here!
+							}
 
 
 
@@ -632,7 +687,7 @@ if ($login->isUserLoggedIn() == true)
 					}
 					else
 					{
-						//	ERR
+						//	SQL ERR
 					}
 		
 
@@ -640,7 +695,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 					//$message_id		=	98;	//	all went well
-					$data_results	=	$location_arr;
+					//$data_results	=	$location_arr;
 
 				}	//	if ($input_checks == 0)
 				else
@@ -667,27 +722,6 @@ if ($login->isUserLoggedIn() == true)
 						$message2op		=	'Case qty incorrect';//$mylang['barcode_to_short'];
 					}
 
-
-/*
-
-				else if (is_numeric($product_qty) == false)
-				{
-					// Product Qty is not a number...
-					$input_checks = 3;
-				}
-				else if ($product_qty <= 0)
-				{
-					// Product Qty is either 0 or negative (-1, -50, etc.). Can't insert stock that is a negative quantity!
-					$input_checks = 4;
-				}
-*/
-
-
-
-
-
-
-
 				}
 
 			}	//	Permissions check!
@@ -707,7 +741,7 @@ if ($login->isUserLoggedIn() == true)
 	}
 	catch(PDOException $e)
 	{
-		$db->rollBack();
+		//$db->rollBack();
 		$message2op		=	$e->getMessage();
 		$message_id		=	107666;
 	}
@@ -721,8 +755,8 @@ if ($login->isUserLoggedIn() == true)
 		print_message_html_payload($message_id, $message2op, $html_results);
 		break;
 		case 1:	//	Grab location details
-		print_message_data_payload($message_id, $message2op, $data_results);
-//		print_message_html_payload($message_id, $message2op, $html_results);
+//		print_message_data_payload($message_id, $message2op, $data_results);
+		print_message_html_payload($message_id, $message2op, $html_results);
 		break;
 		case 2:	//	Add Warehouse
 		print_message($message_id, $message2op);
