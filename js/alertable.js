@@ -43,11 +43,12 @@ if(jQuery) (function($) {
 		//	Different layout for different types of alert... This is all basic AH!
 		if (type === 'info')
 		{
-			modal.find('.alertable-message').html('<p class="alert_info_text_class has-text-dark"><br>' + message + '<br><br></p>');
+			modal.find('.alertable-message').html('<p class="alert_info_text_class has-text-dark"><br>' + message + '</p>');
 		}
 		else if (type === 'error')
 		{
-			modal.find('.alertable-message').html('<p class="alert_error_text_class">Err: ' + title + '<br><br>' + message + '<br><br></p>');
+			modal.find('.alertable-message').html('<p class="alert_error_text_class">Err: ' + title + '<br><br>' + message + '</p>');
+		//	modal.find('.alertable-message').html('<p class="alert_error_text_class is-paddingless">Err: ' + title + '</p><div class="blank_space_10px is-paddingless"></div>' + '<p class="alert_error_text_class is-paddingless">' + message + '</p>');
 		}
 
 

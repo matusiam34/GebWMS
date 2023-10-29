@@ -9,8 +9,8 @@ $mylang = array(
 'max_qty'					=>	'Max Qty',
 
 
-'each'						=>	'EACH(s)',
-'case'						=>	'CASE(s)',
+'each'						=>	'EACH',
+'case'						=>	'CASE',
 
 'single'					=>	'Single',
 'multi'						=>	'Multi',
@@ -28,6 +28,7 @@ $mylang = array(
 'disabled'					=>	'Disabled',
 'suspended'					=>	'Suspended',
 
+'function'					=>	'Function',
 
 'no'						=>	'No',
 'yes'						=>	'Yes',
@@ -40,6 +41,9 @@ $mylang = array(
 'select_category_first'		=>	'Select category A first!',
 'product_already_exists'	=>	'Product already exists!',
 'product_not_found'			=>	'Product not found!',
+'unit_mismatch'				=>	'Unit mismatch!',
+'category_mismatch'			=>	'Category mismatch!',
+'location_full'				=>	'Location full!',
 
 
 'products_found_with_the_same_barcode'		=>	'Products founds with the same barcode!',
@@ -134,6 +138,7 @@ $mylang = array(
 
 //	Error Messages and Messages
 'a_OK'						=>	'a-OK',
+'error'						=>	'Error',
 'could_not_get_data'		=>	'Could not get data!',
 'could_not_update'			=>	'Could not update!',
 'user_uid_incorrect'		=>	'User UID incorrect!',

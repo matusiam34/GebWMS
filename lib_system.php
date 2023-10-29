@@ -63,9 +63,15 @@ $date_display_style	=	0;		//	Default is GebWMS style = 	25/11/2022 at 18:04:33
 
 $loc_types_arr	=	array(
 
-	'10'	=>	$mylang['single'],
-	'20'	=>	$mylang['multi'],
-	'30'	=>	$mylang['mixed']
+	'10'	=>	$mylang['single'] . ' (A)',
+	'11'	=>	$mylang['single'] . ' (E)',
+	'12'	=>	$mylang['single'] . ' (C)',
+	'20'	=>	$mylang['multi'] . ' (A)',
+	'21'	=>	$mylang['multi'] . ' (E)',
+	'22'	=>	$mylang['multi'] . ' (C)',
+	'30'	=>	$mylang['mixed'] . ' (A)',
+	'31'	=>	$mylang['mixed'] . ' (E)',
+	'32'	=>	$mylang['mixed'] . ' (C)'
 
 );
 
@@ -76,9 +82,15 @@ $loc_types_arr	=	array(
 // like the product search page.
 $loc_type_codes_arr	=	array(
 
-	'10'	=>	'SI',	//	"Single"
-	'20'	=>	'MU',	//	"Multi"
-	'30'	=>	'MX'	//	"Multi Mixed"
+	'10'	=>	'SIA',	//	"Single" A
+	'11'	=>	'SIE',	//	"Single" E
+	'12'	=>	'SIC',	//	"Single" C
+	'20'	=>	'MUA',	//	"Multi" A
+	'21'	=>	'MUE',	//	"Multi" E
+	'22'	=>	'MUC',	//	"Multi" C
+	'30'	=>	'MXA',	//	"Multi Mixed" A
+	'31'	=>	'MXE',	//	"Multi Mixed" E
+	'32'	=>	'MXC'	//	"Multi Mixed" C
 
 );
 
@@ -320,6 +332,32 @@ function decode_loc($loc_func, $loc_type, $loc_blkd, $function_codes_arr, $type_
 }
 
 
+
+//	Checks if the product categories match the location categories. Used in things like prod2loc (and I am sure it will be in others)
+function location_category_check($location_arr, $product_arr)
+{
+
+	if
+	(
+		($location_arr[0]['loc_cat_a'] == 0 || $location_arr[0]['loc_cat_a'] == $product_arr[0]['prod_category_a']) 
+
+		AND	
+
+		($location_arr[0]['loc_cat_b'] == 0 || $location_arr[0]['loc_cat_b'] == $product_arr[0]['prod_category_b'])
+
+		AND
+
+		($location_arr[0]['loc_cat_c'] == 0 || $location_arr[0]['loc_cat_c'] == $product_arr[0]['prod_category_c'])
+	)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+}
 
 
 //

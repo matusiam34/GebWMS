@@ -153,23 +153,22 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-		// Function to get location data
 		function get_location()
 		{
 
-			$.post('geb_ajax_location.php',
-			{
+			$.post('geb_ajax_location.php', {
 				action_code_js: 1,
 				loc_uid_js: get_Element_Value_By_ID('id_hidden')
-			}, 
-			
+			},
+
 			function (output)
 			{
-				var obje = jQuery.parseJSON(output);
 
-				if (obje.control === 0)	// Green light to GO !!!
+				const obje = jQuery.parseJSON(output);
+
+				if (obje.control === 0)
 				{
+
 					// Set element values
 					set_Element_Value_By_ID('id_warehouse', obje.data.wh_pkey);
 					set_Element_Value_By_ID('id_location_name', obje.data.loc_code);
@@ -179,25 +178,26 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_blocked', obje.data.loc_blocked);
 					set_Element_Value_By_ID('id_desc', obje.data.loc_note);
 					set_Element_Value_By_ID('id_location_status', obje.data.loc_disabled);
+					set_Element_Value_By_ID('id_magic_product_name', obje.data.prod_code);
 
 					// Append HTML to elements of categories
 					$('#id_category_a').empty().append(obje.data.cat_a_html);
 					$('#id_category_b').empty().append(obje.data.cat_b_html);
 					$('#id_category_c').empty().append(obje.data.cat_c_html);
+
 				}
 				else
 				{
-					// Handle the error case
 					$.alertable.error(obje.control, obje.msg).always(function () {});
 				}
-
-			}).fail(function ()
-			{
-				// Handle the case where something went wrong
+			})
+			.fail(function () {
 				$.alertable.error('102556', '<?php echo $mylang['server_error']; ?>');
 			});
-
 		}
+
+
+
 
 
 
@@ -216,6 +216,10 @@ if ($login->isUserLoggedIn() == true)
 				type_js				:	get_Element_Value_By_ID('id_type'),
 				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
+				loc_cat_a_js		:	get_Element_Value_By_ID('id_category_a'),
+				loc_cat_b_js		:	get_Element_Value_By_ID('id_category_b'),
+				loc_cat_c_js		:	get_Element_Value_By_ID('id_category_c'),
+				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
 
 			},
@@ -259,9 +263,14 @@ if ($login->isUserLoggedIn() == true)
 				barcode_js			:	get_Element_Value_By_ID('id_barcode'),
 				function_js			:	get_Element_Value_By_ID('id_function'),
 				type_js				:	get_Element_Value_By_ID('id_type'),
+				cat_a_js			:	get_Element_Value_By_ID('id_category_a'),
+				cat_b_js			:	get_Element_Value_By_ID('id_category_b'),
+				cat_c_js			:	get_Element_Value_By_ID('id_category_c'),
 				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
+				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
+				
 
 			},
 
@@ -281,6 +290,10 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_barcode', '');
 					set_Element_Value_By_ID('id_function', 0);
 					set_Element_Value_By_ID('id_type', 0);
+					set_Element_Value_By_ID('id_hidden', 0);
+					set_Element_Value_By_ID('id_category_a', 0);
+					set_Element_Value_By_ID('id_category_b', 0);
+					set_Element_Value_By_ID('id_category_c', 0);
 					set_Element_Value_By_ID('id_blocked', 0);
 					set_Element_Value_By_ID('id_desc', '');
 					set_Element_Value_By_ID('id_location_status', 0);
@@ -301,67 +314,46 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+	function get_all_warehouses()
+	{
 
-		// Get all warehouses
-		function get_all_warehouses()
+		$.post('geb_ajax_warehouse.php', {
+
+			action_code_js: 20
+
+		})
+		.done(function (output)
 		{
+			const obje = jQuery.parseJSON(output);
 
-			$.post('geb_ajax_warehouse.php', { 
-
-				action_code_js				:	20
-
-			},
-
-			function(output)
+			if (obje.control === 0)
 			{
 
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
+				const warehouseSelect = $('#id_warehouse');
+				warehouseSelect.empty();
 
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
+				if (obje.data && obje.data.length > 0)
 				{
-
-					var len = obje.data.length;
-
-
-					// jQuery - remove all entries
-					$('#id_warehouse').empty();
-
-					// The first entry
-					var opt = document.createElement('Option');
-					document.getElementById('id_warehouse').options.add(opt);
-					opt.value = 0;
-					opt.text = '-----';
-
-					if(len > 0)
+					obje.data.forEach(function(item)
 					{
-
-						for (var i = 0; i < len; i++)
+						warehouseSelect.append($('<option>',
 						{
-							var opt = document.createElement('Option');
-							document.getElementById('id_warehouse').options.add(opt);
-							opt.value = obje.data[i].wh_pkey;
-							opt.text = obje.data[i].wh_code;
-						}
-
-					}
-
-				}
-				else
-				{
-					alert(obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
+							value: item.wh_pkey,
+							text: item.wh_code
+						}));
 					});
-
-		}
-
-
-
+				}
+			}
+			else
+			{
+				$.alertable.error(obje.control, obje.msg);
+			}
+		})
+		.fail(function() {
+			// Something went wrong
+			$.alertable.error('102559', '<?php echo $mylang["server_error"]; ?>');
+		});
+	}
 
 
 
@@ -370,106 +362,91 @@ if ($login->isUserLoggedIn() == true)
 		function get_all_category_b()
 		{
 
-			$.post('geb_ajax_category.php', { 
-
-				action_code_js		:	1,
-				action_format_js	:	1,
-				action_disabled_js	:	0,
-				cat_uid_js			:	get_Element_Value_By_ID('id_category_a')
-
-			},
-
-			function(output)
+			const category_a_val = get_Element_Value_By_ID('id_category_a');
+			const postData =
 			{
+				action_code_js:			1,
+				action_format_js:		1,
+				action_disabled_js:		0,
+				cat_uid_js:				category_a_val
+			};
 
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
+			$.post('geb_ajax_category.php', postData)
+				.done(function (output)
 				{
-
-					var len = obje.data.length;
-
-					emptySelectBox('id_category_b');
-					addOption2SelectBox('id_category_b', 0, '<?php	echo $mylang['none'];	?>');	
-
-					if(len > 0)
+					const obje = jQuery.parseJSON(output);
+					
+					if (obje.control === 0)
 					{
+						var len = obje.data.length;
 
-						for (var i = 0; i < len; i++)
+						emptySelectBox('id_category_b');
+						addOption2SelectBox('id_category_b', 0, '<?php	echo $mylang['none'];	?>');	
+
+						if(len > 0)
 						{
-							addOption2SelectBox('id_category_b', obje.data[i].cat_b_pkey, obje.data[i].cat_b_name);	
+							for (var i = 0; i < len; i++)
+							{
+								addOption2SelectBox('id_category_b', obje.data[i].cat_b_pkey, obje.data[i].cat_b_name);	
+							}
 						}
-
 					}
-
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
-					});
+					else
+					{
+						$.alertable.error(obje.control, obje.msg);
+					}
+				})
+				.fail(function () {
+					$.alertable.error('102559', '<?php echo $mylang["server_error"]; ?>');
+				});
 
 		}
 
 
 
 
-		// Get category C based on category B
+
 		function get_all_category_c()
 		{
-
-			$.post('geb_ajax_category.php', { 
-
-				action_code_js		:	2,
-				action_format_js	:	1,
-				action_disabled_js	:	0,
-				cat_uid_js			:	get_Element_Value_By_ID('id_category_b')
-
-			},
-
-			function(output)
+			const category_b_val = get_Element_Value_By_ID('id_category_b');
+			const postData =
 			{
+				action_code_js:			2,
+				action_format_js:		1,
+				action_disabled_js:		0,
+				cat_uid_js: 			category_b_val
+			};
 
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-
-					var len = obje.data.length;
-
-					emptySelectBox('id_category_c');
-					addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
-
-					if(len > 0)
+			$.post('geb_ajax_category.php', postData)
+				.done(function (output) {
+					const obje = jQuery.parseJSON(output);
+					
+					if (obje.control === 0)
 					{
+						var len = obje.data.length;
 
-						for (var i = 0; i < len; i++)
+						emptySelectBox('id_category_c');
+						addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
+
+						if(len > 0)
 						{
-							addOption2SelectBox('id_category_c', obje.data[i].cat_c_pkey, obje.data[i].cat_c_name);	
+							for (var i = 0; i < len; i++)
+							{
+								addOption2SelectBox('id_category_c', obje.data[i].cat_c_pkey, obje.data[i].cat_c_name);	
+							}
 						}
-
 					}
-
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
-					});
-
+					else
+					{
+						$.alertable.error(obje.control, obje.msg);
+					}
+				})
+				.fail(function () {
+					$.alertable.error('102559', '<?php echo $mylang["server_error"]; ?>');
+				});
 		}
+
+
 
 
 
@@ -615,7 +592,7 @@ if ($login->isUserLoggedIn() == true)
 								<div class="control">
 									<div class="select is-fullwidth">
 										<select id="id_function">
-											<!--	Populate this so that it uses the array from lib_functions			-->
+											<!--	Populate this so that it uses the array from lib_system			-->
 											<?php
 
 												foreach ($loc_functions_arr as $locid => $locdescription)
@@ -638,11 +615,15 @@ if ($login->isUserLoggedIn() == true)
 								<div class="control">
 									<div class="select is-fullwidth">
 										<select id="id_type">
+											<!--	Populate this so that it uses the array from lib_system			-->
+											<?php
 
-											<!--	Populate this so that it uses the array from lib_functions			-->
-											<option value="10">Single</option>
-											<option value="20">Multi</option>
-											<option value="30">Mixed</option>
+												foreach ($loc_types_arr as $typeid => $typedescription)
+												{
+													echo	'<option value="' . $typeid . '">' . $typedescription . '</option>';
+												}
+
+											?>
 										</select>
 									</div>
 								</div>

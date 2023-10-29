@@ -79,6 +79,18 @@ if ($login->isUserLoggedIn() == true)
 		});
 
 
+		function clear_product_barcode()
+		{
+			empty_Element_By_ID('product_details');
+			empty_Element_By_ID('location_details')
+			set_Element_Value_By_ID("prod_barcode", "");
+			set_Focus_On_Element_By_ID("prod_barcode");
+		}
+
+
+
+
+
 		function decrease_value()
 		{
 			var qty_value = parseInt(get_Element_Value_By_ID('product_qty')) - 1;
@@ -125,15 +137,16 @@ if ($login->isUserLoggedIn() == true)
 				var obje = jQuery.parseJSON(output);
 
 				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
+//				if (obje.control == 0)
+//				{
 					empty_Element_By_ID('product_details');
+					empty_Element_By_ID('location_details');
 					append_HTML_to_Element_By_ID('product_details', obje.html);
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
+//				}
+//				else
+//				{
+//					$.alertable.error(obje.control, obje.msg);
+//				}
 
 			}).fail(function() {
 						// something went wrong
@@ -157,7 +170,7 @@ if ($login->isUserLoggedIn() == true)
 
 			function(output)
 			{
-alert(output);
+
 				// Parse the json  !!
 				var obje = jQuery.parseJSON(output);
 
@@ -167,12 +180,16 @@ alert(output);
 
 					//empty_Element_By_ID('product_details');
 					//append_HTML_to_Element_By_ID('product_details', obje.html);
-					$.alertable.info(obje.control, obje.msg);
+					empty_Element_By_ID('location_details');
+					append_HTML_to_Element_By_ID('location_details', obje.html);
 
 				}
 				else
 				{
-					$.alertable.error(obje.control, obje.msg);
+					//$.alertable.error(obje.control, obje.msg);
+					empty_Element_By_ID('location_details');
+					append_HTML_to_Element_By_ID('location_details', obje.html);
+
 				}
 
 			}).fail(function() {
@@ -218,6 +235,9 @@ alert(output);
 	$page_controls	.=	'<p class="control">';
 	$page_controls	.=		'<button class="button inventory_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
 	$page_controls	.=	'</p>';
+
+
+
 
 
 
@@ -268,11 +288,17 @@ alert(output);
 							<button class="button inventory_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>
 						</p>
 
+						<p class="control">
+							<button class="button inventory_class iconFocus" style="width:50px;" onClick="clear_product_barcode();" type="submit"></button>
+						</p>
+
+
+
 					</div>';
 
 
-	echo		'<div id="product_details"></div>';
-	echo		'<div id="location_details"></div>';
+	echo		'<div class="" id="product_details"></div>';
+	echo		'<div class="" id="location_details"></div>';
 
 
 

@@ -203,52 +203,47 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-		// Add product to the system
 		function add_product()
 		{
 
-			$.post('geb_ajax_product.php', { 
-
-				action_code_js			:	2,
-
-				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
-				product_description_js	:	get_Element_Value_By_ID('id_product_description'),
-				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
-				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
-				product_category_c_js	:	get_Element_Value_By_ID('id_category_c'),
-				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
-				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
-				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
-				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
-				min_qty_js				:	get_Element_Value_By_ID('id_min_qty'),
-				max_qty_js				:	get_Element_Value_By_ID('id_max_qty'),
-				disabled_js				:	get_Element_Value_By_ID('id_disabled')
-
-			},
-
-			function(output)
+			const requestData =
 			{
+				action_code_js:				2,
+				product_code_js:			get_Element_Value_By_ID('id_product_code'),
+				product_description_js:		get_Element_Value_By_ID('id_product_description'),
+				product_category_a_js:	 	get_Element_Value_By_ID('id_category_a'),
+				product_category_b_js:		get_Element_Value_By_ID('id_category_b'),
+				product_category_c_js:		get_Element_Value_By_ID('id_category_c'),
+				each_barcode_js: 			get_Element_Value_By_ID('id_each_barcode'),
+				each_weight_js:				get_Element_Value_By_ID('id_each_weight'),
+				case_barcode_js:			get_Element_Value_By_ID('id_case_barcode'),
+				case_qty_js:				get_Element_Value_By_ID('id_case_qty'),
+				min_qty_js:					get_Element_Value_By_ID('id_min_qty'),
+				max_qty_js:					get_Element_Value_By_ID('id_max_qty'),
+				disabled_js: 				get_Element_Value_By_ID('id_disabled')
+			};
 
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
+			$.post('geb_ajax_product.php', requestData)
+				.done(function (output)
 				{
-					$.alertable.info(obje.control, obje.msg);
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg);
-				}
+					const obje = jQuery.parseJSON(output);
 
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('106555', '<?php	echo $mylang['server_error'];	?>');
-					});
-
+					if (obje.control === 0)
+					{
+						$.alertable.info(obje.control, obje.msg);
+					}
+					else
+					{
+						$.alertable.error(obje.control, obje.msg);
+					}
+				})
+				.fail(function (){
+					$.alertable.error('106555', '<?php echo $mylang['server_error']; ?>');
+				});
 		}
+
+
+
 
 
 

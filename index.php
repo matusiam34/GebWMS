@@ -71,6 +71,7 @@ if ($login->isUserLoggedIn() == true)
 					this.form.submit();
 				});
 
+
 			});
 
 
@@ -232,6 +233,7 @@ if ($login->isUserLoggedIn() == true)
 
 			// More power section?
 			echo '<div class="column is-3">';
+
 
 
 				// My Account! Change Password, set Language etc etc 

@@ -1,6 +1,6 @@
 <?php
 
-//	NOTE:	add qty info for mimics in the product details table. This will be very good to let the operator know that they have 
+//	NOTE:	add qty info for mimics in the product details table (frontend HTML). This will be very good to let the operator know that they have 
 //			encountered a mimic and could check the case qty if needed!
 
 /*
@@ -11,7 +11,7 @@
  
 	//	Action code breakdown
 	0	:	Get product details in a form of an HTML table.
-	1	:	Get location details in a form of an HTML table.
+	1	:	Get location details in a form of an HTML table + Perform checks if the product and location is compatible!
 
 
 
@@ -48,6 +48,7 @@ if ($login->isUserLoggedIn() == true)
 		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
+		$db->beginTransaction();
 
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
@@ -69,7 +70,6 @@ if ($login->isUserLoggedIn() == true)
 			
 				$product_barcode	=	trim($_POST['prod_barcode_js']);	// this should be a number
 				$product_arr		=	array();	//	Product details stored here
-
 
 				$input_checks	=	666;	//	0 means all good; by default it is 666 = BAD!
 
@@ -249,6 +249,10 @@ if ($login->isUserLoggedIn() == true)
 										<button class="button inventory_class iconSearch" style="width:50px;" onClick="get_location_details();" type="submit"></button>
 									</p>
 
+									<p class="control">
+										<button class="button inventory_class iconFocus" style="width:50px;" onClick="clear_location_barcode();" type="submit"></button>
+									</p>
+
 
 								</div>';
 
@@ -258,6 +262,15 @@ if ($login->isUserLoggedIn() == true)
 							<script>
 
 								set_Focus_On_Element_By_ID("location_barcode");
+
+
+								function clear_location_barcode()
+								{
+									set_Element_Value_By_ID("location_barcode", "");
+									set_Focus_On_Element_By_ID("location_barcode");
+								}
+
+
 
 							</script>';
 
@@ -308,6 +321,26 @@ if ($login->isUserLoggedIn() == true)
 
 				}
 
+
+
+				//	When things do NOT go to plan!
+				if ($message_id > 0)
+				{
+					$html_results	=	'<table class="is-fullwidth table is-bordered is-marginless">';	//	all error messages for action 0 here!
+						$html_results	.=	'<tr>';
+							$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['error'] . ':</td>';
+							$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $message_id . '</td>';
+						$html_results	.=	'</tr>';
+
+						$html_results	.=	'<tr class="">';
+							$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['description'] . ':</td>';
+							$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $message2op . '</td>';
+						$html_results	.=	'</tr>';
+					$html_results	.=	'</table>';
+				}
+
+
+
 			}	//	Permissions check!
 
 
@@ -315,6 +348,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Check if location and product is ok to update or insert to stock!
+		//	With a different number it will allow to INSERT / UPDATE stock!
 		elseif
 		(
 			($action_code == 1)
@@ -331,31 +365,12 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				//	This will get me everything about the location (that exists FOR SURE! unless wrong barcode is provided!
-				/*
-				Array ( [stk_pkey] => 22 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 6 )
-				Array ( [stk_pkey] => 21 [stk_loc_pkey] => 4 [stk_prod_pkey] => 8 [stk_qty] => 10 )
-				Array ( [stk_pkey] => 25 [stk_loc_pkey] => 4 [stk_prod_pkey] => 9 [stk_qty] => 43 )
-				*/
-
-
-				//	This array will allow me to iterate and see if the product provided (the ID) matchest the stk_prod_pkey!
-				//	Based on that I will be able to see if the product gets a green light or not!
-				//	Most likely not to duplicate the action do the UPDATE / INSERT within this one with an extra flag!
-				//	This way I will have to write checks only once and not twice if anything changes!!!
-
-
-				
-				//	Figure out if the location is any good. Basic checks first. Things like:
-				//
-				//	-	is the location blocked?
-				//	-	is the location disabled?
-				//	-	does the warehouse of the operator match the warehouse he wants to do a move in.
-				//
-
-				$location_arr		=	array();	//	Location details stored here
+				$loc_arr			=	array();	//	Location details stored here
 				$stock_arr			=	array();	//	Stock details within a location
 				$product_arr		=	array();	//	Product details stored here
+
+				$mimic				=	0;	//	scanned barcode is not a Mimic by default!
+
 
 				$product_uid		=	0;	//	A query will obtain this using the provided product barcode!
 				$product_barcode	=	trim($_POST['prod_barcode_js']);
@@ -418,7 +433,18 @@ if ($login->isUserLoggedIn() == true)
 
 						SELECT
 
-						*
+						prod_pkey,
+						prod_category_a,
+						prod_category_b,
+						prod_category_c,
+						prod_mimic,
+						prod_each_barcode,
+						prod_each_barcode_mimic,
+						prod_case_barcode,
+						prod_case_barcode_mimic,
+						prod_case_qty,
+						prod_case_qty_mimic
+
 
 						FROM 
 
@@ -459,44 +485,47 @@ if ($login->isUserLoggedIn() == true)
 						}
 
 
-//						$stmt->closeCursor();
+						$stmt->closeCursor();
 
 
 						if (count($product_arr) == 1)
 						{
 
 							//	One product found and everything seems to be just fine!
-							//	Next step is to get the location details + stock allocated to it, if any!
 
+							$product_uid	=	leave_numbers_only($product_arr[0]['prod_pkey']);
+							$final_prod_qty	=	0;	//	by default! The final quantity that will be INSERTED / UPDATED!
 
-							$product_uid	=	$product_arr[0]['prod_pkey'];
+							//	Figure out if it is an EACH or CASE unit via the provided barcode!
+							$product_unit	=	0;	//	Wrong! Has to be at least 1 (each) or 3 (case)
 
-
-							//	Figure out if it is an EACH or CASE unit!
-							//$product_unit	=	0;	//	Wrong! Has to be at least 1 (each) or 3 (case)
-
-							$product_unit	=	'';
-							if
-							(
-								(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
-								OR
-								(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
-							)
+							if		(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
 							{
-								$product_unit	=	$mylang['each'];
+								$product_unit	=	1;
+								$final_prod_qty	=	$product_qty;
 							}
-							elseif
-							(
-								(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
-								OR
-								(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
-							)
+							elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
 							{
-								$product_unit	=	$mylang['case'];
+								$product_unit	=	1;
+								//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+								$final_prod_qty	=	$product_qty;
+								$mimic			=	1;	//	Totally a mimic product using the mimic each barcode!
+							}
+							elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
+							{
+								$product_unit	=	3;
+								//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+								$final_prod_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty']) * $product_qty;	//	Mimic case qty!
+							}
+							elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
+							{
+								$product_unit	=	3;
+								//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+								$final_prod_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
+								$mimic			=	1;	//	Totally a mimic product using the mimic case barcode and new case qty!
 							}
 
 
-							
 							//	Run the location query!
 							$sql	=	'
 
@@ -505,9 +534,14 @@ if ($login->isUserLoggedIn() == true)
 
 								loc_pkey,
 								loc_wh_pkey,
+								loc_code,
 								loc_function,
 								loc_type,
 								loc_blocked,
+								loc_cat_a,
+								loc_cat_b,
+								loc_cat_c,
+								loc_magic_product,
 
 								stk_pkey,
 								stk_loc_pkey,
@@ -562,7 +596,6 @@ if ($login->isUserLoggedIn() == true)
 								$stmt->execute();
 
 
-								$location_empty			=	true;
 								$product_ids_arr		=	array();	//	All IDs of the products in the location stored here!
 
 
@@ -571,16 +604,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 									// Check if the location already exists in the array, if not, create it
-									if (!isset($location_arr[0]))
+									if (!isset($loc_arr[0]))
 									{
-										$location_arr[0] =
+										$loc_arr[0] =
 										[
-											'loc_pkey'		=>	$row['loc_pkey'],
-											'loc_wh_pkey'	=>	$row['loc_wh_pkey'],
-											'loc_function'	=>	$row['loc_function'],
-											'loc_type'		=>	$row['loc_type'],
-											'loc_blocked'	=>	$row['loc_blocked'],
-											'stock_info'	=>	[]
+											'loc_pkey'				=>	$row['loc_pkey'],
+											'loc_wh_pkey'			=>	$row['loc_wh_pkey'],
+											'loc_code'				=>	$row['loc_code'],
+											'loc_function'			=>	$row['loc_function'],
+											'loc_type'				=>	$row['loc_type'],
+											'loc_cat_a'				=>	$row['loc_cat_a'],
+											'loc_cat_b'				=>	$row['loc_cat_b'],
+											'loc_cat_c'				=>	$row['loc_cat_c'],
+											'loc_magic_product'		=>	$row['loc_magic_product'],
+											'loc_blocked'			=>	$row['loc_blocked']
 										];
 
 									}
@@ -589,7 +626,7 @@ if ($login->isUserLoggedIn() == true)
 									//	Only add if the location has a product allocated to it!
 									if (leave_numbers_only($row['stk_pkey']) > 0)
 									{
-										
+
 										$stock_arr[] =
 										// Add stock information to the location's stock_info array
 										[
@@ -608,36 +645,14 @@ if ($login->isUserLoggedIn() == true)
 								}
 
 
-//	Write a validation function for this verification if product can be inserted into location!
-
-
-
-
-
-
-
-//	'10'	=>	'SI',	//	"Single"
-//	'20'	=>	'MU',	//	"Multi"
-//	'30'	=>	'MX'	//	"Multi Mixed"
-
-
-
-
-
-
-								$product_ids_arr	=	array_unique($product_ids_arr);		//	Total number of products in location!
-								If (count($product_ids_arr) > 0)	{	$location_empty	=	false;		}
-
-
-								//	Here figure out if the location is suitable for this product.
-								//	Check:
-								//
-								//	-	if location is blocked,
-								//
-
-								$location_checks	=	666;	//	0 means all good; by default it is 666 = BAD!
-
-								if ($location_arr[0]['loc_blocked'] > 0)
+								if (!isset($loc_arr[0]))
+								{
+									//	Provided location barcode does not match to anything!
+									$message_id		=	21;
+									$message2op		=	'Location not found';
+									$html_results	=	$message2op;
+								}
+								elseif ($loc_arr[0]['loc_blocked'] > 0)
 								{
 									//	Location has been blocked.
 									$message_id		=	20;
@@ -645,16 +660,291 @@ if ($login->isUserLoggedIn() == true)
 								}
 								else
 								{
-									// Success! All checks are good so far!
-									$message_id = 0;
-								}
+
+									$product_ids_arr	=	array_unique($product_ids_arr);		//	Total number of products in location!
+									$product_count		=	count($product_ids_arr);
+									$location_type		=	$loc_arr[0]['loc_type'];
+
+
+									// SINGLE LOCATION Checks!
+									if
+									(
+									
+										($location_type == 10)
+
+										OR
+
+										($location_type == 11)
+
+										OR
+
+										($location_type == 12)
+
+									)
+									{
+
+
+										//	Check if location if empty or has a product inside of it.
+										//	Since this is a SINGLE location I do not have to worry about any UPDATEs to
+										//	the geb_stock table.
+										if ($product_count == 0)
+										{
+
+											//	No product in this SINGLE location!
+											//	Check if the SINGLE location allows for this particular product unit to be inserted!
+											//	Example: If the product is a case and the SINGLE is 11 (Each) = Can't go further!
+
+											if
+											(
+												($location_type == 10)
+
+												OR
+
+												($location_type == 11 AND $product_unit == 1)
+
+												OR
+
+												($location_type == 12 AND $product_unit == 3)
+											)
+											{
+
+
+												//	Check if the product is MAGICAL... 
+												if
+												(
+
+													($loc_arr[0]['loc_magic_product'] == $product_uid)
+
+													OR
+													
+													(location_category_check($loc_arr, $product_arr))
+
+												)
+												{
+
+													//	Generate the HTML table with all of the details so far!
+													//	Operator will be given options here. Accept or Abort!
+													
+													
+													
+													
+													/*
+													
+													
+													//	No further checks needed! Product can be allocated to this location!
+
+													$sql	=	'
+
+
+														INSERT
+														
+														INTO
+
+														geb_stock
+														
+														(
+															stk_loc_pkey,
+															stk_prod_pkey,
+															stk_unit,
+															stk_qty,
+															stk_mimic
+														) 
+
+														VALUES
+
+														(
+															:istk_loc_pkey,
+															:istk_prod_pkey,
+															:istk_unit,
+															:istk_qty,
+															:istk_mimic
+														)
+
+													';
+
+
+
+
+
+													if ($stmt = $db->prepare($sql))
+													{
+
+														$stmt->bindValue(':istk_loc_pkey',		$loc_arr[0]['loc_pkey'],	PDO::PARAM_INT);
+														$stmt->bindValue(':istk_prod_pkey',		$product_uid,				PDO::PARAM_INT);
+														$stmt->bindValue(':istk_unit',			$product_unit,				PDO::PARAM_INT);
+														$stmt->bindValue(':istk_qty',			$final_prod_qty,			PDO::PARAM_INT);
+														$stmt->bindValue(':istk_mimic',			$mimic,						PDO::PARAM_INT);
+
+														$stmt->execute();
+														$db->commit();
+
+														$message_id		=	0;	//	all went well
+														$message2op		=	$mylang['success'];
+													}
+*/
+														$message_id		=	0;	//	all went well
+														$message2op		=	$mylang['success'];
+
+												}
+												else
+												{
+													$message_id		=	107203;
+													$message2op		=	$mylang['category_mismatch'];
+												}
+
+
+											}
+											else
+											{
+												//	Generate a table with some explanation...
+												$mismatch_table		=	'<table class="is-fullwidth table is-bordered is-marginless">';
+
+
+												$mismatch_table		.=	'<tr>';
+												$mismatch_table		.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['product'] . '</td>';
+												$mismatch_table		.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['location'] . '</td>';
+												$mismatch_table		.=	'<tr>';
+
+
+												//	THese two most likely need a rewrite...
+												$product_unit_str	=	'';
+												if 		($product_unit == 1)	{	$product_unit_str	=	$mylang['each'];	}
+												elseif	($product_unit == 3)	{	$product_unit_str	=	$mylang['case'];	}
+
+
+												$location_unit_str	=	'';
+												if 		($location_type == 11)	{	$location_unit_str	=	$mylang['each'];	}
+												elseif	($location_type == 12)	{	$location_unit_str	=	$mylang['case'];	}
+
+												$mismatch_table		.=	'<tr>';
+												$mismatch_table		.=	'<td style="background-color: ' . $backclrB . ';">' . $product_unit_str . '</td>';
+												$mismatch_table		.=	'<td style="background-color: ' . $backclrB . ';">' . $location_unit_str . '</td>';
+												$mismatch_table		.=	'<tr>';
+
+												$mismatch_table		.=	'</table>';
+
+
+												$message_id		=	107203;
+												$message2op		=	$mylang['unit_mismatch'] . '<br>' . $mismatch_table;
+											}
+
+
+										}	//	if ($product_count == 0)
+										else
+										{
+											$message_id		=	107203;
+											$message2op		=	$mylang['location_full'];
+										}
+
+
+
+										//	Decode the location code into something more use friendly!
+										$loc_details_arr = decode_loc
+										(
+											$loc_arr[0]['loc_function'],
+											$loc_arr[0]['loc_type'],
+											$loc_arr[0]['loc_blocked'],
+											$loc_function_codes_arr,
+											$loc_type_codes_arr
+										);
+
+
+										//	Generate the HTML Table for the operator!
+										$html_results	.=	'<table class="is-fullwidth table is-bordered is-marginless">';
+/*
+											$html_results	.=	'<tr>';
+												$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['error'] . ':</td>';
+												$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $message2op . '</td>';
+											$html_results	.=	'</tr>';
+*/
+
+
+/*
+											$html_results	.=	'<tr>';
+												$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['location'] . ':</td>';
+												$html_results	.=	'<td style="background-color: ' . $backclrB . '; ' . $loc_details_arr[1] . '">' . $loc_arr[0]['loc_code'] . ' (' . $loc_details_arr[0] . ')</td>';
+											$html_results	.=	'</tr>';
+*/
 
 
 
 
 
 
-//								$message_id		=	0;	//	Everything went GREAT!
+
+
+/*
+											$html_results	.=	'<tr>';
+												$html_results	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['function'] . ':</td>';
+												$html_results	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_functions_arr[$loc_arr[0]['loc_function']] . '</td>';
+											$html_results	.=	'</tr>';
+*/
+
+
+
+
+										$html_results	.=	'</table>';
+
+
+
+									}
+									elseif	//	MULTI LOCATION Checks!
+									(
+									
+										($location_type == 20)
+
+										OR
+
+										($location_type == 21)
+
+										OR
+
+										($location_type == 22)
+
+									)
+									{
+										
+										
+									}
+									elseif	//	MULTI MIXED LOCATION Checks!
+									(
+									
+										($location_type == 30)
+
+										OR
+
+										($location_type == 31)
+
+										OR
+
+										($location_type == 32)
+
+									)
+									{
+										
+										
+									}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+								}	//	location checks end here!
+
 
 
 							}
@@ -695,7 +985,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 					//$message_id		=	98;	//	all went well
-					//$data_results	=	$location_arr;
+					//$data_results	=	$loc_arr;
 
 				}	//	if ($input_checks == 0)
 				else
@@ -724,11 +1014,13 @@ if ($login->isUserLoggedIn() == true)
 
 				}
 
+
+
+
 			}	//	Permissions check!
 
 
 		}	//	Action 1 end!
-
 
 
 

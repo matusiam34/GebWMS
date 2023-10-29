@@ -74,6 +74,7 @@ if ($login->isUserLoggedIn() == true) {
 				geb_location.loc_type,
 				geb_location.loc_blocked,
 				geb_location.loc_note,
+				geb_location.loc_magic_product,
 				geb_location.loc_disabled
 
 
@@ -181,12 +182,17 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_cat_a,
 					geb_location.loc_cat_b,
 					geb_location.loc_cat_c,
+					geb_location.loc_magic_product,
 					geb_location.loc_note,
-					geb_location.loc_disabled
+					geb_location.loc_disabled,
+
+					geb_product.prod_code
+
 
 					FROM  geb_location
 
 					INNER JOIN geb_warehouse ON geb_location.loc_wh_pkey = geb_warehouse.wh_pkey
+					LEFT JOIN geb_product ON geb_location.loc_magic_product = geb_product.prod_pkey
 
 
 					WHERE
@@ -222,7 +228,8 @@ if ($login->isUserLoggedIn() == true) {
 							'loc_cat_b'			=>	$row['loc_cat_b'],
 							'loc_cat_c'			=>	$row['loc_cat_c'],
 							'loc_note'			=>	$row['loc_note'],
-							'loc_disabled'		=>	$row['loc_disabled']
+							'loc_disabled'		=>	$row['loc_disabled'],
+							'prod_code'			=>	$row['prod_code']
 
 						);
 
@@ -340,12 +347,17 @@ if ($login->isUserLoggedIn() == true) {
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
 				$type			=	leave_numbers_only($_POST['type_js']);
+				$cat_a			=	leave_numbers_only($_POST['loc_cat_a_js']);
+				$cat_b			=	leave_numbers_only($_POST['loc_cat_b_js']);
+				$cat_c			=	leave_numbers_only($_POST['loc_cat_c_js']);
+				magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
 				$function		=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
 				$disabled		=	leave_numbers_only($_POST['disabled_js']);
 
 
+				//	Add some validation of the input fields here!
 
 
 				if (strlen($location) >= 1)	//	I am allowing the name of the location to be 1 character long!
@@ -357,7 +369,8 @@ if ($login->isUserLoggedIn() == true) {
 					//	Since two warehouses can have the same location names I need to check for barcodes instead!
 					//	I can't afford to have two identical barcodes since that will cause chaos!
 
-					$found_match	=	0;	//	0 = all good!
+					$found_match		=	0;	//	0 = all good!
+					$magic_product_uid	=	0;	//	default! Means no product has been provided. I am converting the string to a number!
 
 					//	TO DO: Also, can't have duplicate name of location within a warehouse!!!
 
@@ -446,6 +459,9 @@ if ($login->isUserLoggedIn() == true) {
 									loc_barcode,
 									loc_function,
 									loc_type,
+									loc_cat_a,
+									loc_cat_b,
+									loc_cat_c,
 									loc_blocked,
 									loc_note,
 									loc_disabled
@@ -459,6 +475,9 @@ if ($login->isUserLoggedIn() == true) {
 									:iloc_barcode,
 									:iloc_function,
 									:iloc_type,
+									:iloc_cat_a,
+									:iloc_cat_b,
+									:iloc_cat_c,
 									:iloc_blocked,
 									:iloc_note,
 									:iloc_disabled
@@ -475,6 +494,12 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iloc_barcode',		$barcode,			PDO::PARAM_STR);
 							$stmt->bindValue(':iloc_function',		$function,			PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_type',			$type,				PDO::PARAM_INT);
+
+							$stmt->bindValue(':iloc_cat_a',			$cat_a,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_b',			$cat_b,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_c',			$cat_c,				PDO::PARAM_INT);
+
+
 							$stmt->bindValue(':iloc_blocked',		$blocked,			PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_note',			$loc_desc,			PDO::PARAM_STR);
 							$stmt->bindValue(':iloc_disabled',		$disabled,			PDO::PARAM_INT);
@@ -542,7 +567,10 @@ if ($login->isUserLoggedIn() == true) {
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
 				$type			=	leave_numbers_only($_POST['type_js']);
-				$lfunction		=	leave_numbers_only($_POST['function_js']);
+				$cat_a			=	leave_numbers_only($_POST['cat_a_js']);
+				$cat_b			=	leave_numbers_only($_POST['cat_b_js']);
+				$cat_c			=	leave_numbers_only($_POST['cat_c_js']);
+				$loc_function	=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
 				$disabled		=	leave_numbers_only($_POST['disabled_js']);
@@ -666,6 +694,9 @@ if ($login->isUserLoggedIn() == true) {
 								loc_barcode		=		:uloc_barcode,
 								loc_function	=		:uloc_function,
 								loc_type		=		:uloc_type,
+								loc_cat_a		=		:uloc_cat_a,
+								loc_cat_b		=		:uloc_cat_b,
+								loc_cat_c		=		:uloc_cat_c,
 								loc_blocked		=		:uloc_blocked,
 								loc_note		=		:uloc_note,
 								loc_disabled	=		:uloc_disabled
@@ -683,8 +714,11 @@ if ($login->isUserLoggedIn() == true) {
 								$stmt->bindValue(':uloc_wh_pkey',	$warehouse,		PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_code',		$location,		PDO::PARAM_STR);
 								$stmt->bindValue(':uloc_barcode',	$barcode,		PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_function',	$lfunction,		PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_function',	$loc_function,	PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_type',		$type,			PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_a',		$cat_a,			PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_b',		$cat_b,			PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_c',		$cat_c,			PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_blocked',	$blocked,		PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
 								$stmt->bindValue(':uloc_disabled',	$disabled,		PDO::PARAM_INT);

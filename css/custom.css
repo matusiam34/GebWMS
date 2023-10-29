@@ -66,8 +66,8 @@
   position: fixed;
   z-index: 9999;
   top: 36vh;
-  left: calc(50% - 170px);
-  width: 340px;
+  left: calc(50% - 180px);
+  width: 360px;
   background: white;
   border-radius: 4px;
   padding: 20px;
@@ -92,7 +92,7 @@
 
 /* Prompt */
 .alertable-prompt {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .alertable-input {
@@ -173,7 +173,7 @@
 	color: white;
 }
 
-/*	red: same as admin_class; abort and cancel buttons etc	*/
+/*	red: same as admin_class; abort,cancel buttons, red divs with text of errors etc	*/
 .red_class {
 	background-color: #ef5350;
 	color: white;
@@ -434,8 +434,28 @@
 		background-image: url(../images/icon_copy_hover.png);
 		background-repeat: no-repeat;
 		background-position: center;
-		background-size: 20px;
+		background-size: 24px;
     }
+
+
+
+    .iconFocus
+    {
+		background-image: url(../images/icon_focus.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+	}
+
+
+    .iconFocus:hover
+    {
+		background-image: url(../images/icon_focus_hover.png);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 24px;
+    }
+
 
 
 

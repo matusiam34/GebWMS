@@ -468,7 +468,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->execute();
 							$db->commit();
 
-							$message_id		=	0;	//	all went well
+							$message_id		=	1;	//	all went well
 							$message2op		=	$mylang['success'];
 						}
 

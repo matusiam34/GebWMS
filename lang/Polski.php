@@ -10,7 +10,7 @@ $mylang = array(
 
 
 'each'						=>	'JEDNOSTEK',
-'case'						=>	'SKRZYŃ',	//	Paczka!
+'case'						=>	'SKRZYŃ',	//	Paczka!?
 
 'single'					=>	'Pojedynczy',
 'multi'						=>	'Wielo',
@@ -28,6 +28,8 @@ $mylang = array(
 'disabled'					=>	'Wyłączony',
 'suspended'					=>	'Zawieszony',
 
+'function'					=>	'Funkcja',
+
 'no'						=>	'No',
 'yes'						=>	'Yes',
 
@@ -39,6 +41,9 @@ $mylang = array(
 'select_category_first'		=>	'Najpierw wybierz kategorię A!',
 'product_already_exists'	=>	'Ten product już istnieje!',
 'product_not_found'			=>	'Product nie znaleziony!',
+'unit_mismatch'				=>	'Niedopasowanie jednostek!',
+'category_mismatch'			=>	'Niezgodność kategorii!',
+'location_full'				=>	'Lokalizacja pełna!',
 
 
 'products_found_with_the_same_barcode'		=>	'Znaleziono produkty z tym samym kodem kreskowym!',
@@ -130,6 +135,7 @@ $mylang = array(
 
 //	Error Messages and Messages
 'a_OK'						=>	'Wszystko OK!',
+'error'						=>	'Błąd',
 'could_not_get_data'		=>	'Nie można uzyskać danych!',
 'could_not_update'			=>	'Nie można zaktualizować!',
 'user_uid_incorrect'		=>	'UID użytkownika jest nieprawidłowy!',
