@@ -53,6 +53,7 @@ $mylang = array(
 //
 //	The useful day to day stuff here
 //
+'barcode'					=>	'Kod kreskowy',
 'logout'					=>	'Wyloguj',
 'language'					=>	'Język',
 'type'						=>	'Typ',
@@ -145,6 +146,7 @@ $mylang = array(
 'name_too_short'			=>	'Nazwa za krótka!',
 'barcode_too_short'			=>	'Kod kreskowy za krótki!',
 'incorrect_uid'				=>	'Niepoprawny UID!',
+'incorrect_qty'				=>	'Niepoprawna ilość!',
 
 
 

@@ -54,6 +54,7 @@ $mylang = array(
 //
 //	The useful day to day stuff here
 //
+'barcode'					=>	'Barcode',
 'logout'					=>	'Logout',
 'language'					=>	'Language',
 'type'						=>	'Type',
@@ -148,6 +149,7 @@ $mylang = array(
 'name_too_short'			=>	'Name too short!',
 'barcode_too_short'			=>	'Barcode too short!',
 'incorrect_uid'				=>	'Incorrect UID!',
+'incorrect_qty'				=>	'Incorrect Qty!',
 
 
 

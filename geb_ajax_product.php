@@ -11,10 +11,13 @@
 	//	NOTE: Not complete by any means!
 
 	//	Action code breakdown
-	0	:	Get one product details!
-	1	:	Get one location info (disabled location and warehouses ARE included! So it will grab any location!)
+	0	:	Add Product
+	1	:	Update Product details
 
 
+
+
+	//	Old stuff here!
 	2	:	Add product!
 	3	:	Update product details!
 
@@ -49,108 +52,133 @@ if ($login->isUserLoggedIn() == true) {
 		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
+		//	Error codes defined... Good / bad?
+		define('ERROR_SUCCESS', 0);
+		define('ERROR_PRODUCT_CODE_SHORT', 1);
+		define('ERROR_EACH_BARCODE_SHORT', 2);
+		define('ERROR_EACH_BARCODE_NOT_NUMERIC', 3);
+		define('ERROR_CASE_BARCODE_NOT_NUMERIC', 4);
+		define('ERROR_CASE_BARCODE_SHORT', 5);
+		define('ERROR_CASE_QTY_INVALID', 6);
+		define('ERROR_BARCODES_IDENTICAL', 7);
+
+
+
+		//	Validate product input from the operator! Used by Add and Update!
+		function validate_product_data($prod_arr)
+		{
+
+
+			//	Here figure out if the operator provided the correct data and the right mix of required fields.
+			//	For example if you provide a case barcode but not the case Qty = we have a problem since the system
+			//	will not be able to scan in any cases of that product.
+
+			$input_checks	=	0;	//	0 means all good;	666 means BAD!
+
+			//	Check if $case_qty is a number at all... THe default set by the frontend is 0... but to avoid any user input:
+			if (!is_numeric($prod_arr['case_qty']))
+			{
+				$prod_arr['case_qty']	=	0;	//	Will be fine is the user did not want this; Will give an error if provided with case barcode!
+			}
+
+
+			if ( (strlen($prod_arr['case_barcode']) > 0) OR ($prod_arr['case_qty'] > 0) )
+			{
+				//	The user has provided info about cases... lets do further checks...
+
+
+				//	I can not allow to just provide a barcode and not the case number. Same way in reverse!
+				//	Both need to be provided for the case scanning to work!
+				if ($prod_arr['case_qty'] < 2)	//	Case quantity can't be the same as EACH (1). Has to be 2 at least!
+				{
+					//	Case qty must be provided!
+					$input_checks	=	ERROR_CASE_QTY_INVALID;
+				}
+				elseif (strlen($prod_arr['case_barcode']) < min_case_barcode_len)
+				{
+					//	Barcode is too short!
+					$input_checks	=	ERROR_CASE_BARCODE_SHORT;
+				}
+
+				//	Check which type of barcode the system allows...
+				if (case_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
+				{
+					if (!is_numeric($prod_arr['case_barcode']))	//	Chk if each barcode is a string of numbers!
+					{
+						//	Case barcode has to be a number!!
+						$input_checks	=	ERROR_CASE_BARCODE_NOT_NUMERIC;
+					}
+				}
+
+			}
+
+
+			if ( (strlen($prod_arr['each_barcode']) > 0) AND (strlen($prod_arr['case_barcode']) > 0) )
+			{
+				//	Compare the two barcodes since I can't allow them to be identical!
+				//	And I know someone will try it...
+				if (strcmp($prod_arr['each_barcode'], $prod_arr['case_barcode']) === 0)
+				{
+					//	Bingo! someone did try it!
+					$input_checks	=	ERROR_BARCODES_IDENTICAL;
+				}
+			}
+
+
+			if (strlen($prod_arr['product_code']) < min_product_len)
+			{
+				//	Product code too short
+				$input_checks	=	ERROR_PRODUCT_CODE_SHORT;
+			}
+			elseif (strlen($prod_arr['each_barcode']) < min_each_barcode_len)	//	each barcode lenght does not meet requirements!
+			{
+				//	Each barcode has to be at least $min_each_barcode_len characters long
+				$input_checks	=	ERROR_EACH_BARCODE_SHORT;
+			}
+			elseif (each_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
+			{
+				if (!is_numeric($prod_arr['each_barcode']))	//	each barcode is not a string of numbers! ERR!!
+				{
+					//	Each barcode has to be a number!
+					$input_checks	=	ERROR_EACH_BARCODE_NOT_NUMERIC;
+				}
+			}
+
+
+			return $input_checks;
+
+
+		}
+
+
 
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
 
-		//	Get all locations. The action code for this is 0
-		if ($action_code == 0)
+
+
+
+		//	Add and Update in the same process since they are VERY similar
+		if 
+		(
+
+			($action_code == 0)
+
+			OR
+
+			($action_code == 1)
+
+
+		)
+
 		{
 
 
+			//
+			//	Nothing for now! This is a work in progress!
+			//
 
-			$sql	=	'
-
-
-				SELECT
-
-				geb_warehouse.wh_code,
-				geb_location.loc_pkey,
-				geb_location.loc_code,
-
-				geb_location.loc_barcode,
-				geb_location.loc_function,
-				geb_location.loc_type,
-				geb_location.loc_blocked,
-				geb_location.loc_note,
-				geb_location.loc_disabled
-
-
-				FROM  geb_location
-
-				INNER JOIN geb_warehouse ON geb_location.loc_wh_pkey = geb_warehouse.wh_pkey
-
-
-				WHERE
-
-				geb_warehouse.wh_disabled = 0
-
-
-				ORDER BY wh_code, loc_code
-
-
-			';
-
-				$html_results		=	'';
-
-				$html_results		.=	'<thead>';
-
-				$html_results		.=	'<tr>';
-				$html_results		.=		'<th>UID</th>';
-				$html_results		.=		'<th>Warehouse</th>';
-				$html_results		.=		'<th>Location</th>';
-				$html_results		.=		'<th>Barcode</th>';
-				$html_results		.=		'<th>Note</th>';
-				$html_results		.=	'</tr>';
-
-				$html_results		.=	'</thead>';
-
-				$html_results		.=	'<tbody style="max-height:400px;">';
-
-				if ($stmt = $db->prepare($sql))
-				{
-
-					$stmt->execute();
-
-					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-					{
-
-						$tr_style	=	'';
-
-						if (leave_numbers_only($row['loc_disabled']) == 1)
-						{
-							//	Location is disabled. Have a greyish hue background color!
-							$tr_style	=	' style="background-color: #d9d9d9;" ';
-						}
-
-						$html_results		.=	'<tr ' . $tr_style . '>';
-						$html_results		.=		'<td>'	.	trim($row['loc_pkey'])	.	'</td>';
-						$html_results		.=		'<td>'	.	trim($row['wh_code'])	.	'</td>';
-
-
-						// Generate the loc status code. This will allow the operator to see if the location is a Single, Blocked, Mixed etc at a glance
-						$loc_function			=	leave_numbers_only($row['loc_function']);
-						$loc_type				=	leave_numbers_only($row['loc_type']);
-						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
-
-						$loc_details_arr		=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
-
-
-						$html_results		.=		'<td style="'	.	$loc_details_arr[1]	.	'">'	.	trim($row['loc_code'])	.	' ('	.	$loc_details_arr[0]	.	')</td>';
-						$html_results		.=		'<td>'	.	trim($row['loc_barcode'])	.	'</td>';
-
-
-						// Convert the type of location type info into meaninful text.
-						$html_results		.=		'<td>'	.	trim($row['loc_note'])		.	'</td>';
-						$html_results		.=	'</tr>';
-
-					}
-
-					$html_results		.=	'</tbody>';
-					$message_id		=	0;	//	all went well
-
-				}
 
 		}	//	Action 0 end!
 
@@ -159,67 +187,10 @@ if ($login->isUserLoggedIn() == true) {
 		else if ($action_code == 1)
 		{
 
-			if
-			(
-				is_it_enabled($_SESSION['menu_adm_warehouse_loc'])
-			)
-			{
+			//
+			//	Nothing for now! This is a work in progress!
+			//
 
-				//	Get the UID of the location hopefully provided from the frontend.
-				$loc_uid	=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
-
-				$sql	=	'
-
-
-					SELECT
-
-					geb_warehouse.wh_pkey,
-					geb_location.loc_pkey,
-					geb_location.loc_code,
-
-					geb_location.loc_barcode,
-					geb_location.loc_function,
-					geb_location.loc_type,
-					geb_location.loc_blocked,
-					geb_location.loc_note,
-					geb_location.loc_disabled
-
-
-					FROM  geb_location
-
-					INNER JOIN geb_warehouse ON geb_location.loc_wh_pkey = geb_warehouse.wh_pkey
-
-
-					WHERE
-
-					geb_location.loc_pkey = :sloc
-
-
-					ORDER BY wh_code, loc_code
-
-				';
-
-
-				if ($stmt = $db->prepare($sql))
-				{
-
-
-					$stmt->bindValue(':sloc',		$loc_uid,		PDO::PARAM_INT);
-					$stmt->execute();
-
-
-					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-					{
-						// drop it into the final array...
-						$data_results	=	$row;
-					}
-
-					$message_id		=	0;	//	all went well
-				}
-
-
-			}	//	Permissions check!
-			
 		}	//	Action 1 end!
 
 
@@ -246,60 +217,26 @@ if ($login->isUserLoggedIn() == true) {
 			{
 
 
-				// Data from the user to process...
-				$product_code			=	trim($_POST['product_code_js']);	//	this should be text
-				$product_description	=	trim($_POST['product_description_js']);	//	this should be text
-				$product_category_a		=	leave_numbers_only($_POST['product_category_a_js']);	//	this should be a number
-				$product_category_b		=	leave_numbers_only($_POST['product_category_b_js']);	//	this should be a number
-				$product_category_c		=	leave_numbers_only($_POST['product_category_c_js']);	//	this should be a number
-				$each_barcode			=	trim($_POST['each_barcode_js']);	//	this should be text
-				$each_weight			=	trim($_POST['each_weight_js']);	//	this should be text
-				$case_barcode			=	trim($_POST['case_barcode_js']);	//	this should be text
-				$case_qty				=	leave_numbers_only($_POST['case_qty_js']);	//	this should be a number
-				$min_qty				=	leave_numbers_only($_POST['min_qty_js']);	//	this should be a number
-				$max_qty				=	leave_numbers_only($_POST['max_qty_js']);	//	this should be a number
-				$disabled				=	leave_numbers_only($_POST['disabled_js']);	//	this should be a number
+
+				$product_arr = array
+				(
+					'product_code' 				=> trim($_POST['product_code_js']),
+					'product_description'		=> trim($_POST['product_description_js']),
+					'product_category_a'		=> leave_numbers_only($_POST['product_category_a_js']),
+					'product_category_b'		=> leave_numbers_only($_POST['product_category_b_js']),
+					'product_category_c'		=> leave_numbers_only($_POST['product_category_c_js']),
+					'each_barcode'				=> trim($_POST['each_barcode_js']),
+					'each_weight'				=> trim($_POST['each_weight_js']),
+					'case_barcode'				=> trim($_POST['case_barcode_js']),
+					'case_qty'					=> leave_numbers_only($_POST['case_qty_js']),
+					'min_qty'					=> leave_numbers_only($_POST['min_qty_js']),
+					'max_qty'					=> leave_numbers_only($_POST['max_qty_js']),
+					'disabled'					=> leave_numbers_only($_POST['disabled_js'])
+				);
 
 
-				//	Here figure out if the operator provided the correct data and the right mix of required fields.
-				//	For example if you provide a case barcode but not the case Qty = we have a problem since the system
-				//	will not be able to scan in any cases of that product.
+				$input_checks	=	validate_product_data($product_arr);
 
-				$input_checks	=	0;	//	0 means all good
-
-
-				if (strlen($product_code) < 2)	//	I am allowing the product code to be at least 2 characters long
-				{
-					//	Product code too short
-					$input_checks	=	1;
-				}
-				else if (strlen($each_barcode) < 4)	//	barcode has to be at least 4 characters long!
-				{
-					//	Each barcode has to be at least 4 characters long
-					$input_checks	=	2;
-				}
-				elseif ((strlen($case_barcode) > 0) OR ($case_qty > 0))
-				{
-					//	The user has provided info about cases... lets do further checks...
-					//	I can not allow to just provide a barcode and not the case number. Same way in reverse!
-					//	Both need to be provided for the case scanning to work!
-					if (strlen($case_barcode) < 4)
-					{
-						//	Barcode is too short!
-						$input_checks	=	3;
-					}
-					elseif ($case_qty < 1)
-					{
-						//	Case qty must be provided!
-						$input_checks	=	4;
-					}
-
-				}
-				elseif (($min_qty > 0) OR ($max_qty > 0))
-				{
-					//	Hmmmm... Do I need both? Maybe someone does not care about the min but only cares
-					//	about the maximum value? Ok... lets leave it for now and see what to do with that at some point.
-				}
 
 				if ($input_checks == 0)	//	All input checks have passed! Move towards further checks!
 				{
@@ -350,43 +287,45 @@ if ($login->isUserLoggedIn() == true) {
 					if ($stmt = $db->prepare($sql))
 					{
 
-						$stmt->bindValue(':sprod_code',				$product_code,	PDO::PARAM_STR);
-						$stmt->bindValue(':sprod_each_barcode',		$each_barcode,	PDO::PARAM_STR);
-						$stmt->bindValue(':sprod_case_barcode',		$case_barcode,	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_code',				$product_arr['product_code'],	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_each_barcode',		$product_arr['each_barcode'],	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_case_barcode',		$product_arr['case_barcode'],	PDO::PARAM_STR);
 						$stmt->execute();
 
 						while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 						{
 
 
-							if (strcmp(trim($row['prod_code']), $product_code) === 0)
+							if (strcmp(trim($row['prod_code']), $product_arr['product_code']) === 0)
 							{
 								//	Found duplicate product code!
 								$found_match	=	1;
 							}
-							else if
-							(
-								(strcmp(trim($row['prod_each_barcode']), $each_barcode) === 0)
-
-								OR
-
-								(strcmp(trim($row['prod_each_barcode']), $case_barcode) === 0)
-							)
+							elseif	(strcmp(trim($row['prod_each_barcode']), $product_arr['each_barcode']) === 0)
 							{
 								//	Found duplicate each barcode!
 								$found_match	=	2;
 							}
-							else if
-							(
-								(strcmp(trim($row['prod_case_barcode']), $each_barcode) === 0)
-
-								OR
-
-								(strcmp(trim($row['prod_case_barcode']), $case_barcode) === 0)
-							)
+							elseif	(strcmp(trim($row['prod_each_barcode']), $product_arr['case_barcode']) === 0)
 							{
-								//	Found duplicate case barcode!
+								//	Found duplicate case barcode in the each column!
 								$found_match	=	3;
+							}
+
+							elseif (strlen($product_arr['case_barcode']) >= min_case_barcode_len)
+							{
+
+								if		(strcmp(trim($row['prod_case_barcode']), $product_arr['each_barcode']) === 0)
+								{
+									//	Found duplicate each barcode!
+									$found_match	=	4;
+								}
+								elseif	(strcmp(trim($row['prod_case_barcode']), $product_arr['case_barcode']) === 0)
+								{
+									//	Found duplicate each barcode!
+									$found_match	=	5;
+								}
+
 							}
 
 
@@ -396,6 +335,8 @@ if ($login->isUserLoggedIn() == true) {
 					// show an error if the query has an error?
 					else
 					{
+						//	Just in case I end up here...
+						$found_match	=	166;
 					}
 
 
@@ -453,23 +394,24 @@ if ($login->isUserLoggedIn() == true) {
 						{
 
 
-							$stmt->bindValue(':iprod_code',				$product_code,				PDO::PARAM_STR);
-							$stmt->bindValue(':iprod_desc',				$product_description,		PDO::PARAM_STR);
-							$stmt->bindValue(':iprod_category_a',		$product_category_a,		PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_category_b',		$product_category_b,		PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_category_c',		$product_category_c,		PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_each_barcode',		$each_barcode,				PDO::PARAM_STR);
-							$stmt->bindValue(':iprod_each_weight',		$each_weight,				PDO::PARAM_STR);
-							$stmt->bindValue(':iprod_case_barcode',		$case_barcode,				PDO::PARAM_STR);
-							$stmt->bindValue(':iprod_case_qty',			$case_qty,					PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_min_qty',			$min_qty,					PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_max_qty',			$max_qty,					PDO::PARAM_INT);
-							$stmt->bindValue(':iprod_disabled',			$disabled,					PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_code',				$product_arr['product_code'],				PDO::PARAM_STR);
+							$stmt->bindValue(':iprod_desc',				$product_arr['product_description'],		PDO::PARAM_STR);
+							$stmt->bindValue(':iprod_category_a',		$product_arr['product_category_a'],			PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_category_b',		$product_arr['product_category_b'],			PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_category_c',		$product_arr['product_category_c'],			PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_each_barcode',		$product_arr['each_barcode'],				PDO::PARAM_STR);
+							$stmt->bindValue(':iprod_each_weight',		$product_arr['each_weight'],				PDO::PARAM_STR);
+							$stmt->bindValue(':iprod_case_barcode',		$product_arr['case_barcode'],				PDO::PARAM_STR);
+							$stmt->bindValue(':iprod_case_qty',			$product_arr['case_qty'],					PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_min_qty',			$product_arr['min_qty'],					PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_max_qty',			$product_arr['max_qty'],					PDO::PARAM_INT);
+							$stmt->bindValue(':iprod_disabled',			$product_arr['disabled'],					PDO::PARAM_INT);
 							$stmt->execute();
 							$db->commit();
 
-							$message_id		=	1;	//	all went well
+							$message_id		=	0;	//	all went well
 							$message2op		=	$mylang['success'];
+
 						}
 
 
@@ -485,15 +427,27 @@ if ($login->isUserLoggedIn() == true) {
 						elseif ($found_match == 2)
 						{
 							$message_id		=	106201;
-							$message2op		=	$mylang['barcode_already_exists'];
+							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
 						}
 						elseif ($found_match == 3)
 						{
 							$message_id		=	106202;
-							$message2op		=	$mylang['barcode_already_exists'];
+							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
+						}
+						elseif ($found_match == 4)
+						{
+							$message_id		=	106203;
+							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
+						}
+						elseif ($found_match == 5)
+						{
+							$message_id		=	106204;
+							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
 						}
 
 					}
+
+
 
 
 				}
@@ -503,23 +457,33 @@ if ($login->isUserLoggedIn() == true) {
 
 					if ($input_checks	==	1)
 					{
-						$message_id		=	106203;
+						$message_id		=	106205;
 						$message2op		=	$mylang['name_too_short'];
 					}
 					elseif ($input_checks	==	2)
 					{
-						$message_id		=	106204;
-						$message2op		=	$mylang['barcode_too_short'];
+						$message_id		=	106206;
+						$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_too_short'];
 					}
 					elseif ($input_checks	==	3)
 					{
-						$message_id		=	106205;
-						$message2op		=	'Case barcode too short';//$mylang['barcode_to_short'];
+						$message_id		=	106207;
+						$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['invalid_barcode'];
 					}
 					elseif ($input_checks	==	4)
 					{
-						$message_id		=	106206;
-						$message2op		=	'Case qty incorrect';//$mylang['barcode_to_short'];
+						$message_id		=	106208;
+						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['invalid_barcode'];
+					}
+					elseif ($input_checks	==	5)
+					{
+						$message_id		=	106209;
+						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_too_short'];
+					}
+					elseif ($input_checks	==	6)
+					{
+						$message_id		=	106210;
+						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['incorrect_qty'];
 					}
 
 
@@ -576,42 +540,66 @@ if ($login->isUserLoggedIn() == true) {
 					//	For example if you provide a case barcode but not the case Qty = we have a problem since the system
 					//	will not be able to scan in any cases of that product.
 
-					$input_checks	=	0;	//	0 means all good
+					$input_checks	=	0;	//	0 means all good;	666 means BAD!
+
+					//	Check if $case_qty is a number at all... THe default set by the frontend is 0... but to avoid any user input:
+					if (!is_numeric($case_qty))
+					{
+						$case_qty	=	0;	//	Will be fine is the user did not want this; Will give an error if provided with case barcode!
+					}
 
 
-					if (strlen($product_code) < 2)	//	I am allowing the product code to be at least 2 characters long
+
+					if ( (strlen($case_barcode) > 0) OR ($case_qty > 0) )
+					{
+						//	The user has provided info about cases... lets do further checks...
+
+
+						//	I can not allow to just provide a barcode and not the case number. Same way in reverse!
+						//	Both need to be provided for the case scanning to work!
+						if ($case_qty < 2)	//	Case quantity can't be the same as EACH (1). Has to be 2 at least!
+						{
+							//	Case qty must be provided!
+							$input_checks	=	6;
+						}
+						elseif (strlen($case_barcode) < min_case_barcode_len)
+						{
+							//	Barcode is too short!
+							$input_checks	=	5;
+						}
+
+						//	Check which type of barcode the system allows...
+						if (case_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
+						{
+							if (!is_numeric($case_barcode))	//	Chk if each barcode is a string of numbers!
+							{
+								//	Case barcode has to be a number!!
+								$input_checks	=	4;
+							}
+						}
+
+
+					}
+
+
+					if (strlen($product_code) < min_product_len)
 					{
 						//	Product code too short
 						$input_checks	=	1;
 					}
-					else if (strlen($each_barcode) < 4)	//	barcode has to be at least 4 characters long!
+					elseif (strlen($each_barcode) < min_each_barcode_len)	//	each barcode lenght does not meet requirements!
 					{
-						//	Each barcode has to be at least 4 characters long
+						//	Each barcode has to be at least $min_each_barcode_len characters long
 						$input_checks	=	2;
 					}
-					elseif ((strlen($case_barcode) > 0) OR ($case_qty > 0))
+					elseif (each_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
 					{
-						//	The user has provided info about cases... lets do further checks...
-						//	I can not allow to just provide a barcode and not the case number. Same way in reverse!
-						//	Both need to be provided for the case scanning to work!
-						if (strlen($case_barcode) < 4)
+						if (!is_numeric($each_barcode))	//	each barcode is not a string of numbers! ERR!!
 						{
-							//	Barcode is too short!
+							//	Each barcode has to be a number!
 							$input_checks	=	3;
 						}
-						elseif ($case_qty < 1)
-						{
-							//	Case qty must be provided!
-							$input_checks	=	4;
-						}
-
 					}
-					elseif (($min_qty > 0) OR ($max_qty > 0))
-					{
-						//	Hmmmm... Do I need both? Maybe someone does not care about the min but only cares
-						//	about the maximum value? Ok... lets leave it for now and see what to do with that at some point.
-					}
-
 
 
 
@@ -631,7 +619,7 @@ if ($login->isUserLoggedIn() == true) {
 						//
 						//	!!!!!!!!!!!!!!!!!!!
 						//
-						//	See if there are duplicates! Have a look at this later just in case I missed something...
+						//	See if there are duplicates!
 						//
 						//	!!!!!!!!!!!!!!!!!!!
 						//
@@ -641,43 +629,55 @@ if ($login->isUserLoggedIn() == true) {
 
 							SELECT
 
-							*
+							prod_pkey,
+							prod_code,
+							prod_each_barcode,
+							prod_case_barcode
 
 							FROM geb_product
 
 							WHERE
 
-							prod_pkey	<>	:sprod_pkey
+							((prod_pkey	<>	:sprod_pkey) AND (prod_code = :sprod_code))
 
-							AND
+							OR
 
 							(
 
-								(prod_each_barcode = :sprod_each_barcode)
+								(
 
-								OR
+									(prod_each_barcode = :sprod_each_barcode)
 
-								(prod_case_barcode = :sprod_case_barcode)
+									OR
 
-								OR
+									(prod_case_barcode = :sprod_case_barcode)
 
-								(prod_each_barcode = :sprod_case_barcode)
+									OR
 
-								OR
+									(prod_each_barcode = :sprod_case_barcode)
 
-								(prod_case_barcode = :sprod_each_barcode)
+									OR
+
+									(prod_case_barcode = :sprod_each_barcode)
+
+								)
+
+								AND
+
+								(prod_pkey	<>	:sprod_pkey)
 
 							)
 
 
-
 						';
+
 
 
 						if ($stmt = $db->prepare($sql))
 						{
 
 							$stmt->bindValue(':sprod_pkey',				$product_uid,	PDO::PARAM_INT);
+							$stmt->bindValue(':sprod_code',				$product_code,	PDO::PARAM_STR);
 							$stmt->bindValue(':sprod_each_barcode',		$each_barcode,	PDO::PARAM_STR);
 							$stmt->bindValue(':sprod_case_barcode',		$case_barcode,	PDO::PARAM_STR);
 							$stmt->execute();
@@ -686,29 +686,40 @@ if ($login->isUserLoggedIn() == true) {
 							{
 
 
-								if
-								(
-									(strcmp(trim($row['prod_each_barcode']), $each_barcode) === 0)
-
-									OR
-
-									(strcmp(trim($row['prod_each_barcode']), $case_barcode) === 0)
-								)
+								if (strcmp(trim($row['prod_code']), $product_code) === 0)
 								{
-									//	Found duplicate each barcode!
-									$found_match	=	2;
+									//	Found duplicate product code!
+									$found_match	=	1;
 								}
-								else if
-								(
-									(strcmp(trim($row['prod_case_barcode']), $each_barcode) === 0)
-
-									OR
-
-									(strcmp(trim($row['prod_case_barcode']), $case_barcode) === 0)
-								)
+								else
 								{
-									//	Found duplicate case barcode!
-									$found_match	=	3;
+
+									//	Barcode related checks now!
+									if	(strcmp(trim($row['prod_each_barcode']), $each_barcode) === 0)
+									{
+										//	Found duplicate each barcode!
+										$found_match	=	2;
+									}
+									elseif	(strcmp(trim($row['prod_each_barcode']), $case_barcode) === 0)
+									{
+										//	Found duplicate case barcode in the each column!
+										$found_match	=	3;
+									}
+									elseif (strlen($case_barcode) >= min_case_barcode_len)
+									{
+										if		(strcmp(trim($row['prod_case_barcode']), $each_barcode) === 0)
+										{
+											//	Found duplicate each barcode!
+											$found_match	=	4;
+										}
+										elseif	(strcmp(trim($row['prod_case_barcode']), $case_barcode) === 0)
+										{
+											//	Found duplicate case barcode!
+											$found_match	=	5;
+										}
+
+									}
+
 								}
 
 
@@ -718,6 +729,8 @@ if ($login->isUserLoggedIn() == true) {
 						// show an error if the query has an error?
 						else
 						{
+							//	Just in case I ever end up here...
+							$found_match	=	166;
 						}
 
 
@@ -790,21 +803,35 @@ if ($login->isUserLoggedIn() == true) {
 
 							if ($found_match == 1)
 							{
-								$message_id		=	106200;
+								$message_id		=	106211;
 								$message2op		=	$mylang['product_already_exists'];
 							}
 							elseif ($found_match == 2)
 							{
-								$message_id		=	106201;
-								$message2op		=	$mylang['barcode_already_exists'];
+								$message_id		=	106212;
+								$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
 							}
 							elseif ($found_match == 3)
 							{
-								$message_id		=	106202;
-								$message2op		=	$mylang['barcode_already_exists'];
+								$message_id		=	106213;
+								$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
+							}
+							elseif ($found_match == 4)
+							{
+								$message_id		=	106214;
+								$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
+							}
+							elseif ($found_match == 5)
+							{
+								$message_id		=	106215;
+								$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
 							}
 
+
+
 						}
+
+
 
 
 					}
@@ -814,23 +841,33 @@ if ($login->isUserLoggedIn() == true) {
 
 						if ($input_checks	==	1)
 						{
-							$message_id		=	106203;
+							$message_id		=	106216;
 							$message2op		=	$mylang['name_too_short'];
 						}
 						elseif ($input_checks	==	2)
 						{
-							$message_id		=	106204;
-							$message2op		=	$mylang['barcode_too_short'];
+							$message_id		=	106217;
+							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_too_short'];
 						}
 						elseif ($input_checks	==	3)
 						{
-							$message_id		=	106205;
-							$message2op		=	'Case barcode too short';//$mylang['barcode_to_short'];
+							$message_id		=	106218;
+							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['invalid_barcode'];
 						}
 						elseif ($input_checks	==	4)
 						{
-							$message_id		=	106205;
-							$message2op		=	'Case qty incorrect';//$mylang['barcode_to_short'];
+							$message_id		=	106219;
+							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['invalid_barcode'];
+						}
+						elseif ($input_checks	==	5)
+						{
+							$message_id		=	106220;
+							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_too_short'];
+						}
+						elseif ($input_checks	==	6)
+						{
+							$message_id		=	1062221;
+							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['incorrect_qty'];
 						}
 
 
@@ -840,11 +877,10 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-
 				}
 				else
 				{
-					$message_id		=	102206;
+					$message_id		=	106222;
 					$message2op		=	$mylang['incorrect_uid'];
 				}
 
@@ -872,12 +908,15 @@ if ($login->isUserLoggedIn() == true) {
 
 
 	switch ($action_code) {
-		case 0:	//	Grab all locations
-		print_message_html_payload($message_id, $message2op, $html_results);
+		case 0:	//	Add product
+		print_message($message_id, $message2op);
 		break;
-		case 1:	//	Get one location details
-		print_message_data_payload($message_id, $message2op, $data_results);
+		case 1:	//	Update product
+		print_message($message_id, $message2op);
 		break;
+
+
+		//	Remove the old stuff once migrated!
 		case 2:	//	Add product
 		print_message($message_id, $message2op);
 		break;

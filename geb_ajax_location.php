@@ -99,10 +99,10 @@ if ($login->isUserLoggedIn() == true) {
 
 				$html_results		.=	'<tr>';
 				$html_results		.=		'<th>UID</th>';
-				$html_results		.=		'<th>Warehouse</th>';
-				$html_results		.=		'<th>Location</th>';
-				$html_results		.=		'<th>Barcode</th>';
-				$html_results		.=		'<th>Note</th>';
+				$html_results		.=		'<th>' . $mylang['warehouse'] . '</th>';
+				$html_results		.=		'<th>' . $mylang['location'] . '</th>';
+				$html_results		.=		'<th>' . $mylang['barcode'] . '</th>';
+				$html_results		.=		'<th>' . $mylang['note'] . '</th>';
 				$html_results		.=	'</tr>';
 
 				$html_results		.=	'</thead>';
@@ -350,7 +350,7 @@ if ($login->isUserLoggedIn() == true) {
 				$cat_a			=	leave_numbers_only($_POST['loc_cat_a_js']);
 				$cat_b			=	leave_numbers_only($_POST['loc_cat_b_js']);
 				$cat_c			=	leave_numbers_only($_POST['loc_cat_c_js']);
-				magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
+				$magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
 				$function		=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
@@ -375,7 +375,9 @@ if ($login->isUserLoggedIn() == true) {
 					//	TO DO: Also, can't have duplicate name of location within a warehouse!!!
 
 					//
-					// Seek out for duplicate barcode entry across ALL locations!
+					//	Seek out for duplicate barcode entry across ALL locations!
+					//	Also check if the operator is not trying to add an identically named location name to the same warehouse!
+					//	I can't have two identical location names like C113A in a Coventry warehouse.
 					//
 					$sql	=	'
 
@@ -429,7 +431,6 @@ if ($login->isUserLoggedIn() == true) {
 								$found_match	=	2;	//	The barcode you entered is already allocated to a location!
 							}
 
-
 						}
 
 					}
@@ -437,6 +438,68 @@ if ($login->isUserLoggedIn() == true) {
 					else
 					{
 					}
+
+
+					//	Now... Since the operator is providing me potentially with a Magic Product I need to query the geb_product
+					//	table to see if there is a match. If there is a match ===>>> get the UID (prod_pkey) of that product and use It
+					//	to insert!
+
+
+					if (strlen($magic_product) >= 1)	//	Some product has been provided...
+					{
+
+						$magic_arr	=	array();	//	all of the magic product matches that I can find.
+													//	I will check if there is more than one product code found etc
+													//	Better to check for errors just to be on the safe side!
+
+						//	Run the query and see what I get!
+
+						$sql	=	'
+
+							SELECT
+
+							prod_pkey
+
+							FROM geb_product
+
+							WHERE
+
+							prod_code = :sprod_code
+
+						';
+
+
+						if ($stmt = $db->prepare($sql))
+						{
+
+							$stmt->bindValue(':sprod_code',		$magic_product,		PDO::PARAM_STR);
+							$stmt->execute();
+
+							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+							{
+								$magic_arr[]	=	$row;
+							}
+
+
+							if (count($magic_arr) == 1)
+							{
+								//	One product found! Allocated the $magic_product_uid to the prod_pkey
+								$magic_product_uid	=	$magic_arr[0]['prod_pkey'];
+							}
+							elseif (count($magic_arr) > 1)
+							{
+								$found_match	=	3;	//	Multiple products with the same!
+							}
+
+
+						}
+						// show an error if the query has an error?
+						else
+						{
+						}
+
+					}
+
 
 
 
@@ -459,6 +522,7 @@ if ($login->isUserLoggedIn() == true) {
 									loc_barcode,
 									loc_function,
 									loc_type,
+									loc_magic_product,
 									loc_cat_a,
 									loc_cat_b,
 									loc_cat_c,
@@ -475,6 +539,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iloc_barcode,
 									:iloc_function,
 									:iloc_type,
+									:iloc_magic_product,
 									:iloc_cat_a,
 									:iloc_cat_b,
 									:iloc_cat_c,
@@ -489,20 +554,22 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':iloc_wh_pkey',		$warehouse,			PDO::PARAM_INT);
-							$stmt->bindValue(':iloc_code',			$location,			PDO::PARAM_STR);
-							$stmt->bindValue(':iloc_barcode',		$barcode,			PDO::PARAM_STR);
-							$stmt->bindValue(':iloc_function',		$function,			PDO::PARAM_INT);
-							$stmt->bindValue(':iloc_type',			$type,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_wh_pkey',			$warehouse,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_code',				$location,				PDO::PARAM_STR);
+							$stmt->bindValue(':iloc_barcode',			$barcode,				PDO::PARAM_STR);
+							$stmt->bindValue(':iloc_function',			$function,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_type',				$type,					PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_magic_product',		$magic_product_uid,		PDO::PARAM_INT);
 
-							$stmt->bindValue(':iloc_cat_a',			$cat_a,				PDO::PARAM_INT);
-							$stmt->bindValue(':iloc_cat_b',			$cat_b,				PDO::PARAM_INT);
-							$stmt->bindValue(':iloc_cat_c',			$cat_c,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_a',				$cat_a,					PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_b',				$cat_b,					PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_c',				$cat_c,					PDO::PARAM_INT);
 
 
-							$stmt->bindValue(':iloc_blocked',		$blocked,			PDO::PARAM_INT);
-							$stmt->bindValue(':iloc_note',			$loc_desc,			PDO::PARAM_STR);
-							$stmt->bindValue(':iloc_disabled',		$disabled,			PDO::PARAM_INT);
+
+							$stmt->bindValue(':iloc_blocked',			$blocked,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_note',				$loc_desc,				PDO::PARAM_STR);
+							$stmt->bindValue(':iloc_disabled',			$disabled,				PDO::PARAM_INT);
 
 							$stmt->execute();
 							$db->commit();

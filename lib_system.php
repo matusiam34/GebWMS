@@ -46,6 +46,18 @@ $date_display_style	=	0;		//	Default is GebWMS style = 	25/11/2022 at 18:04:33
 //	Some GebWMS settings...
 
 
+//	Global settings for the min lenght of fields!
+define('min_product_len', 4);
+define('min_each_barcode_len', 4);
+define('min_case_barcode_len', 4);
+
+//	What kind of barcodes are alloed to be allocated to products!
+define('each_barcode_alphanumeric', 0);		//	0:	Each barcode is numbers only!	1:	Alphanumeric:	BAR57072 allowed!
+define('case_barcode_alphanumeric', 0);		//	0:	Case barcode is numbers only!	1:	Alphanumeric:	BAR57072 allowed!
+
+
+
+
 //	Cancelled for now
 //	Order Header: Order Type!
 //	Since I want to support different types of orders:

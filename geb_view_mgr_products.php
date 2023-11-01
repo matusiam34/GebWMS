@@ -1,6 +1,10 @@
 <?php
 
 
+//	NOTE:	If you are using only numbers for a product code... This will mess this script up a bit at the momemnt...
+//			Need to find a nice solution for this! Maybe not allow to search via barcode?
+
+
 // load the login class
 require_once('lib_login.php');
 
@@ -86,6 +90,7 @@ if ($login->isUserLoggedIn() == true)
 				addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
 			});
 
+
 			// When the operator selects a new category B = fetch the related category C entries!
 			$('#id_category_b').change(function() {
 				get_all_category_c();
@@ -142,7 +147,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('106555', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -196,7 +201,7 @@ if ($login->isUserLoggedIn() == true)
 
 			}).fail(function() {
 						// something went wrong
-						$.alertable.error('102559', '<?php	echo $mylang['server_error'];	?>');
+						$.alertable.error('106556', '<?php	echo $mylang['server_error'];	?>');
 					});
 
 		}
@@ -223,6 +228,7 @@ if ($login->isUserLoggedIn() == true)
 				disabled_js: 				get_Element_Value_By_ID('id_disabled')
 			};
 
+
 			$.post('geb_ajax_product.php', requestData)
 				.done(function (output)
 				{
@@ -230,7 +236,8 @@ if ($login->isUserLoggedIn() == true)
 
 					if (obje.control === 0)
 					{
-						$.alertable.info(obje.control, obje.msg);
+						//	Ugly, but does the job!
+						location.reload();
 					}
 					else
 					{
@@ -238,7 +245,7 @@ if ($login->isUserLoggedIn() == true)
 					}
 				})
 				.fail(function (){
-					$.alertable.error('106555', '<?php echo $mylang['server_error']; ?>');
+					$.alertable.error('106557', '<?php echo $mylang['server_error']; ?>');
 				});
 		}
 
@@ -323,7 +330,7 @@ if ($login->isUserLoggedIn() == true)
 
 		$page_form	=	'';
 
-		$page_form	.=	'<form action="geb_view_mgr_products.php" method="get">';
+		$page_form	.=	'<form action="geb_view_mgr_products.php" name="product_form" id="product_form" method="get">';
 
 			$page_form	.=	'<div class="field has-addons">';
 
