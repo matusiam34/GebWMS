@@ -985,7 +985,7 @@ echo	$user_details_html;
 			<div class="field" style="'. $box_size_str .'">
 				<p class="help">&nbsp;</p>
 				<div class="control">
-					<button class="button admin_class is-fullwidth" onclick="update_user_acl();">Update ACL</button>
+					<button class="button admin_class is-fullwidth" onclick="update_user_acl();">' . $mylang['update_acl'] . '</button>
 				</div>
 			</div>';
 
@@ -1010,7 +1010,7 @@ echo	$user_details_html;
 			<div class="field" style="'. $box_size_str .'">
 				<p class="help">&nbsp;</p>
 				<div class="control">
-					<button class="button admin_class is-fullwidth" onclick="add_new_user();">Add user</button>
+					<button class="button admin_class is-fullwidth" onclick="add_new_user();">' . $mylang['add_user'] . '</button>
 				</div>
 			</div>';
 

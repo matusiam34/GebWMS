@@ -98,11 +98,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
-
-
-
 		});
 
 
@@ -207,6 +202,7 @@ if ($login->isUserLoggedIn() == true)
 			LEFT JOIN geb_category_a ON geb_product.prod_category_a = geb_category_a.cat_a_pkey
 			LEFT JOIN geb_category_b ON geb_product.prod_category_b = geb_category_b.cat_b_pkey
 			LEFT JOIN geb_category_c ON geb_product.prod_category_c = geb_category_c.cat_c_pkey
+			LEFT JOIN geb_category_d ON geb_product.prod_category_d = geb_category_d.cat_d_pkey
 
 
 			WHERE
@@ -324,6 +320,11 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'<tr>';
 							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['category'] . ' (C):</td>';
 							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['cat_c_name']) . '</td>';
+						$details_html	.=	'</tr>';
+
+						$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['category'] . ' (D):</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($products_arr[0]['cat_d_name']) . '</td>';
 						$details_html	.=	'</tr>';
 
 

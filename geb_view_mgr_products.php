@@ -208,6 +208,63 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+		// Get category D based on category C
+		function get_all_category_d()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js		:	3,
+				action_format_js	:	1,
+				action_disabled_js	:	0,
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_c')
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_category_d');
+					addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');	
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_category_d', obje.data[i].cat_c_pkey, obje.data[i].cat_c_name);	
+						}
+
+					}
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('106556', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+
+
 		function add_product()
 		{
 
@@ -219,6 +276,7 @@ if ($login->isUserLoggedIn() == true)
 				product_category_a_js:	 	get_Element_Value_By_ID('id_category_a'),
 				product_category_b_js:		get_Element_Value_By_ID('id_category_b'),
 				product_category_c_js:		get_Element_Value_By_ID('id_category_c'),
+				product_category_d_js:		get_Element_Value_By_ID('id_category_d'),
 				each_barcode_js: 			get_Element_Value_By_ID('id_each_barcode'),
 				each_weight_js:				get_Element_Value_By_ID('id_each_weight'),
 				case_barcode_js:			get_Element_Value_By_ID('id_case_barcode'),
@@ -267,6 +325,7 @@ if ($login->isUserLoggedIn() == true)
 				product_category_a_js	:	get_Element_Value_By_ID('id_category_a'),
 				product_category_b_js	:	get_Element_Value_By_ID('id_category_b'),
 				product_category_c_js	:	get_Element_Value_By_ID('id_category_c'),
+				product_category_d_js	:	get_Element_Value_By_ID('id_category_d'),
 				each_barcode_js			:	get_Element_Value_By_ID('id_each_barcode'),
 				each_weight_js			:	get_Element_Value_By_ID('id_each_weight'),
 				case_barcode_js			:	get_Element_Value_By_ID('id_case_barcode'),
@@ -425,6 +484,7 @@ if ($login->isUserLoggedIn() == true)
 		$prod_category_a	=	0;
 		$prod_category_b	=	0;
 		$prod_category_c	=	0;
+		$prod_category_d	=	0;
 		$prod_each_barcode	=	"";
 		$prod_each_weight	=	"";
 		$prod_case_barcode	=	"";
@@ -463,6 +523,7 @@ if ($login->isUserLoggedIn() == true)
 				$prod_category_a		=	leave_numbers_only($row['prod_category_a']);
 				$prod_category_b		=	leave_numbers_only($row['prod_category_b']);
 				$prod_category_c		=	leave_numbers_only($row['prod_category_c']);
+				$prod_category_d		=	leave_numbers_only($row['prod_category_d']);
 				$prod_each_barcode		=	trim($row['prod_each_barcode']);	// barcodes could contain letters?!?!?!
 				$prod_each_weight		=	trim($row['prod_each_weight']);
 				$prod_case_barcode		=	trim($row['prod_case_barcode']);	// barcodes could contain letters?!?!?!
@@ -488,13 +549,17 @@ if ($login->isUserLoggedIn() == true)
 					cat_b_a_level,
 					cat_c_pkey,
 					cat_c_name,
-					cat_c_b_level
+					cat_c_b_level,
+					cat_d_pkey,
+					cat_d_name,
+					cat_d_c_level
 
 
 					FROM geb_category_a
 
 					LEFT JOIN geb_category_b ON geb_category_a.cat_a_pkey = geb_category_b.cat_b_a_level
 					LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
+					LEFT JOIN geb_category_d ON geb_category_c.cat_c_pkey = geb_category_d.cat_d_c_level
 
 
 			';
@@ -521,10 +586,11 @@ if ($login->isUserLoggedIn() == true)
 			//	<AI>
 			//
 
-			// Generate HTML for Category A, B and C
+			// Generate HTML for Category A, B, C and D
 			$category_A_options = [];
 			$category_B_options = [];
 			$category_C_options = [];
+			$category_D_options = [];
 
 			// Populate category options arrays
 			foreach ($category_arr as $category)
@@ -544,11 +610,20 @@ if ($login->isUserLoggedIn() == true)
 					$category_C_options[$category['cat_c_pkey']] = $category['cat_c_name'];
 				}
 
+				// Check if the current category C is associated with the selected category B
+				if ($category['cat_d_c_level'] == $prod_category_c)
+				{
+					$category_D_options[$category['cat_d_pkey']] = $category['cat_d_name'];
+				}
+
+
+
 			}
 
 			$category_a_html	=	generate_select_options($category_A_options, leave_numbers_only($prod_category_a), $mylang['none']);
 			$category_b_html	=	generate_select_options($category_B_options, leave_numbers_only($prod_category_b), $mylang['none']);
 			$category_c_html	=	generate_select_options($category_C_options, leave_numbers_only($prod_category_c), $mylang['none']);
+			$category_d_html	=	generate_select_options($category_D_options, leave_numbers_only($prod_category_d), $mylang['none']);
 
 
 			//
@@ -636,6 +711,19 @@ if ($login->isUserLoggedIn() == true)
 	  <div class="control">
 		<div class="select is-fullwidth">
 			<select id="id_category_c">' . $category_c_html . '
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
+<div class="field" style="' . $box_size_str . '">
+	<p class="help">' .	$mylang['category'] . ' (D)</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_category_d">' . $category_d_html . '
 			</select>
 		</div>
 	  </div>

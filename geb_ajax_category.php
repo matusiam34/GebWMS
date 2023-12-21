@@ -17,21 +17,25 @@
 	0	:	Get A categories!	+	action_format = 0: HTML; 1:  Array
 	1	:	Get B categories!	+	action_format = 0: HTML; 1:  Array
 	2	:	Get C categories!	+	action_format = 0: HTML; 1:  Array
+	3	:	Get D categories!	+	action_format = 0: HTML; 1:  Array
 
 
 	5	:	Get one category A entry data!
 	6	:	Get one Category B entry data!
 	7	:	Get one Category C entry data!
+	8	:	Get one Category D entry data!
 
 
 	10	:	Add Category A!
 	11	:	Add Category B!
 	12	:	Add Category C!
+	13	:	Add Category D!
 
 
 	15	:	Update Category A!
 	16	:	Update Category B!
 	17	:	Update Category C!
+	18	:	Update Category D!
 
 
 */
@@ -100,12 +104,18 @@ if ($login->isUserLoggedIn() == true) {
 			OR
 		
 			($action_code == 2)		//	Get all category C in HTML table form (action_format by default is 0)
+
+			OR
+		
+			($action_code == 3)		//	Get all category D in HTML table form (action_format by default is 0)
+
 		)
 		{
 
 				$which_cat	=	'a';
 				if		($action_code == 1)	{	$which_cat	=	'b';	}
 				elseif	($action_code == 2)	{	$which_cat	=	'c';	}
+				elseif	($action_code == 3)	{	$which_cat	=	'd';	}
 				
 				$cat_uid	=	0;
 
@@ -139,6 +149,11 @@ if ($login->isUserLoggedIn() == true) {
 					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
 					$sql		.=	'	WHERE	cat_c_b_level	=	:scat_uid	';		//	category C
 				}
+				else if ($action_code == 3)
+				{
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
+					$sql		.=	'	WHERE	cat_d_c_level	=	:scat_uid	';		//	category D
+				}
 
 
 				//	Get all categories that are active. Otherwise get EVERYTHING!
@@ -164,8 +179,10 @@ if ($login->isUserLoggedIn() == true) {
 				if ($stmt = $db->prepare($sql))
 				{
 
-					
-					if (($action_code == 1) OR ($action_code == 2))
+					if
+					(
+						($action_code == 1) OR ($action_code == 2) OR ($action_code == 3)
+					)
 					{
 						$stmt->bindValue(':scat_uid',	$cat_uid,		PDO::PARAM_INT);
 					}
@@ -222,12 +239,17 @@ if ($login->isUserLoggedIn() == true) {
 			OR
 		
 			($action_code == 7)	//	Get category C details
+
+			OR
+		
+			($action_code == 8)	//	Get category D details
 		)
 		{
 
 			$which_cat	=	'a';
 			if 		($action_code == 6)	{	$which_cat	=	'b';	}
 			elseif	($action_code == 7)	{	$which_cat	=	'c';	}
+			elseif	($action_code == 8)	{	$which_cat	=	'd';	}
 
 			//	Get the UID of the category entry.
 			$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);	//	this should be a number
@@ -420,6 +442,10 @@ if ($login->isUserLoggedIn() == true) {
 			OR
 		
 			($action_code == 12)	//	Add category C
+
+			OR
+		
+			($action_code == 13)	//	Add category D
 		)
 		{
 
@@ -442,7 +468,8 @@ if ($login->isUserLoggedIn() == true) {
 
 				$which_cat	=	'b';
 				$level		=	'b_a';
-				if 	($action_code == 12)	{	$which_cat	=	'c';	$level		=	'c_b';	}
+				if 		($action_code == 12)	{	$which_cat	=	'c';	$level		=	'c_b';	}
+				elseif 	($action_code == 13)	{	$which_cat	=	'd';	$level		=	'd_c';	}
 				
 				
 				$cat_master_uid		=	leave_numbers_only($_POST['cat_master_uid_js']);	// this should be a number and has to be a value!
@@ -455,7 +482,7 @@ if ($login->isUserLoggedIn() == true) {
 					
 					if
 					(
-						($cat_master_uid > 0)	//	the operator needs to select a category A first!
+						($cat_master_uid > 0)	//	the operator needs to select a master category first!
 					
 						AND
 
@@ -599,6 +626,10 @@ if ($login->isUserLoggedIn() == true) {
 			OR
 		
 			($action_code == 17)		//	Update category C
+
+			OR
+		
+			($action_code == 18)		//	Update category C
 		)
 
 
@@ -641,6 +672,7 @@ if ($login->isUserLoggedIn() == true) {
 						$which_cat	=	'a';
 						if 		($action_code == 16)	{	$which_cat	=	'b';	}
 						elseif	($action_code == 17)	{	$which_cat	=	'c';	}
+						elseif	($action_code == 18)	{	$which_cat	=	'd';	}
 						
 						
 						
@@ -812,6 +844,18 @@ if ($login->isUserLoggedIn() == true) {
 				}
 		break;
 
+		case 3:	//	Grab all category D that corresponds to category C
+			if ($action_format == 0)		//	HTML
+			{
+				print_message_html_payload($message_id, $message2op, $html_results);
+			}
+			else
+				if ($action_format == 1)	//	Array
+				{
+					print_message_data_payload($message_id, $message2op, $data_results);
+				}
+		break;
+
 
 		case 5:	//	Get one Category A entry data
 		print_message_data_payload($message_id, $message2op, $data_results);
@@ -820,6 +864,9 @@ if ($login->isUserLoggedIn() == true) {
 		print_message_data_payload($message_id, $message2op, $data_results);
 		break;
 		case 7:	//	Get one Category C entry data
+		print_message_data_payload($message_id, $message2op, $data_results);
+		break;
+		case 8:	//	Get one Category D entry data
 		print_message_data_payload($message_id, $message2op, $data_results);
 		break;
 
@@ -833,6 +880,9 @@ if ($login->isUserLoggedIn() == true) {
 		case 12:	//	Add Category C!
 		print_message($message_id, $message2op);
 		break;
+		case 13:	//	Add Category D!
+		print_message($message_id, $message2op);
+		break;
 
 
 		case 15:	//	Update category A!
@@ -842,6 +892,9 @@ if ($login->isUserLoggedIn() == true) {
 		print_message($message_id, $message2op);
 		break;
 		case 17:	//	Update category C!
+		print_message($message_id, $message2op);
+		break;
+		case 18:	//	Update category D!
 		print_message($message_id, $message2op);
 		break;
 

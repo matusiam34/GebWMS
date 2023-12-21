@@ -38,7 +38,7 @@ $mylang = array(
 'invalid_barcode'			=>	'Invalid barcode!',
 'location_already_exists'	=>	'Location already exists in this warehouse!',
 'category_already_exists'	=>	'This category already exists!',
-'select_category_first'		=>	'Select category A first!',
+'select_category_first'		=>	'Select parent category first!',
 'product_already_exists'	=>	'Product already exists!',
 'product_not_found'			=>	'Product not found!',
 'unit_mismatch'				=>	'Unit mismatch!',
@@ -104,6 +104,8 @@ $mylang = array(
 'last_name'					=>	'Last name',
 'email'						=>	'Email',
 'save_details'				=>	'Save Details',
+'update_acl'				=>	'Update ACL',
+'add_user'					=>	'Add User',
 'shipping_address'			=>	'Shipping address',
 'billing_address'			=>	'Billing address',
 
