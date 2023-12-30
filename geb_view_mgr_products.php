@@ -270,7 +270,7 @@ if ($login->isUserLoggedIn() == true)
 
 			const requestData =
 			{
-				action_code_js:				2,
+				action_code_js:				0,
 				product_code_js:			get_Element_Value_By_ID('id_product_code'),
 				product_description_js:		get_Element_Value_By_ID('id_product_description'),
 				product_category_a_js:	 	get_Element_Value_By_ID('id_category_a'),
@@ -318,7 +318,7 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_product.php', { 
 
-				action_code_js			:	3,
+				action_code_js			:	1,
 				product_uid_js			:	get_Element_Value_By_ID('id_hidden'),
 				product_code_js			:	get_Element_Value_By_ID('id_product_code'),
 				product_description_js	:	get_Element_Value_By_ID('id_product_description'),

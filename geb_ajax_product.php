@@ -156,47 +156,8 @@ if ($login->isUserLoggedIn() == true) {
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
 
-
-
-
-		//	Add and Update in the same process since they are VERY similar
-		if 
-		(
-
-			($action_code == 0)
-
-			OR
-
-			($action_code == 1)
-
-
-		)
-
-		{
-
-
-			//
-			//	Nothing for now! This is a work in progress!
-			//
-
-
-		}	//	Action 0 end!
-
-		//	Get details of one!
-
-		else if ($action_code == 1)
-		{
-
-			//
-			//	Nothing for now! This is a work in progress!
-			//
-
-		}	//	Action 1 end!
-
-
 		//	Add product!
-
-		else if ($action_code == 2)
+		if ($action_code == 0)
 		{
 
 			//	Only an Manager or Admin of this system can add! At least that is the idea...
@@ -503,18 +464,18 @@ if ($login->isUserLoggedIn() == true) {
 
 		//	Update one product!
 
-		else if ($action_code == 3)
+		else if ($action_code == 1)
 		{
 
 			//	Only an Admin of this system can update a product!
 			if
 			(
 
-				(is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
+				(is_it_enabled($_SESSION['menu_mgr_products']))
 
 				AND
 
-				(can_user_update($_SESSION['menu_adm_warehouse_loc']))
+				(can_user_update($_SESSION['menu_mgr_products']))
 
 			)
 			{
@@ -894,7 +855,7 @@ if ($login->isUserLoggedIn() == true) {
 
 			}
 			
-		}	//	Action 3 end!
+		}	//	Action 1 end!
 
 
 
@@ -919,15 +880,6 @@ if ($login->isUserLoggedIn() == true) {
 		print_message($message_id, $message2op);
 		break;
 		case 1:	//	Update product
-		print_message($message_id, $message2op);
-		break;
-
-
-		//	Remove the old stuff once migrated!
-		case 2:	//	Add product
-		print_message($message_id, $message2op);
-		break;
-		case 3:	//	Update product
 		print_message($message_id, $message2op);
 		break;
 		default:

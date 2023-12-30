@@ -2,7 +2,7 @@
 
 /*
 
-		A bunch of support stuff to aid the "framework" !
+		A bunch of support stuff to aid the WMS "framework" !
 		Also many config items to make it yours :)
 
  */
@@ -21,7 +21,7 @@
 
 
 $set_language	=	trim($_SESSION['user_language']);
-include('lang/' . $set_language . '.php');
+require_once('lang/' . $set_language . '.php');
 
 
 //	NOTE: Orders
@@ -111,7 +111,7 @@ $loc_types_codes_reverse_arr	=	array(
 
 	'S'		=>	10,		//	"Single"
 	'M'		=>	20,		//	"Multi"
-	'X'		=>	30		//	"Multi Mixeds"
+	'X'		=>	30		//	"Multi Mixed"
 
 );
 
@@ -324,6 +324,8 @@ function decode_loc($loc_func, $loc_type, $loc_blkd, $function_codes_arr, $type_
 	elseif	($loc_func == 330)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Storage		:	ST
 	elseif	($loc_func == 340)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Return		:	RT
 
+	//	What about Damages??????
+
 	elseif	($loc_func == 399)	{	$loc_str	.=	$function_codes_arr[$loc_func];	$loc_style	.=	'';		}	//					//	Despatch	:	DE
 
 
@@ -351,15 +353,20 @@ function location_category_check($location_arr, $product_arr)
 
 	if
 	(
-		($location_arr[0]['loc_cat_a'] == 0 || $location_arr[0]['loc_cat_a'] == $product_arr[0]['prod_category_a']) 
+		($location_arr['loc_cat_a'] == 0 || $location_arr['loc_cat_a'] == $product_arr[0]['prod_category_a']) 
 
 		AND	
 
-		($location_arr[0]['loc_cat_b'] == 0 || $location_arr[0]['loc_cat_b'] == $product_arr[0]['prod_category_b'])
+		($location_arr['loc_cat_b'] == 0 || $location_arr['loc_cat_b'] == $product_arr[0]['prod_category_b'])
 
 		AND
 
-		($location_arr[0]['loc_cat_c'] == 0 || $location_arr[0]['loc_cat_c'] == $product_arr[0]['prod_category_c'])
+		($location_arr['loc_cat_c'] == 0 || $location_arr['loc_cat_c'] == $product_arr[0]['prod_category_c'])
+
+		AND
+
+		($location_arr['loc_cat_d'] == 0 || $location_arr['loc_cat_d'] == $product_arr[0]['prod_category_d'])
+
 	)
 	{
 		return true;
@@ -370,6 +377,727 @@ function location_category_check($location_arr, $product_arr)
 	}
 
 }
+
+
+//
+//
+//	Provide a barcode and get an error code if the product does not meet certain criteria!
+//	Will be used in many places in GebWMS
+//
+//
+
+function get_product_data_via_barcode($db, $product_barcode, $product_qty)
+{
+
+    global $mylang;
+
+	$msg				=	'';			//	An error message typically!
+	$control			=	666;		//	0 = all good, anything else means an error occured!
+	$result				=	array();	//	the final array!
+	$product_arr		=	array();	//	all product details will be stored here from the SQL!
+
+	$mimic				=	0;			//	Not a MIMIC by default! 1 = MIMIC!
+	$product_final_qty	=	0;			//	0 by default! The final quantity that will be INSERTED / UPDATED!
+	$product_unit		=	0;			//	Wrong! Has to be at least 1 (each) or 3 (case), 0 by default to show it it BAD!
+
+
+	$sql	=	'
+
+		SELECT
+
+		prod_pkey,
+		prod_category_a,
+		prod_category_b,
+		prod_category_c,
+		prod_category_d,
+		prod_mimic,
+		prod_each_barcode,
+		prod_each_barcode_mimic,
+		prod_case_barcode,
+		prod_case_barcode_mimic,
+		prod_case_qty,
+		prod_case_qty_mimic
+
+		FROM 
+
+		geb_product
+
+		WHERE
+
+		prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar
+
+		OR
+
+		CASE
+			WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
+		END;
+
+
+		AND
+		
+		prod_disabled = 0
+
+
+	';
+
+
+
+	if ($stmt = $db->prepare($sql))
+	{
+
+		$stmt->bindValue(':sprod_each_bar',		$product_barcode,	PDO::PARAM_STR);
+		$stmt->bindValue(':sprod_case_bar',		$product_barcode,	PDO::PARAM_STR);
+		$stmt->bindValue(':smimic_bar',			$product_barcode,	PDO::PARAM_STR);
+
+		$stmt->execute();
+
+
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+		{
+			$product_arr[]	=	$row;
+		}
+
+
+		//	Only process the product if ONLY 1 is returned! If > 1 means that barcodes are a mess!!
+		//	That would require the Admin to fix the duplicates!!!
+		if (count($product_arr) == 1)
+		{
+
+			if		(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
+			{
+				$product_unit		=	1;
+				$product_final_qty	=	$product_qty;
+			}
+			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
+			{
+				$product_unit		=	1;
+				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+				$product_final_qty	=	$product_qty;
+				$mimic				=	1;	//	Totally a mimic product using the mimic each barcode!
+			}
+			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
+			{
+				$product_unit		=	3;
+				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+				$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty']) * $product_qty;		//	Mimic case qty!
+			}
+			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
+			{
+				$product_unit		=	3;
+				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+				$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
+				$mimic				=	1;	//	Totally a mimic product using the mimic case barcode and new case qty!
+			}
+
+
+		}
+
+
+
+	}
+
+
+	//	Note:	Maybe check if the product_qty provided is not 0?
+
+
+
+	//
+	//	Do some checks here!
+	//
+
+	if
+	(
+		(count($product_arr) == 0)
+	)
+	{
+		//	No product found!
+		$control	=	107203;
+		$msg		=	$mylang['product_not_found'];
+	}
+	elseif (count($product_arr) > 1)
+	{
+		//	Two or more products found with the same barcode... Needs to be fixed ASAP by the Admin!
+		$control	=	107203;
+		$msg		=	$mylang['products_found_with_the_same_barcode'];
+	}
+	elseif ($product_final_qty == 0)
+	{
+		//	The final qty can't be 0 = ERR somewhere!
+		$control	=	107203;
+		$msg		=	$mylang['products_found_with_the_same_barcode'];
+	}
+	elseif ($product_unit == 0)
+	{
+		//	The product unit can't be 0 = ERR somewhere!
+		$control	=	107203;
+		$msg		=	$mylang['products_found_with_the_same_barcode'];
+	}
+	else
+	{
+		//	Seems like all checks are a-Ok if you got here!
+		$control	=	0;
+	}
+
+
+	$result['control']			=	$control;
+	$result['msg']				=	$msg;
+
+	$result['product_arr']		=	$product_arr;
+	$result['unit']				=	$product_unit;		//	1:	EACH;	3:	CASE
+	$result['final_qty']		=	$product_final_qty;	//	always in EACH
+	$result['is_mimic']			=	$mimic;
+
+	return $result;
+
+
+}
+
+
+
+
+
+
+
+
+function get_location_data_via_barcode($db, $location_barcode)
+{
+
+    global $mylang;
+
+
+	$msg			=	'';			//	An error message typically!
+	$control		=	666;		//	0 = all good, anything else means an error occured!
+	$result			=	array();	//	the final array!
+
+	$location_arr	=	array();	//	all location details will be stored here from the SQL!
+	$stock_arr		=	array();	//	all stock that is in this location!
+	//	fix
+	$user_warehouse_uid	=	0;
+
+	//	Run the location query!
+	$sql	=	'
+
+
+		SELECT
+
+		loc_pkey,
+		loc_wh_pkey,
+		loc_code,
+		loc_function,
+		loc_type,
+		loc_blocked,
+		loc_cat_a,
+		loc_cat_b,
+		loc_cat_c,
+		loc_cat_d,
+		loc_magic_product,
+
+		stk_pkey,
+		stk_loc_pkey,
+		stk_prod_pkey,
+		stk_unit,
+		stk_qty,
+		stk_mimic
+
+		FROM 
+
+		geb_location
+
+		LEFT JOIN geb_stock ON geb_location.loc_pkey = geb_stock.stk_loc_pkey
+
+		WHERE
+
+		geb_location.loc_barcode = :sloc_barcode
+
+		AND
+
+		geb_location.loc_disabled = 0
+
+		AND
+
+		(geb_stock.stk_disabled IS NULL OR geb_stock.stk_disabled = 0)
+
+
+	';
+
+	if ($user_warehouse_uid > 0)
+	{
+		//	Add a warehouse filter to the location!
+		//	THis is to comply with the user settings!
+		$sql	.=	' AND geb_location.loc_wh_pkey = :swarehouse_uid ';
+	}
+
+
+
+	if ($stmt = $db->prepare($sql))
+	{
+
+		$stmt->bindValue(':sloc_barcode',	$location_barcode,	PDO::PARAM_STR);
+
+		//	Limit the scope of locations based on the warehouse!
+		//	Again, if the user has this set to 0 = can view ANY warehouse!
+		if ($user_warehouse_uid > 0)
+		{
+			$stmt->bindValue(':swarehouse_uid',		$user_warehouse_uid,	PDO::PARAM_INT);
+		}
+
+
+		$stmt->execute();
+
+
+		$product_ids_arr		=	array();	//	All IDs of the products in the location stored in the location!
+												//	This is more of a helper array!
+
+
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+		{
+
+
+			// Check if the location already exists in the array, if not, create it
+			if (count($location_arr) == 0)
+			{
+				$location_arr = array(
+				
+					'loc_pkey'				=>	$row['loc_pkey'],
+					'loc_wh_pkey'			=>	$row['loc_wh_pkey'],
+					'loc_code'				=>	$row['loc_code'],
+					'loc_function'			=>	$row['loc_function'],
+					'loc_type'				=>	$row['loc_type'],
+					'loc_cat_a'				=>	$row['loc_cat_a'],
+					'loc_cat_b'				=>	$row['loc_cat_b'],
+					'loc_cat_c'				=>	$row['loc_cat_c'],
+					'loc_cat_d'				=>	$row['loc_cat_d'],
+					'loc_magic_product'		=>	$row['loc_magic_product'],
+					'loc_blocked'			=>	$row['loc_blocked']
+				);
+
+			}
+
+
+			//	Only add if the location has a product allocated to it!
+			if (leave_numbers_only($row['stk_pkey']) > 0)
+			{
+
+				$stock_arr[] =
+				// Add stock information to the location's stock_info array
+				[
+					'stk_pkey'		=>	$row['stk_pkey'],
+					'stk_loc_pkey'	=>	$row['stk_loc_pkey'],
+					'stk_prod_pkey' =>	$row['stk_prod_pkey'],
+					'stk_unit'		=>	$row['stk_unit'],
+					'stk_qty'		=>	$row['stk_qty'],
+					'stk_mimic'		=>	$row['stk_mimic']
+				];
+				array_push($product_ids_arr, leave_numbers_only($row['stk_prod_pkey']));
+			}
+
+
+		}
+
+
+	}
+
+
+	//
+	//	Do some checks here!
+	//
+
+	if (count($location_arr) == 0)
+	{
+		//	Location not found!
+		$control	=	21;
+		$msg		=	'Location not found';
+	}
+	elseif ($location_arr['loc_blocked'] > 0)
+	{
+		$control	=	20;
+		$msg		=	'Location blocked';
+	}
+	else
+	{
+		//	Seems like all checks are a-Ok if you got here!
+		$control	=	0;
+	}
+
+
+	$result['control']			=	$control;
+	$result['msg']				=	$msg;
+	$result['location_arr']		=	$location_arr;
+	$result['stock_arr']		=	$stock_arr;
+	$result['product_ids_arr']	=	$product_ids_arr;
+
+
+	return $result;
+
+}
+
+
+
+
+
+//
+//
+//	Big Boy! Does all the heavy lifting for me!
+//	Provide location barcode, product barcode and QTY. The function will figure out
+//	the product can be be INSERTED / UPDATED into the specified location!
+//
+//
+function do_magic($db, $product_barcode, $location_barcode, $product_qty)
+{
+
+    global $mylang;
+
+	$result				=	array();
+	$message_id			=	666;	//	Not so good by default :)
+	$message2op			=	'';
+
+	$location_data		=	array();	//	Location details stored here
+	$stock_data			=	array();	//	Stock details within a location
+	$product_data		=	array();	//	Product details stored here
+
+
+	//	Used to determine what to show based on users warehouse settings.
+	//	Keep in mind that a value of 0 means ALL warehouses! So only apply a filter when the value is > 0
+	//	Maybe also add a check to see it if even has been set????
+	$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+
+	$input_checks			=	666;		//	0 means all good; by default it is 666 = BAD!
+
+
+	//
+	//
+	//	INPUT Checks!
+	//
+	//
+
+	if
+	(
+		(strlen($product_barcode) < 4)
+		OR
+		(strlen($location_barcode) < 4)
+	)
+	{
+		// Product nor location barcode doesn't meet the length requirements! 
+		$input_checks = 1;
+	}
+	else if
+	(
+		(is_numeric($product_barcode) == false)
+		OR
+		(is_numeric($location_barcode) == false)
+	)
+	{
+		// Product nor location barcode is not numeric! Abort!
+		$input_checks = 2;
+	}
+	else if (is_numeric($product_qty) == false)
+	{
+		// Product Qty is not a number...
+		$input_checks = 3;
+	}
+	else if ($product_qty <= 0)
+	{
+		// Product Qty is either 0 or negative (-1, -50, etc.). Can't insert stock that is a negative quantity!
+		$input_checks = 4;
+	}
+	else
+	{
+		// Success! All checks are good so far!
+		$input_checks = 0;
+	}
+
+
+
+
+	if ($input_checks == 0)
+	{
+
+		//	Get all the required info about the product like if it is a mimic, product_uid etc
+		//	All of that information based on the product barcode! This will also run checks if 
+		//	duplicate barcodes exists etc
+		$product_data	=	get_product_data_via_barcode($db, $product_barcode, $product_qty);
+
+		//	If control is == 0 that means that I can move to the next stage!
+		//	Otherwise assign the $message_id and $message2op variables!
+		if ($product_data['control'] == 0)
+		{
+
+			//	Maybe will replace them soon.. for now let them be!
+			$mimic				=	$product_data['is_mimic'];						//	0:	NO;	1:	YES!
+			$product_uid		=	$product_data['product_arr'][0]['prod_pkey'];	//	The unique key of the product!
+			$product_unit		=	$product_data['unit'];							//	1:	EACH;	3:	CASE
+			$product_final_qty	=	$product_data['final_qty'];
+
+
+			//	Gets all location specs + entire stock off the location!
+			$location_data		=	get_location_data_via_barcode($db, $location_barcode);
+
+
+			//	If control is == 0 that means that I can move to the next stage!
+			//	Otherwise assign the $message_id and $message2op variables!
+			if ($location_data['control'] == 0)
+			{
+
+				$location_arr		=	$location_data['location_arr'];
+				$location_type		=	$location_arr['loc_type'];
+
+				$product_ids_arr	=	array_unique($location_data['product_ids_arr']);		//	Total number of products in location!
+				$product_count		=	count($product_ids_arr);
+
+
+				// SINGLE LOCATION Checks!
+				if
+				(
+				
+					($location_type == 10)								//	ANY can go in here!
+
+					OR
+
+					($location_type == 11 AND $product_unit == 1)		//	SINGLE (E) AND EACH only
+
+					OR
+
+					($location_type == 12 AND $product_unit == 3)		//	SINGLE (C) AND CASE only
+
+				)
+				{
+
+
+					//	Check if location is empty or has a product allocated!
+					if ($product_count == 0)
+					{
+
+						//	No product in this SINGLE location!
+						//	Check if the SINGLE location allows for this particular product unit to be inserted!
+						//	Example: If the product is a case and the location is SINGLE EACH (11) = Can't go further!
+
+
+						//	Magic Product takes priority over category settings!
+						if
+						(
+							($location_arr['loc_magic_product'] > 0)	//	just in case the one below in not sufficient!
+							
+							AND
+							
+							($location_arr['loc_magic_product'] == $product_uid)
+						)
+						{
+							//	INSERT product into location!
+							$message_id		=	0;	//	all went well
+							$message2op		=	$mylang['success'];
+						}
+						else
+						{
+							//	NOT a magic product!
+							//	Now check if the location has categories specified!
+
+
+							//	Can be merged into one if statement with the category check????
+							if ($location_arr['loc_cat_a'] > 0)	//	if true		=	category settings enabled for this location!
+							{
+								//	This has to be actioned only when the category_a is > 0!
+								if (location_category_check($location_arr, $product_data['product_arr']))
+								{
+									//	The product matches to the categories of the location!
+									$message_id		=	2;	//	all went well
+									$message2op		=	$mylang['success'];
+									
+								}
+								else
+								{
+									//	Category requirements NOT MET!
+									$message_id		=	3;	//	Can't insert product here!
+									$message2op		=	$mylang['success'];
+								}
+							}
+							else
+							{
+								//	Location has no categories set for it. Just INSERT the goods!
+								$message_id		=	4;	//	all went well
+								$message2op		=	$mylang['success'];
+							}
+
+
+						}
+
+								//	No further checks needed! Product can be allocated to this location!
+/*
+								$sql	=	'
+
+
+									INSERT
+									
+									INTO
+
+									geb_stock
+									
+									(
+										stk_loc_pkey,
+										stk_prod_pkey,
+										stk_unit,
+										stk_qty,
+										stk_mimic
+									) 
+
+									VALUES
+
+									(
+										:istk_loc_pkey,
+										:istk_prod_pkey,
+										:istk_unit,
+										:istk_qty,
+										:istk_mimic
+									)
+
+								';
+
+
+
+								if ($stmt = $db->prepare($sql))
+								{
+
+									$stmt->bindValue(':istk_loc_pkey',		$loc_arr[0]['loc_pkey'],	PDO::PARAM_INT);
+									$stmt->bindValue(':istk_prod_pkey',		$product_uid,				PDO::PARAM_INT);
+									$stmt->bindValue(':istk_unit',			$product_unit,				PDO::PARAM_INT);
+									$stmt->bindValue(':istk_qty',			$product_final_qty,			PDO::PARAM_INT);
+									$stmt->bindValue(':istk_mimic',			$mimic,						PDO::PARAM_INT);
+
+									$stmt->execute();
+									$db->commit();
+
+									$message_id		=	0;	//	all went well
+									$message2op		=	$mylang['success'];
+								}
+*/
+
+
+
+
+					}	//	if ($product_count == 0)
+					else
+					{
+						$message_id		=	107203;
+						$message2op		=	$mylang['location_full'];
+					}
+
+
+
+
+
+				}
+				elseif	//	MULTI LOCATION Checks!
+				(
+				
+					($location_type == 20)
+
+					OR
+
+					($location_type == 21)
+
+					OR
+
+					($location_type == 22)
+
+				)
+				{
+					
+					
+				}
+				elseif	//	MULTI MIXED LOCATION Checks!
+				(
+				
+					($location_type == 30)
+
+					OR
+
+					($location_type == 31)
+
+					OR
+
+					($location_type == 32)
+
+				)
+				{
+					
+					
+				}
+				else
+				{
+
+					$message_id	=	3456789;
+					$message2op	=	'Illegal location for this product';
+
+				}
+
+
+
+
+
+
+
+			}	//	location checks end here!
+			else
+			{
+				$message_id	=	$location_data['control'];
+				$message2op	=	$location_data['msg'];
+			}
+
+
+
+		}	//	product checks end here!
+		else
+		{
+			$message_id	=	$product_data['control'];
+			$message2op	=	$product_data['msg'];
+		}
+
+
+
+	}	//	if ($input_checks == 0)
+	else
+	{
+
+		if ($input_checks	==	1)
+		{
+			$message_id		=	107203;
+			$message2op		=	$mylang['barcode_too_short'];
+		}
+		elseif ($input_checks	==	2)
+		{
+			$message_id		=	107204;
+			$message2op		=	$mylang['invalid_barcode'];
+		}
+		elseif ($input_checks	==	3)
+		{
+			$message_id		=	107205;
+			$message2op		=	'Case barcode too short';	//$mylang['barcode_to_short'];
+		}
+		elseif ($input_checks	==	4)
+		{
+			$message_id		=	107205;
+			$message2op		=	'Case qty incorrect';	//$mylang['barcode_to_short'];
+		}
+
+	}
+
+
+	$result['control']		=	$message_id;
+	$result['msg']			=	$message2op;
+
+
+	return $result;
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 //

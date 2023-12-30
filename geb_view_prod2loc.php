@@ -186,7 +186,7 @@ if ($login->isUserLoggedIn() == true)
 				}
 				else
 				{
-					//$.alertable.error(obje.control, obje.msg);
+					$.alertable.error(obje.control, obje.msg);
 					empty_Element_By_ID('location_details');
 					append_HTML_to_Element_By_ID('location_details', obje.html);
 
