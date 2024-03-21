@@ -168,6 +168,7 @@ $stock_unit_type_arr	=	array(
 $stock_unit_type_reverse_arr	=	array(
 
 	'E'	=>	1,	//	"EACH"
+	'E'	=>	1,	//	"EACH"
 	'C'	=>	3,	//	"CASE"
 //	'P'	=>	5	//	"PALLET"
 
@@ -379,6 +380,8 @@ function location_category_check($location_arr, $product_arr)
 }
 
 
+
+
 //
 //
 //	Provide a barcode and get an error code if the product does not meet certain criteria!
@@ -431,7 +434,6 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 		CASE
 			WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
 		END;
-
 
 		AND
 		
@@ -493,50 +495,54 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 		}
 
 
+		//	Note:	Maybe check if the product_qty provided is not 0?
 
-	}
+		//
+		//	Do some checks here!
+		//
+
+		if
+		(
+			(count($product_arr) == 0)
+		)
+		{
+			//	No product found!
+			$control	=	107203;
+			$msg		=	$mylang['product_not_found'];
+		}
+		elseif (count($product_arr) > 1)
+		{
+			//	Two or more products found with the same barcode... Needs to be fixed ASAP by the Admin!
+			$control	=	107203;
+			$msg		=	$mylang['products_found_with_the_same_barcode'];
+		}
+		elseif ($product_final_qty == 0)
+		{
+			//	The final qty can't be 0 = ERR somewhere!
+			$control	=	107203;
+			$msg		=	$mylang['products_found_with_the_same_barcode'];
+		}
+		elseif ($product_unit == 0)
+		{
+			//	The product unit can't be 0 = ERR somewhere!
+			$control	=	107203;
+			$msg		=	$mylang['products_found_with_the_same_barcode'];
+		}
+		else
+		{
+			//	Seems like all checks are a-Ok if you got here!
+			$control	=	0;
+		}
 
 
-	//	Note:	Maybe check if the product_qty provided is not 0?
 
-
-
-	//
-	//	Do some checks here!
-	//
-
-	if
-	(
-		(count($product_arr) == 0)
-	)
-	{
-		//	No product found!
-		$control	=	107203;
-		$msg		=	$mylang['product_not_found'];
-	}
-	elseif (count($product_arr) > 1)
-	{
-		//	Two or more products found with the same barcode... Needs to be fixed ASAP by the Admin!
-		$control	=	107203;
-		$msg		=	$mylang['products_found_with_the_same_barcode'];
-	}
-	elseif ($product_final_qty == 0)
-	{
-		//	The final qty can't be 0 = ERR somewhere!
-		$control	=	107203;
-		$msg		=	$mylang['products_found_with_the_same_barcode'];
-	}
-	elseif ($product_unit == 0)
-	{
-		//	The product unit can't be 0 = ERR somewhere!
-		$control	=	107203;
-		$msg		=	$mylang['products_found_with_the_same_barcode'];
 	}
 	else
 	{
-		//	Seems like all checks are a-Ok if you got here!
-		$control	=	0;
+		//	Something did not go well!
+		$control	=	667;
 	}
+
 
 
 	$result['control']			=	$control;
@@ -572,7 +578,8 @@ function get_location_data_via_barcode($db, $location_barcode)
 	$location_arr	=	array();	//	all location details will be stored here from the SQL!
 	$stock_arr		=	array();	//	all stock that is in this location!
 	//	fix
-	$user_warehouse_uid	=	0;
+	$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
+	//$user_warehouse_uid	=	0;
 
 	//	Run the location query!
 	$sql	=	'
@@ -695,29 +702,38 @@ function get_location_data_via_barcode($db, $location_barcode)
 		}
 
 
-	}
+
+		//
+		//	Do some checks here!
+		//
+
+		if (count($location_arr) == 0)
+		{
+			//	Location not found!
+			$control	=	21;
+			$msg		=	'Location not found';
+		}
+		elseif ($location_arr['loc_blocked'] > 0)
+		{
+			$control	=	20;
+			$msg		=	'Location blocked';
+		}
+		else
+		{
+			//	Seems like all checks are a-Ok if you got here!
+			$control	=	0;
+		}
 
 
-	//
-	//	Do some checks here!
-	//
 
-	if (count($location_arr) == 0)
-	{
-		//	Location not found!
-		$control	=	21;
-		$msg		=	'Location not found';
-	}
-	elseif ($location_arr['loc_blocked'] > 0)
-	{
-		$control	=	20;
-		$msg		=	'Location blocked';
 	}
 	else
 	{
-		//	Seems like all checks are a-Ok if you got here!
-		$control	=	0;
+		//	Something did not go well!
+		$control	=	668;
+		$msg		=	'ups';
 	}
+
 
 
 	$result['control']			=	$control;
@@ -730,6 +746,87 @@ function get_location_data_via_barcode($db, $location_barcode)
 	return $result;
 
 }
+
+
+
+
+//	Exactly what it says on the tin!
+//	Provide a product and location + other info and it will insert it to the location!
+//	This works for NOT occupied locations!
+//	A different function will be used to UPDATE the location stock about a product!
+function insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_final_qty, $mimic)
+{
+
+    global $mylang;
+
+
+	$msg			=	'';			//	An error message typically!
+	$control		=	666;		//	0 = all good, anything else means an error occured!
+	$result			=	array();	//	the final array!
+
+
+	$sql	=	'
+
+
+		INSERT
+		
+		INTO
+
+		geb_stock
+		
+		(
+			stk_loc_pkey,
+			stk_prod_pkey,
+			stk_unit,
+			stk_qty,
+			stk_mimic
+		) 
+
+		VALUES
+
+		(
+			:istk_loc_pkey,
+			:istk_prod_pkey,
+			:istk_unit,
+			:istk_qty,
+			:istk_mimic
+		)
+
+	';
+
+
+
+	if ($stmt = $db->prepare($sql))
+	{
+
+		$stmt->bindValue(':istk_loc_pkey',		$location_uid,				PDO::PARAM_INT);
+		$stmt->bindValue(':istk_prod_pkey',		$product_uid,				PDO::PARAM_INT);
+		$stmt->bindValue(':istk_unit',			$product_unit,				PDO::PARAM_INT);
+		$stmt->bindValue(':istk_qty',			$product_final_qty,			PDO::PARAM_INT);
+		$stmt->bindValue(':istk_mimic',			$mimic,						PDO::PARAM_INT);
+
+		$stmt->execute();
+		$db->commit();
+
+		$control	=	0;	//	all went well
+	}
+	else
+	{
+		//	Something did not go well!
+		$control	=	670;
+		$msg		=	$mylang['sql_error'];		
+	}
+
+
+	$result['control']			=	$control;
+	$result['msg']				=	$msg;
+
+	return $result;
+
+}
+
+
+
 
 
 
@@ -748,7 +845,7 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
     global $mylang;
 
 	$result				=	array();
-	$message_id			=	666;	//	Not so good by default :)
+	$message_id			=	666;		//	Not so good by default :)
 	$message2op			=	'';
 
 	$location_data		=	array();	//	Location details stored here
@@ -840,6 +937,7 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 
 				$location_arr		=	$location_data['location_arr'];
 				$location_type		=	$location_arr['loc_type'];
+				$location_uid		=	$location_arr['loc_pkey'];
 
 				$product_ids_arr	=	array_unique($location_data['product_ids_arr']);		//	Total number of products in location!
 				$product_count		=	count($product_ids_arr);
@@ -862,7 +960,6 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 				)
 				{
 
-
 					//	Check if location is empty or has a product allocated!
 					if ($product_count == 0)
 					{
@@ -883,7 +980,7 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 						)
 						{
 							//	INSERT product into location!
-							$message_id		=	0;	//	all went well
+							$message_id		=	0;	//	+++		ALL WENT WELL	+++
 							$message2op		=	$mylang['success'];
 						}
 						else
@@ -899,78 +996,39 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 								if (location_category_check($location_arr, $product_data['product_arr']))
 								{
 									//	The product matches to the categories of the location!
-									$message_id		=	2;	//	all went well
+									$message_id		=	0;	//	+++		ALL WENT WELL	+++
 									$message2op		=	$mylang['success'];
 									
 								}
 								else
 								{
 									//	Category requirements NOT MET!
-									$message_id		=	3;	//	Can't insert product here!
+									$message_id		=	3;	//	Can't insert product! Category mismatch!
+															//	Basically, the location has some category filter set but hte product
+															//	that the operator is trying to insert to it does not meet these categories.
 									$message2op		=	$mylang['success'];
 								}
 							}
 							else
 							{
-								//	Location has no categories set for it. Just INSERT the goods!
-								$message_id		=	4;	//	all went well
+								//	Location has no categories set for it.
+								//	No Magic Product either!
+								// Just INSERT the goods!
+								$message_id		=	0;	//	+++		ALL WENT WELL	+++
 								$message2op		=	$mylang['success'];
 							}
 
 
 						}
 
-								//	No further checks needed! Product can be allocated to this location!
-/*
-								$sql	=	'
-
-
-									INSERT
-									
-									INTO
-
-									geb_stock
-									
-									(
-										stk_loc_pkey,
-										stk_prod_pkey,
-										stk_unit,
-										stk_qty,
-										stk_mimic
-									) 
-
-									VALUES
-
-									(
-										:istk_loc_pkey,
-										:istk_prod_pkey,
-										:istk_unit,
-										:istk_qty,
-										:istk_mimic
-									)
-
-								';
-
-
-
-								if ($stmt = $db->prepare($sql))
-								{
-
-									$stmt->bindValue(':istk_loc_pkey',		$loc_arr[0]['loc_pkey'],	PDO::PARAM_INT);
-									$stmt->bindValue(':istk_prod_pkey',		$product_uid,				PDO::PARAM_INT);
-									$stmt->bindValue(':istk_unit',			$product_unit,				PDO::PARAM_INT);
-									$stmt->bindValue(':istk_qty',			$product_final_qty,			PDO::PARAM_INT);
-									$stmt->bindValue(':istk_mimic',			$mimic,						PDO::PARAM_INT);
-
-									$stmt->execute();
-									$db->commit();
-
-									$message_id		=	0;	//	all went well
-									$message2op		=	$mylang['success'];
-								}
-*/
-
-
+						//	No further checks needed! Product can be allocated to this location if the message_id = 0!
+						//	Also, there will be a time where you want to just insert the product and a time when you want To
+						//	provide a HTML output for the operator to select what action to take!
+						if ($message_id == 0)
+						{
+							$insert_now	=	insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_final_qty, $mimic);
+							$message_id	=	$insert_now['control'];
+						}
 
 
 					}	//	if ($product_count == 0)
@@ -1000,8 +1058,9 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 
 				)
 				{
-					
-					
+
+							$message_id		=	234;
+
 				}
 				elseif	//	MULTI MIXED LOCATION Checks!
 				(
@@ -1025,7 +1084,7 @@ function do_magic($db, $product_barcode, $location_barcode, $product_qty)
 				{
 
 					$message_id	=	3456789;
-					$message2op	=	'Illegal location for this product';
+					$message2op	=	$mylang['product_loc_nt_compatible'];
 
 				}
 

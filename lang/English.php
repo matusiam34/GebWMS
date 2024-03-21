@@ -44,6 +44,7 @@ $mylang = array(
 'unit_mismatch'				=>	'Unit mismatch!',
 'category_mismatch'			=>	'Category mismatch!',
 'location_full'				=>	'Location full!',
+'product_loc_nt_compatible'	=>	'Product not compatible with location type!',
 
 
 'products_found_with_the_same_barcode'		=>	'Products founds with the same barcode!',
@@ -142,6 +143,7 @@ $mylang = array(
 //	Error Messages and Messages
 'a_OK'						=>	'a-OK',
 'error'						=>	'Error',
+'sql_error'					=>	'SQL Error!',
 'could_not_get_data'		=>	'Could not get data!',
 'could_not_update'			=>	'Could not update!',
 'user_uid_incorrect'		=>	'User UID incorrect!',

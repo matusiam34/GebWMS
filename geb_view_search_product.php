@@ -474,7 +474,6 @@ if ($login->isUserLoggedIn() == true)
 					loc_blocked,
 					stk_unit,
 					prod_case_qty,
-					prod_pall_qty,
 					SUM(stk_qty) as all_stk_qty
 
 					FROM 
@@ -503,7 +502,7 @@ if ($login->isUserLoggedIn() == true)
 					prod_pkey = :iprod_pkey
 
 
-					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_function, loc_blocked, stk_unit, prod_case_qty, prod_pall_qty
+					GROUP BY wh_code, loc_code, loc_barcode, loc_type, loc_function, loc_blocked, stk_unit, prod_case_qty
 
 					ORDER BY wh_code, loc_code
 
