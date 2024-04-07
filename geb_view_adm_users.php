@@ -214,7 +214,8 @@ if ($login->isUserLoggedIn() == true)
 
 
 					set_Element_Value_By_ID('id_goodsin',				obje.data.menu_goodsin);
-					set_Element_Value_By_ID('id_prod2location',			obje.data.menu_prod2loc);
+					set_Element_Value_By_ID('id_mpa',					obje.data.menu_mpa);
+					set_Element_Value_By_ID('id_mpp',					obje.data.menu_mpp);
 					set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
 
 
@@ -302,7 +303,8 @@ if ($login->isUserLoggedIn() == true)
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
 				goodsin_js				:	get_Element_Value_By_ID('id_goodsin'),
-				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
+				mpa_js					:	get_Element_Value_By_ID('id_mpa'),
+				mpp_js					:	get_Element_Value_By_ID('id_mpp'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
@@ -360,7 +362,8 @@ if ($login->isUserLoggedIn() == true)
 				product_search_js		:	get_Element_Value_By_ID('id_product_search'),
 				location_search_js		:	get_Element_Value_By_ID('id_location_search'),
 				goodsin_js				:	get_Element_Value_By_ID('id_goodsin'),
-				prod2location_js		:	get_Element_Value_By_ID('id_prod2location'),
+				mpa_js					:	get_Element_Value_By_ID('id_mpa'),
+				mpp_js					:	get_Element_Value_By_ID('id_mpp'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
 				mgr_products_js			:	get_Element_Value_By_ID('id_mgr_products'),
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
@@ -781,11 +784,11 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['prod2location'] . ':</p>
+	<p class="help">' . $mylang['mpa'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_prod2location">
+			<select style="' . $color_general . '" id="id_mpa">
 
 				<option value="32768">X</option>
 				<option value="49152">E</option>
@@ -795,6 +798,28 @@ echo	$user_details_html;
 	  </div>
 	</div>
 </div>
+
+
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['mpp'] . ':</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-yellow is-fullwidth">
+			<select style="' . $color_general . '" id="id_mpp">
+
+				<option value="32768">X</option>
+				<option value="49152">E</option>
+
+			</select>
+		</div>
+	  </div>
+	</div>
+</div>
+
+
 
 
 <div class="field" style="'. $box_size_str .'">

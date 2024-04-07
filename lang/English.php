@@ -27,6 +27,7 @@ $mylang = array(
 'enabled'					=>	'Enabled',
 'disabled'					=>	'Disabled',
 'suspended'					=>	'Suspended',
+'blocked'					=>	'Blocked',
 
 'function'					=>	'Function',
 
@@ -44,6 +45,8 @@ $mylang = array(
 'unit_mismatch'				=>	'Unit mismatch!',
 'category_mismatch'			=>	'Category mismatch!',
 'location_full'				=>	'Location full!',
+'location_blocked'			=>	'Location blocked!',
+'location_not_found'		=>	'Location not found!',
 'product_loc_nt_compatible'	=>	'Product not compatible with location type!',
 
 
@@ -109,6 +112,7 @@ $mylang = array(
 'add_user'					=>	'Add User',
 'shipping_address'			=>	'Shipping address',
 'billing_address'			=>	'Billing address',
+'magic_product'				=>	'Magic Product',
 
 
 //	Main menu Search lines
@@ -119,7 +123,8 @@ $mylang = array(
 
 
 //	Main menu buttons... And other potentially
-'prod2location'				=>	'Product2Location',
+'mpa'						=>	'Manual Product Allocation',
+'mpp'						=>	'Manual Product Pick',
 'recent_activity'			=>	'Recent Activity',
 'products'					=>	'Products',
 'users'						=>	'Users',

@@ -88,13 +88,24 @@ if ($login->isUserLoggedIn() == true)
 				get_all_category_b();
 				emptySelectBox('id_category_c');
 				addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
+				emptySelectBox('id_category_d');
+				addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');	
 			});
 
 
 			// When the operator selects a new category B = fetch the related category C entries!
 			$('#id_category_b').change(function() {
 				get_all_category_c();
+				emptySelectBox('id_category_d');
+				addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');	
 			});
+
+			// When the operator selects a new category C = fetch the related category D entries!
+			$('#id_category_c').change(function() {
+				get_all_category_d();
+			});
+
+
 
 		});
 
@@ -242,7 +253,7 @@ if ($login->isUserLoggedIn() == true)
 
 						for (var i = 0; i < len; i++)
 						{
-							addOption2SelectBox('id_category_d', obje.data[i].cat_c_pkey, obje.data[i].cat_c_name);	
+							addOption2SelectBox('id_category_d', obje.data[i].cat_d_pkey, obje.data[i].cat_d_name);	
 						}
 
 					}

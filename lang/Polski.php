@@ -9,8 +9,8 @@ $mylang = array(
 'max_qty'					=>	'Maksymalna ilość',
 
 
-'each'						=>	'JEDNOSTEK',
-'case'						=>	'SKRZYŃ',	//	Paczka!?
+'each'						=>	'SZTUKA',//'JEDNOSTEK',
+'case'						=>	'PACZKA',//'SKRZYŃ',	//	Paczka!?
 
 'single'					=>	'Pojedynczy',
 'multi'						=>	'Wielo',
@@ -27,11 +27,12 @@ $mylang = array(
 'enabled'					=>	'Włączony',
 'disabled'					=>	'Wyłączony',
 'suspended'					=>	'Zawieszony',
+'blocked'					=>	'Zablokowany',
 
 'function'					=>	'Funkcja',
 
-'no'						=>	'No',
-'yes'						=>	'Yes',
+'no'						=>	'Nie',
+'yes'						=>	'Tak',
 
 'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'barcode_already_exists'	=>	'Ten kod kreskowy już istnieje!',
@@ -44,6 +45,8 @@ $mylang = array(
 'unit_mismatch'				=>	'Niedopasowanie jednostek!',
 'category_mismatch'			=>	'Niezgodność kategorii!',
 'location_full'				=>	'Lokalizacja pełna!',
+'location_blocked'			=>	'Lokalizacja zablokowana!',
+'location_not_found'		=>	'Lokalizacja nie znaleziona!',
 'product_loc_nt_compatible'	=>	'Produkt niezgodny z rodzajem lokalizacji!',
 
 
@@ -77,8 +80,8 @@ $mylang = array(
 'total_eaches'				=>	'Suma JEDNOSTEK',
 'each_barcode'				=>	'POJEDYNCZY Kod Kreskowy',
 'each_weight'				=>	'POJEDYNCZY Waga',
-'case_barcode'				=>	'SKRZYŃ Kod Kreskowy',
-'case_qty'					=>	'SKRZYŃ Ilość',
+'case_barcode'				=>	'PACZKA Kod Kreskowy',//'SKRZYŃ Kod Kreskowy',
+'case_qty'					=>	'PACZKA Ilość',//'SKRZYŃ Ilość',
 'pallet_qty'				=>	'PALET Ilość',
 'note'						=>	'Notatka',
 'location_details'			=>	'Szczegóły lokalizacji',
@@ -107,6 +110,7 @@ $mylang = array(
 'add_user'					=>	'Dodaj konto',
 'shipping_address'			=>	'Adres wysyłki',
 'billing_address'			=>	'Adres rozliczeniowy',
+'magic_product'				=>	'Magiczny Produkt',
 
 
 //	Main menu Search lines
@@ -117,7 +121,8 @@ $mylang = array(
 
 
 //	Main menu buttons... And other potentially
-'prod2location'				=>	'Produkt do Lokalizacji',
+'mpa'						=>	'Ręczny Przydział Produktów',
+'mpp'						=>	'Ręczne Zbieranie Produktów',
 'recent_activity'			=>	'Ostania Aktywność',
 'products'					=>	'Produkty',
 'users'						=>	'Użytkownicy',

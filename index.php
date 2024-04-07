@@ -191,13 +191,25 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				if (is_it_enabled($_SESSION['menu_prod2loc']))
+				if (is_it_enabled($_SESSION['menu_mpa']))
 				{
-					$bookin_prod2loc_link		=	"location.href='geb_view_prod2loc.php'";
+					$mpa_link		=	"location.href='geb_view_mpa.php'";
 
 					echo	'<div class="field">
 								<div class="control">
-									<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $bookin_prod2loc_link . '">' . $mylang['prod2location'] . '</a>
+									<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $mpa_link . '">' . $mylang['mpa'] . '</a>
+								</div>
+							</div>';
+				}
+
+
+				if (is_it_enabled($_SESSION['menu_mpp']))
+				{
+					$mpp_link		=	"location.href='geb_view_mpp.php'";
+
+					echo	'<div class="field">
+								<div class="control">
+									<a class="button is-normal is-fullwidth inventory_class is-bold" onclick="' . $mpp_link . '">' . $mylang['mpp'] . '</a>
 								</div>
 							</div>';
 				}

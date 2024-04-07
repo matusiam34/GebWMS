@@ -358,7 +358,8 @@ class Login
 				$_SESSION['menu_prod_search']				=	$result_row->menu_prod_search;
 				$_SESSION['menu_location_search']			=	$result_row->menu_location_search;
 				$_SESSION['menu_goodsin']					=	$result_row->menu_goodsin;
-				$_SESSION['menu_prod2loc']					=	$result_row->menu_prod2loc;
+				$_SESSION['menu_mpa']						=	$result_row->menu_mpa;	//	Manual Product Allocation
+				$_SESSION['menu_mpp']						=	$result_row->menu_mpp;	//	Manual Product Pick
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_mgr_products']				=	$result_row->menu_mgr_products;
 				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;

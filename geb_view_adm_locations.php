@@ -99,13 +99,25 @@ if ($login->isUserLoggedIn() == true)
 			$('#id_category_a').change(function() {
 				get_all_category_b();
 				emptySelectBox('id_category_c');
-				addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');	
+				addOption2SelectBox('id_category_c', 0, '<?php	echo $mylang['none'];	?>');
+				emptySelectBox('id_category_d');
+				addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');
 			});
 
 			// When the operator selects a new category B = fetch the related category C entries!
 			$('#id_category_b').change(function() {
 				get_all_category_c();
+				emptySelectBox('id_category_d');
+				addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');
 			});
+
+
+			// When the operator selects a new category C = fetch the related category D entries!
+			$('#id_category_c').change(function() {
+				get_all_category_d();
+			});
+
+
 
 
 
@@ -184,6 +196,8 @@ if ($login->isUserLoggedIn() == true)
 					$('#id_category_a').empty().append(obje.data.cat_a_html);
 					$('#id_category_b').empty().append(obje.data.cat_b_html);
 					$('#id_category_c').empty().append(obje.data.cat_c_html);
+					$('#id_category_d').empty().append(obje.data.cat_d_html);
+
 
 				}
 				else
@@ -219,6 +233,7 @@ if ($login->isUserLoggedIn() == true)
 				loc_cat_a_js		:	get_Element_Value_By_ID('id_category_a'),
 				loc_cat_b_js		:	get_Element_Value_By_ID('id_category_b'),
 				loc_cat_c_js		:	get_Element_Value_By_ID('id_category_c'),
+				loc_cat_d_js		:	get_Element_Value_By_ID('id_category_d'),
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
 
@@ -266,6 +281,7 @@ if ($login->isUserLoggedIn() == true)
 				cat_a_js			:	get_Element_Value_By_ID('id_category_a'),
 				cat_b_js			:	get_Element_Value_By_ID('id_category_b'),
 				cat_c_js			:	get_Element_Value_By_ID('id_category_c'),
+				cat_d_js			:	get_Element_Value_By_ID('id_category_d'),
 				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
@@ -294,6 +310,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_category_a', 0);
 					set_Element_Value_By_ID('id_category_b', 0);
 					set_Element_Value_By_ID('id_category_c', 0);
+					set_Element_Value_By_ID('id_category_d', 0);
 					set_Element_Value_By_ID('id_blocked', 0);
 					set_Element_Value_By_ID('id_desc', '');
 					set_Element_Value_By_ID('id_location_status', 0);
@@ -450,6 +467,48 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		function get_all_category_d()
+		{
+			const category_c_val = get_Element_Value_By_ID('id_category_c');
+			const postData =
+			{
+				action_code_js:			3,
+				action_format_js:		1,
+				action_disabled_js:		0,
+				cat_uid_js: 			category_c_val
+			};
+
+			$.post('geb_ajax_category.php', postData)
+				.done(function (output) {
+					const obje = jQuery.parseJSON(output);
+					
+					if (obje.control === 0)
+					{
+						var len = obje.data.length;
+
+						emptySelectBox('id_category_d');
+						addOption2SelectBox('id_category_d', 0, '<?php	echo $mylang['none'];	?>');	
+
+						if(len > 0)
+						{
+							for (var i = 0; i < len; i++)
+							{
+								addOption2SelectBox('id_category_d', obje.data[i].cat_d_pkey, obje.data[i].cat_d_name);	
+							}
+						}
+					}
+					else
+					{
+						$.alertable.error(obje.control, obje.msg);
+					}
+				})
+				.fail(function () {
+					$.alertable.error('102559', '<?php echo $mylang["server_error"]; ?>');
+				});
+		}
+
+
+
 
 
 
@@ -565,7 +624,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Location:</p>
+							<p class="help"><?php	echo $mylang['location'];		?></p>
 							<div class="control">
 								<input id="id_location_name" class="input is-normal" type="text" placeholder="B003A">
 							</div>
@@ -573,11 +632,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Barcode:</p>
+							<p class="help"><?php	echo $mylang['barcode'];		?></p>
 							<div class="control">
 								<input id="id_barcode" class="input is-normal" type="text" placeholder="7334764234185">
 							</div>
 						</div>
+
+
+
+
 
 				</div>
 
@@ -587,7 +650,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Function:</p>
+							<p class="help"><?php	echo $mylang['function'];		?></p>
 							<div class="field is-narrow">
 								<div class="control">
 									<div class="select is-fullwidth">
@@ -610,7 +673,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Type:</p>
+							<p class="help"><?php	echo $mylang['type'];		?></p>
 							<div class="field is-narrow">
 								<div class="control">
 									<div class="select is-fullwidth">
@@ -632,11 +695,18 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Magic Product:</p>
+							<p class="help"><?php	echo $mylang['magic_product'];		?></p>
 							<div class="control">
 								<input id="id_magic_product_name" class="input is-normal" type="text">
+							</div>
+						</div>
+
+
+						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help"><?php	echo $mylang['magic_product'];		?></p>
+							<div class="control">
+								<input id="id_max_qty" class="input is-normal" type="text">
 							</div>
 						</div>
 
@@ -654,7 +724,8 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field is-narrow">
 						  <div class="control">
 							<div class="select is-fullwidth">
-								<select id="id_category_a">' . $category_a_html . '
+								<select id="id_category_a">
+									<option value="0"><?php	echo $mylang['none'];		?></option>
 								</select>
 							</div>
 						  </div>
@@ -668,7 +739,8 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field is-narrow">
 						  <div class="control">
 							<div class="select is-fullwidth">
-								<select id="id_category_b">' . $category_b_html . '
+								<select id="id_category_b">
+									<option value="0"><?php	echo $mylang['none'];		?></option>
 								</select>
 							</div>
 						  </div>
@@ -682,7 +754,23 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field is-narrow">
 						  <div class="control">
 							<div class="select is-fullwidth">
-								<select id="id_category_c">' . $category_c_html . '
+								<select id="id_category_c">
+									<option value="0"><?php	echo $mylang['none'];		?></option>
+								</select>
+							</div>
+						  </div>
+						</div>
+					</div>
+
+
+
+					<div class="field" style="<?php echo $box_size_str; ?>">
+						<p class="help"><?php	echo $mylang['category'] . ' (D)'; ?></p>
+						<div class="field is-narrow">
+						  <div class="control">
+							<div class="select is-fullwidth">
+								<select id="id_category_d">
+									<option value="0"><?php	echo $mylang['none'];		?></option>
 								</select>
 							</div>
 						  </div>
@@ -723,7 +811,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help">Blocked:</p>
+							<p class="help"><?php	echo $mylang['blocked'];		?></p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
@@ -739,7 +827,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 					<div class="field" style="<?php echo $box_size_str; ?>">
-						<p class="help">Note:</p>
+						<p class="help"><?php	echo $mylang['description'];		?></p>
 						<div class="control">
 							<input id="id_desc" class="input is-normal" type="text" placeholder="do not use">
 						</div>
@@ -757,7 +845,7 @@ if ($login->isUserLoggedIn() == true)
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="add_item();">Add</button>
+				<button class="button admin_class is-fullwidth"  onclick="add_item();">' . $mylang['add'] . '</button>
 			</div>
 		</div>';
 	}
@@ -771,7 +859,7 @@ if ($login->isUserLoggedIn() == true)
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="update_location();">Update</button>
+				<button class="button admin_class is-fullwidth"  onclick="update_location();">' . $mylang['update'] . '</button>
 			</div>
 		</div>';
 	}

@@ -102,7 +102,7 @@ if ($login->isUserLoggedIn() == true) {
 				$html_results		.=		'<th>' . $mylang['warehouse'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['location'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['barcode'] . '</th>';
-				$html_results		.=		'<th>' . $mylang['note'] . '</th>';
+				$html_results		.=		'<th>' . $mylang['description'] . '</th>';
 				$html_results		.=	'</tr>';
 
 				$html_results		.=	'</thead>';
@@ -150,7 +150,7 @@ if ($login->isUserLoggedIn() == true) {
 		}	//	Action 0 end!
 
 
-		//	Get details of one!
+		//	Get details of one location!
 
 		else if ($action_code == 1)
 		{
@@ -164,7 +164,7 @@ if ($login->isUserLoggedIn() == true) {
 				$category_arr	=	array();
 
 				//	Get the UID of the location hopefully provided from the frontend.
-				$loc_uid	=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
+				$loc_uid		=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
 
 				$sql	=	'
 
@@ -182,6 +182,7 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_cat_a,
 					geb_location.loc_cat_b,
 					geb_location.loc_cat_c,
+					geb_location.loc_cat_d,
 					geb_location.loc_magic_product,
 					geb_location.loc_note,
 					geb_location.loc_disabled,
@@ -227,9 +228,10 @@ if ($login->isUserLoggedIn() == true) {
 							'loc_cat_a'			=>	$row['loc_cat_a'],
 							'loc_cat_b'			=>	$row['loc_cat_b'],
 							'loc_cat_c'			=>	$row['loc_cat_c'],
+							'loc_cat_d'			=>	$row['loc_cat_d'],
 							'loc_note'			=>	$row['loc_note'],
 							'loc_disabled'		=>	$row['loc_disabled'],
-							'prod_code'			=>	$row['prod_code']
+							'prod_code'			=>	trim($row['prod_code'])
 
 						);
 
@@ -250,13 +252,16 @@ if ($login->isUserLoggedIn() == true) {
 							cat_b_a_level,
 							cat_c_pkey,
 							cat_c_name,
-							cat_c_b_level
-
+							cat_c_b_level,
+							cat_d_pkey,
+							cat_d_name,
+							cat_d_c_level
 
 							FROM geb_category_a
 
 							LEFT JOIN geb_category_b ON geb_category_a.cat_a_pkey = geb_category_b.cat_b_a_level
 							LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
+							LEFT JOIN geb_category_d ON geb_category_c.cat_c_pkey = geb_category_d.cat_d_c_level
 
 
 					';
@@ -276,10 +281,11 @@ if ($login->isUserLoggedIn() == true) {
 					}
 
 
-					// Generate HTML for Category A, B and C select box
+					// Generate HTML for Category A, B, C and D select box
 					$category_A_options = [];
 					$category_B_options = [];
 					$category_C_options = [];
+					$category_D_options = [];
 
 					// Populate category options arrays
 					foreach ($category_arr as $category)
@@ -299,12 +305,23 @@ if ($login->isUserLoggedIn() == true) {
 							$category_C_options[$category['cat_c_pkey']] = $category['cat_c_name'];
 						}
 
+						// Check if the current category D is associated with the selected category C
+						if ($category['cat_d_c_level'] == $data_results['loc_cat_c'])
+						{
+							$category_D_options[$category['cat_d_pkey']] = $category['cat_d_name'];
+						}
+
+
+
+
+
 					}
 
 
 					$data_results['cat_a_html']	=	generate_select_options($category_A_options, leave_numbers_only($data_results['loc_cat_a']), $mylang['none']);
 					$data_results['cat_b_html']	=	generate_select_options($category_B_options, leave_numbers_only($data_results['loc_cat_b']), $mylang['none']);
 					$data_results['cat_c_html']	=	generate_select_options($category_C_options, leave_numbers_only($data_results['loc_cat_c']), $mylang['none']);
+					$data_results['cat_d_html']	=	generate_select_options($category_D_options, leave_numbers_only($data_results['loc_cat_d']), $mylang['none']);
 
 					$message_id		=	0;	//	all went well
 
@@ -319,7 +336,7 @@ if ($login->isUserLoggedIn() == true) {
 		}	//	Action 1 end!
 
 
-		//	Add one!
+		//	Add one location to the system!
 
 		else if ($action_code == 2)
 		{
@@ -350,6 +367,7 @@ if ($login->isUserLoggedIn() == true) {
 				$cat_a			=	leave_numbers_only($_POST['loc_cat_a_js']);
 				$cat_b			=	leave_numbers_only($_POST['loc_cat_b_js']);
 				$cat_c			=	leave_numbers_only($_POST['loc_cat_c_js']);
+				$cat_d			=	leave_numbers_only($_POST['loc_cat_d_js']);
 				$magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
 				$function		=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
@@ -441,7 +459,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 					//	Now... Since the operator is providing me potentially with a Magic Product I need to query the geb_product
-					//	table to see if there is a match. If there is a match ===>>> get the UID (prod_pkey) of that product and use It
+					//	table to see if there is a match. If there is a match ===>>> get the UID (prod_pkey) of that product and use it
 					//	to insert!
 
 
@@ -481,14 +499,23 @@ if ($login->isUserLoggedIn() == true) {
 							}
 
 
+
 							if (count($magic_arr) == 1)
 							{
+								//	!!! WINNER !!!
 								//	One product found! Allocated the $magic_product_uid to the prod_pkey
 								$magic_product_uid	=	$magic_arr[0]['prod_pkey'];
+								//	!!! WINNER !!!
 							}
+
+							elseif (count($magic_arr) == 0)	//	No match based on the product name has been found in the geb_product table!
+							{
+								$found_match	=	3;	//	No match has been found!
+							}
+
 							elseif (count($magic_arr) > 1)
 							{
-								$found_match	=	3;	//	Multiple products with the same!
+								$found_match	=	4;	//	Multiple products with the same name! Needs to be investigated by the sys admin!
 							}
 
 
@@ -526,6 +553,7 @@ if ($login->isUserLoggedIn() == true) {
 									loc_cat_a,
 									loc_cat_b,
 									loc_cat_c,
+									loc_cat_d,
 									loc_blocked,
 									loc_note,
 									loc_disabled
@@ -543,6 +571,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iloc_cat_a,
 									:iloc_cat_b,
 									:iloc_cat_c,
+									:iloc_cat_d,
 									:iloc_blocked,
 									:iloc_note,
 									:iloc_disabled
@@ -564,6 +593,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iloc_cat_a',				$cat_a,					PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_cat_b',				$cat_b,					PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_cat_c',				$cat_c,					PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_cat_d',				$cat_d,					PDO::PARAM_INT);
 
 
 
@@ -592,6 +622,19 @@ if ($login->isUserLoggedIn() == true) {
 							$message_id		=	102201;
 							$message2op		=	$mylang['barcode_already_exists'];
 						}
+
+
+						elseif ($found_match == 3)
+						{
+							$message_id		=	102201;
+							$message2op		=	'No matching product found!!!';//$mylang['barcode_already_exists'];
+						}
+						elseif ($found_match == 4)
+						{
+							$message_id		=	102201;
+							$message2op		=	'Multiple products with the same name found';//$mylang['barcode_already_exists'];
+						}
+
 
 					}
 
@@ -637,6 +680,7 @@ if ($login->isUserLoggedIn() == true) {
 				$cat_a			=	leave_numbers_only($_POST['cat_a_js']);
 				$cat_b			=	leave_numbers_only($_POST['cat_b_js']);
 				$cat_c			=	leave_numbers_only($_POST['cat_c_js']);
+				$cat_d			=	leave_numbers_only($_POST['cat_d_js']);
 				$loc_function	=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
@@ -764,6 +808,7 @@ if ($login->isUserLoggedIn() == true) {
 								loc_cat_a		=		:uloc_cat_a,
 								loc_cat_b		=		:uloc_cat_b,
 								loc_cat_c		=		:uloc_cat_c,
+								loc_cat_d		=		:uloc_cat_d,
 								loc_blocked		=		:uloc_blocked,
 								loc_note		=		:uloc_note,
 								loc_disabled	=		:uloc_disabled
@@ -786,6 +831,7 @@ if ($login->isUserLoggedIn() == true) {
 								$stmt->bindValue(':uloc_cat_a',		$cat_a,			PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_cat_b',		$cat_b,			PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_cat_c',		$cat_c,			PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_d',		$cat_d,			PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_blocked',	$blocked,		PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
 								$stmt->bindValue(':uloc_disabled',	$disabled,		PDO::PARAM_INT);

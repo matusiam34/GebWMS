@@ -164,7 +164,7 @@ if ($login->isUserLoggedIn() == true) {
 					{
 						$sql	.=	'	WHERE	';
 					}
-					elseif (($action_code == 1) OR ($action_code == 2))
+					elseif (($action_code == 1) OR ($action_code == 2) OR ($action_code == 3))
 					{
 						$sql	.=	'	AND	';
 					}
