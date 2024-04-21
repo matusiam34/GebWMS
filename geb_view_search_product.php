@@ -456,6 +456,8 @@ if ($login->isUserLoggedIn() == true)
 
 				//	Also since there is only one product get the warehouse stock details...
 				$total_product_eaches	=	0;			//	shown in the last line of the table!
+				$total_product_cases	=	0;			//	shown in the last line of the table!
+
 				$location_totals_arr	=	array();	//	all locations found added up here. This is to provide a glance look
 														//	of the entire stock across the entire warehouse regardless where the stuff is.
 														//	Displayed as another table next to the Warehouse/Location/Qty table.
@@ -541,8 +543,9 @@ if ($login->isUserLoggedIn() == true)
 						$loc_function			=	leave_numbers_only($row['loc_function']);
 						$loc_type				=	leave_numbers_only($row['loc_type']);
 						$loc_blocked			=	leave_numbers_only($row['loc_blocked']);
+						$stock_unit				=	leave_numbers_only($row['stk_unit']);
 
-
+/*
 						//	Before I do anything else add the location function and qty to the $location_totals_arr
 						if (isset($location_totals_arr[$loc_function]))
 						{
@@ -554,7 +557,7 @@ if ($login->isUserLoggedIn() == true)
 							//	Entry does not exist = add it
 							$location_totals_arr[$loc_function]	=	$location_stock_qty;
 						}
-
+*/
 
 
 
@@ -564,24 +567,47 @@ if ($login->isUserLoggedIn() == true)
 						//	NOTE:
 						//	0:	Stores the string
 						//	1:	Stores the styling 
-						$loc_details_arr	=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
+						$loc_details_arr		=	decode_loc($loc_function, $loc_type, $loc_blocked, $loc_function_codes_arr, $loc_type_codes_arr);
+
+						$stock_unit_str			=	'err';	//	FIX this at some point!
 
 
-						// Calculate amount of CASES if stk_unit indicates it to be a CASE (id = 5)
-						$stock_unit				=	trim($row['stk_unit']);
-						$stock_unit_str			=	'E';	// default lets go with EACHES
 
-						if ($stock_unit == $stock_unit_type_reverse_arr['C'])
+						if ($stock_unit == $stock_unit_type_reverse_arr['E'])
 						{
-							$location_case_qty		=	$location_stock_qty / trim($row['prod_case_qty']);
+							$total_product_eaches	=	$total_product_eaches + leave_numbers_only($row['all_stk_qty']);
+							$stock_unit_str			=	'(E)';
 
-							if (is_float($location_case_qty))
+							if (isset($location_totals_arr[$loc_function]['E']))
 							{
-								// If the number is a float than do please trim down the deciman places to a 2 as it will look ugly with an
-								// entry like 4.6666666666666666666667 or something to that tune.
-								$location_case_qty		=	number_format($location_case_qty, 2);
+								//	Update the location function type with the EACH QTY!
+								$location_totals_arr[$loc_function]['E']	+=	$location_stock_qty;
 							}
-							$stock_unit_str			=	$location_case_qty . ' C';
+							else
+							{
+								//	Entry does not exist = add it
+								$location_totals_arr[$loc_function]['E']	=	$location_stock_qty;
+							}
+
+						}
+						else if ($stock_unit == $stock_unit_type_reverse_arr['C'])
+						{
+							$total_product_cases	=	$total_product_cases + leave_numbers_only($row['all_stk_qty']);
+							$case_count				=	$location_stock_qty * leave_numbers_only($row['prod_case_qty']);
+							$stock_unit_str			=	'(C; ' . $case_count . ' E)';
+
+							if (isset($location_totals_arr[$loc_function]['C']))
+							{
+								//	Update the location function type with the EACH QTY!
+								$location_totals_arr[$loc_function]['C']	+=	$location_stock_qty;
+							}
+							else
+							{
+								//	Entry does not exist = add it
+								$location_totals_arr[$loc_function]['C']	=	$location_stock_qty;
+							}
+
+
 						}
 
 
@@ -603,10 +629,9 @@ if ($login->isUserLoggedIn() == true)
 						$details_html	.=	'<tr>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($row['wh_code']) . '</td>';
 						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_details_lnk . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' (' . $stock_unit_str .   ')</td>';
+						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $location_stock_qty . ' ' . $stock_unit_str . '</td>';
 						$details_html	.=	'</tr>';
 
-						$total_product_eaches	=	$total_product_eaches + trim($row['all_stk_qty']);
 
 
 					}		// First query while row bracket...
@@ -618,6 +643,12 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $mylang['total_eaches'] . '</td>';
 					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_eaches . '</td>';
+					$details_html	.=	'</tr>';
+
+					$details_html	.=	'<tr>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';"></td>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $mylang['total_cases'] . '</td>';
+					$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $total_product_cases . '</td>';
 					$details_html	.=	'</tr>';
 
 					$details_html	.=	'</table>';
@@ -636,17 +667,21 @@ if ($login->isUserLoggedIn() == true)
 					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['location'] . '</th>';
 					$details_html	.=	'<th style="background-color: ' . $backclrA . ';">' . $mylang['qty'] . '</th>';
 					$details_html	.=	'</tr>';
+
+
 					//	Loop to provide the details!
 					foreach ($location_totals_arr as $key => $value)
 					{
 
-						$details_html	.=	'<tr>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_functions_arr[$key] . '</td>';
-						$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $value . '</td>';
-						$details_html	.=	'</tr>';
+						foreach ($value as $key2 => $value2)
+						{
+							$details_html	.=	'<tr>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $loc_functions_arr[$key] . '</td>';
+							$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $value2 . ' (' . $key2 . ')</td>';
+							$details_html	.=	'</tr>';
+						}
 
 					}
-
 
 					$details_html	.=	'</table>';
 					$columns_html	.=	$details_html;	// place the table in the column...

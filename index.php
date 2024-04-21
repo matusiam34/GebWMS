@@ -151,7 +151,7 @@ if ($login->isUserLoggedIn() == true)
 					echo	'
 
 						<div class="field">
-						<form action="gv_search_location.php" method="get">
+						<form action="geb_view_search_location.php" method="get">
 							<div class="field has-addons" >
 
 								<p class="control is-expanded">
@@ -262,14 +262,16 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				// Basic user management + Access Control tool
-				if (is_it_enabled($_SESSION['menu_adm_users']))
+
+
+				// Basic tool to manage companies!
+				if (is_it_enabled($_SESSION['menu_adm_company']))
 				{
-					$users_link		=	"location.href='geb_view_adm_users.php'";
+					$company_link		=	"location.href='geb_view_adm_companies.php'";
 
 					echo	'<div class="field">
 								<div class="control">
-									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $users_link . '">' . $mylang['users'] . '</a>
+									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $company_link . '">' . $mylang['companies'] . '</a>
 								</div>
 							</div>';
 				}
@@ -299,6 +301,21 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							</div>';
 				}
+
+
+
+				// Basic user management + Access Control tool
+				if (is_it_enabled($_SESSION['menu_adm_users']))
+				{
+					$users_link		=	"location.href='geb_view_adm_users.php'";
+
+					echo	'<div class="field">
+								<div class="control">
+									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $users_link . '">' . $mylang['users'] . '</a>
+								</div>
+							</div>';
+				}
+
 
 
 				if (is_it_enabled($_SESSION['menu_adm_category']))

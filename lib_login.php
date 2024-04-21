@@ -362,6 +362,7 @@ class Login
 				$_SESSION['menu_mpp']						=	$result_row->menu_mpp;	//	Manual Product Pick
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_mgr_products']				=	$result_row->menu_mgr_products;
+				$_SESSION['menu_adm_company']				=	$result_row->menu_adm_company;
 				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;
 				$_SESSION['menu_adm_warehouse']				=	$result_row->menu_adm_warehouse;
 				$_SESSION['menu_adm_warehouse_loc']			=	$result_row->menu_adm_warehouse_loc;
@@ -372,7 +373,12 @@ class Login
 
 				//	Language that the user has set! Default is English... however there will be few available to select... later on...
 				$_SESSION['user_language']					=	$result_row->user_language;
-				//	Warehouse that the user can operate in. Can be all!
+				//	This places the user / operator in a specific company! GebWMS can support many companies working in the same
+				//	physical warehouse so that is really good! It is more like if you own the building and need a software to manage the warehouse
+				//	in a way that allows 3 or 5 (or more) companies to share spare without an issue. I am sure there are other ways that this can BE
+				//	done but at the end of the day this is a quirky WMS so get over it! 999 is the default figure!
+				$_SESSION['user_company']					=	$result_row->user_company;
+				//	Warehouse that the user can operate in. 0 means all warehouses!
 				$_SESSION['user_warehouse']					=	$result_row->user_warehouse;
 
 

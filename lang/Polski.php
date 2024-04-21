@@ -46,11 +46,13 @@ $mylang = array(
 'category_mismatch'			=>	'Niezgodność kategorii!',
 'location_full'				=>	'Lokalizacja pełna!',
 'location_blocked'			=>	'Lokalizacja zablokowana!',
+'location_disabled'			=>	'Lokalizacja dezaktywowana!',
 'location_not_found'		=>	'Lokalizacja nie znaleziona!',
 'product_loc_nt_compatible'	=>	'Produkt niezgodny z rodzajem lokalizacji!',
 
 
 'products_found_with_the_same_barcode'		=>	'Znaleziono produkty z tym samym kodem kreskowym!',
+'location_found_with_the_same_barcode'		=>	'Znaleziono lokalizacje z tym samym kodem kreskowym!',
 
 
 
@@ -78,9 +80,10 @@ $mylang = array(
 'warehouse'					=>	'Magazyn',
 'location'					=>	'Lokalizacja',
 'total_eaches'				=>	'Suma JEDNOSTEK',
-'each_barcode'				=>	'POJEDYNCZY Kod Kreskowy',
+'total_cases'				=>	'Suma PACZEK',
+'each_barcode'				=>	'POJEDYNCZY Kod kreskowy',
 'each_weight'				=>	'POJEDYNCZY Waga',
-'case_barcode'				=>	'PACZKA Kod Kreskowy',//'SKRZYŃ Kod Kreskowy',
+'case_barcode'				=>	'PACZKA Kod kreskowy',//'SKRZYŃ Kod Kreskowy',
 'case_qty'					=>	'PACZKA Ilość',//'SKRZYŃ Ilość',
 'pallet_qty'				=>	'PALET Ilość',
 'note'						=>	'Notatka',
@@ -125,6 +128,8 @@ $mylang = array(
 'mpp'						=>	'Ręczne Zbieranie Produktów',
 'recent_activity'			=>	'Ostania Aktywność',
 'products'					=>	'Produkty',
+'company'					=>	'Firma',
+'companies'					=>	'Firmy',
 'users'						=>	'Użytkownicy',
 'warehouses'				=>	'Magazyny',
 'warehouse_locations'		=>	'Lokalizacje w Magazynach',
@@ -152,11 +157,14 @@ $mylang = array(
 'user_uid_incorrect'		=>	'UID użytkownika jest nieprawidłowy!',
 'permissions_error'			=>	'Błąd uprawnień!',
 'warehouse_already_exists'	=>	'Magazyn już istnieje!',
+'company_already_exists'	=>	'Firma już istnieje!',
 'user_already_exists'		=>	'Użytkownik już istnieje!',
 'name_too_short'			=>	'Nazwa za krótka!',
 'barcode_too_short'			=>	'Kod kreskowy za krótki!',
+'identical_barcodes'		=>	'Identyczne kody kreskowe!',
 'incorrect_uid'				=>	'Niepoprawny UID!',
 'incorrect_qty'				=>	'Niepoprawna ilość!',
+'invalid_qty'				=>	'Błędna ilość!',
 
 
 

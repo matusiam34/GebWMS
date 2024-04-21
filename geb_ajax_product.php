@@ -15,8 +15,6 @@
 	1	:	Update Product details
 
 
-
-
 	//	Old stuff here!
 	2	:	Add product!
 	3	:	Update product details!
@@ -78,7 +76,7 @@ if ($login->isUserLoggedIn() == true) {
 			//	Check if $case_qty is a number at all... THe default set by the frontend is 0... but to avoid any user input:
 			if (!is_numeric($prod_arr['case_qty']))
 			{
-				$prod_arr['case_qty']	=	0;	//	Will be fine is the user did not want this; Will give an error if provided with case barcode!
+				$prod_arr['case_qty']	=	0;	//	Will be fine if the user did not want this; Will give an error if provided with case barcode!
 			}
 
 
@@ -103,7 +101,7 @@ if ($login->isUserLoggedIn() == true) {
 				//	Check which type of barcode the system allows...
 				if (case_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
 				{
-					if (!is_numeric($prod_arr['case_barcode']))	//	Chk if each barcode is a string of numbers!
+					if (!is_numeric($prod_arr['case_barcode']))	//	Check if case barcode is a string of numbers!
 					{
 						//	Case barcode has to be a number!!
 						$input_checks	=	ERROR_CASE_BARCODE_NOT_NUMERIC;
@@ -176,7 +174,6 @@ if ($login->isUserLoggedIn() == true) {
 
 			)
 			{
-
 
 
 				$product_arr = array
@@ -450,6 +447,11 @@ if ($login->isUserLoggedIn() == true) {
 						$message_id		=	106210;
 						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['incorrect_qty'];
 					}
+					elseif ($input_checks	==	7)
+					{
+						$message_id		=	106210;
+						$message2op		=	$mylang['identical_barcodes'];
+					}
 
 
 				}
@@ -496,6 +498,26 @@ if ($login->isUserLoggedIn() == true) {
 				$max_qty				=	leave_numbers_only($_POST['max_qty_js']);	//	this should be a number
 				$disabled				=	leave_numbers_only($_POST['disabled_js']);	//	this should be a number
 
+/*
+
+				$product_arr = array
+				(
+					'product_code' 				=> trim($_POST['product_code_js']),
+					'product_description'		=> trim($_POST['product_description_js']),
+					'product_category_a'		=> leave_numbers_only($_POST['product_category_a_js']),
+					'product_category_b'		=> leave_numbers_only($_POST['product_category_b_js']),
+					'product_category_c'		=> leave_numbers_only($_POST['product_category_c_js']),
+					'product_category_d'		=> leave_numbers_only($_POST['product_category_d_js']),
+					'each_barcode'				=> trim($_POST['each_barcode_js']),
+					'each_weight'				=> trim($_POST['each_weight_js']),
+					'case_barcode'				=> trim($_POST['case_barcode_js']),
+					'case_qty'					=> leave_numbers_only($_POST['case_qty_js']),
+					'min_qty'					=> leave_numbers_only($_POST['min_qty_js']),
+					'max_qty'					=> leave_numbers_only($_POST['max_qty_js']),
+					'disabled'					=> leave_numbers_only($_POST['disabled_js'])
+				);
+
+*/
 
 
 				if ($product_uid >= 0)

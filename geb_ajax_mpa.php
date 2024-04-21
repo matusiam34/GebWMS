@@ -123,7 +123,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						AND
-						
+
 						prod_disabled = 0
 
 					';

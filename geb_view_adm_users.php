@@ -205,6 +205,7 @@ if ($login->isUserLoggedIn() == true)
 
 					set_Element_Value_By_ID('id_user_desc',				obje.data.user_description);
 					set_Element_Value_By_ID('id_user_email',			obje.data.user_email);
+					set_Element_Value_By_ID('id_user_company',			obje.data.user_company);
 					set_Element_Value_By_ID('id_user_warehouse',		obje.data.user_warehouse);
 					set_Element_Value_By_ID('id_user_active',			obje.data.user_active);
 
@@ -258,6 +259,7 @@ if ($login->isUserLoggedIn() == true)
 				user_username_js		:	get_Element_Value_By_ID('id_user_name'),
 				user_firstname_js		:	get_Element_Value_By_ID('id_user_firstname'),
 				user_lastname_js		:	get_Element_Value_By_ID('id_user_lastname'),
+				user_company_js			:	get_Element_Value_By_ID('id_user_company'),
 				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
 				user_warehouse_js		:	get_Element_Value_By_ID('id_user_warehouse'),
@@ -355,6 +357,7 @@ if ($login->isUserLoggedIn() == true)
 				user_username_js		:	get_Element_Value_By_ID('id_user_name'),
 				user_firstname_js		:	get_Element_Value_By_ID('id_user_firstname'),
 				user_lastname_js		:	get_Element_Value_By_ID('id_user_lastname'),
+				user_company_js			:	get_Element_Value_By_ID('id_user_company'),
 				user_desc_js			:	get_Element_Value_By_ID('id_user_desc'),
 				user_email_js			:	get_Element_Value_By_ID('id_user_email'),
 				user_warehouse_js		:	get_Element_Value_By_ID('id_user_warehouse'),
@@ -456,7 +459,53 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+		// Get all companies for the selectbox
+		function get_all_companies()
+		{
 
+			$.post('geb_ajax_company.php', { 
+
+				action_code_js		:	20
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_user_company');
+					addOption2SelectBox('id_user_company', 0, '<?php	echo $mylang['all'];	?>');	
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_user_company', obje.data[i].company_pkey, obje.data[i].company_code);	
+						}
+
+					}
+
+				}
+				else
+				{
+					$.alertable.info(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
 
 
 
@@ -498,7 +547,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_users(); get_all_warehouses();'>
+<body onLoad='get_all_users(); get_all_warehouses(); get_all_companies();'>
 
 
 <?php
@@ -595,6 +644,22 @@ if ($login->isUserLoggedIn() == true)
 
 
 					<div class="column is-4">
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['company'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_user_company">
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
@@ -854,7 +919,7 @@ echo	$user_details_html;
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['my_account'] . ':</p>
+	<p class="help">' . $mylang['products'] . ':</p>
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-yellow is-fullwidth">

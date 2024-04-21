@@ -191,6 +191,7 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_desc', obje.data.loc_note);
 					set_Element_Value_By_ID('id_location_status', obje.data.loc_disabled);
 					set_Element_Value_By_ID('id_magic_product_name', obje.data.prod_code);
+					set_Element_Value_By_ID('id_max_qty', obje.data.loc_max_qty);
 
 					// Append HTML to elements of categories
 					$('#id_category_a').empty().append(obje.data.cat_a_html);
@@ -235,6 +236,7 @@ if ($login->isUserLoggedIn() == true)
 				loc_cat_c_js		:	get_Element_Value_By_ID('id_category_c'),
 				loc_cat_d_js		:	get_Element_Value_By_ID('id_category_d'),
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
+				max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
 
 			},
@@ -285,6 +287,7 @@ if ($login->isUserLoggedIn() == true)
 				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
+				max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
 				
 
@@ -307,6 +310,8 @@ if ($login->isUserLoggedIn() == true)
 					set_Element_Value_By_ID('id_function', 0);
 					set_Element_Value_By_ID('id_type', 0);
 					set_Element_Value_By_ID('id_hidden', 0);
+					set_Element_Value_By_ID('id_max_qty', 0);
+					set_Element_Value_By_ID('id_magic_product_name', '');
 					set_Element_Value_By_ID('id_category_a', 0);
 					set_Element_Value_By_ID('id_category_b', 0);
 					set_Element_Value_By_ID('id_category_c', 0);
@@ -696,7 +701,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help"><?php	echo $mylang['magic_product'];		?></p>
+							<p class="help"><?php	echo $mylang['magic_product'];	?></p>
 							<div class="control">
 								<input id="id_magic_product_name" class="input is-normal" type="text">
 							</div>
@@ -704,9 +709,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
-							<p class="help"><?php	echo $mylang['magic_product'];		?></p>
+							<p class="help"><?php	echo $mylang['max_qty'];	?></p>
 							<div class="control">
-								<input id="id_max_qty" class="input is-normal" type="text">
+								<input id="id_max_qty" class="input is-normal" type="text" value="1">
 							</div>
 						</div>
 
@@ -827,7 +832,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 					<div class="field" style="<?php echo $box_size_str; ?>">
-						<p class="help"><?php	echo $mylang['description'];		?></p>
+						<p class="help"><?php	echo $mylang['note'];	?></p>
 						<div class="control">
 							<input id="id_desc" class="input is-normal" type="text" placeholder="do not use">
 						</div>

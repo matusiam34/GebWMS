@@ -46,11 +46,13 @@ $mylang = array(
 'category_mismatch'			=>	'Category mismatch!',
 'location_full'				=>	'Location full!',
 'location_blocked'			=>	'Location blocked!',
+'location_disabled'			=>	'Location disabled!',
 'location_not_found'		=>	'Location not found!',
 'product_loc_nt_compatible'	=>	'Product not compatible with location type!',
 
 
 'products_found_with_the_same_barcode'		=>	'Products founds with the same barcode!',
+'location_found_with_the_same_barcode'		=>	'Locations founds with the same barcode!',
 
 
 
@@ -80,6 +82,7 @@ $mylang = array(
 'warehouse'					=>	'Warehouse',
 'location'					=>	'Location',
 'total_eaches'				=>	'Total EACHES',
+'total_cases'				=>	'Total CASES',
 'each_barcode'				=>	'EACH Barcode',
 'each_weight'				=>	'EACH Weight',
 'case_barcode'				=>	'CASE Barcode',
@@ -127,6 +130,8 @@ $mylang = array(
 'mpp'						=>	'Manual Product Pick',
 'recent_activity'			=>	'Recent Activity',
 'products'					=>	'Products',
+'company'					=>	'Company',
+'companies'					=>	'Companies',
 'users'						=>	'Users',
 'warehouses'				=>	'Warehouses',
 'warehouse_locations'		=>	'Warehouse Locations',
@@ -154,11 +159,14 @@ $mylang = array(
 'user_uid_incorrect'		=>	'User UID incorrect!',
 'permissions_error'			=>	'Permissions error!',
 'warehouse_already_exists'	=>	'Warehouse already exists!',
+'company_already_exists'	=>	'Company already exists!',
 'user_already_exists'		=>	'User already exists!',
 'name_too_short'			=>	'Name too short!',
 'barcode_too_short'			=>	'Barcode too short!',
+'identical_barcodes'		=>	'Identical barcodes!',
 'incorrect_uid'				=>	'Incorrect UID!',
-'incorrect_qty'				=>	'Incorrect Qty!',
+'incorrect_qty'				=>	'Incorrect qty!',
+'invalid_qty'				=>	'Invalid qty!',
 
 
 

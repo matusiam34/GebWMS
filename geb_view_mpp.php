@@ -1,6 +1,6 @@
 <?php
 
-//	MPA:	Manual Product Allocation
+//	MPP:	Manual Product Pick
 
 // load the login class
 require_once('lib_login.php');
@@ -19,7 +19,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// Certain access rights checks should be executed here...
-	if (is_it_enabled($_SESSION['menu_mpa']))
+	if (is_it_enabled($_SESSION['menu_mpp']))
 	{
 
 
@@ -32,7 +32,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title><?php	echo $mylang['mpa'];	?></title>
+	<title><?php	echo $mylang['mpp'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -70,15 +70,16 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-			$("#prod_barcode").focus();
+			//$("#product_barcode").focus();
+			set_Focus_On_Element_By_ID('location_barcode');
+
 			
-			
-			$('#prod_barcode').keypress(function(event)
+			$('#location_barcode').keypress(function(event)
 			{
 				if (event.which === 13)
 				{ // Check if Enter key is pressed
 					event.preventDefault(); // Prevent default form submission
-					get_product_details();
+					get_location_details();
 				}
 			});	
 
@@ -86,13 +87,13 @@ if ($login->isUserLoggedIn() == true)
 		});
 
 
-		function clear_product_barcode()
+		function clear_location_barcode()
 		{
 			empty_Element_By_ID('product_details');
 			empty_Element_By_ID('location_details')
 			empty_Element_By_ID('error_details')
-			set_Element_Value_By_ID("prod_barcode", "");
-			set_Focus_On_Element_By_ID("prod_barcode");
+			set_Element_Value_By_ID("location_barcode", "");
+			set_Focus_On_Element_By_ID("location_barcode");
 		}
 
 
@@ -128,55 +129,14 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_product_details()
-		{
 
-			$.post('geb_ajax_mpa.php', { 
-
-				action_code_js		:	0,
-				prod_barcode_js		:	get_Element_Value_By_ID('prod_barcode')
-
-			},
-
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-					empty_Element_By_ID('product_details');
-					empty_Element_By_ID('location_details');
-					empty_Element_By_ID('error_details');
-					append_HTML_to_Element_By_ID('product_details', obje.html);
-				}
-				else
-				{
-					//$.alertable.error(obje.control, obje.msg);
-					empty_Element_By_ID('product_details');
-					empty_Element_By_ID('location_details');
-					empty_Element_By_ID('error_details');
-					append_HTML_to_Element_By_ID('error_details', obje.html);
-				}
-
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('107555', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
+		//	Get basic info + do some checks!
 		function get_location_details()
 		{
 
-			$.post('geb_ajax_mpa.php', { 
+			$.post('geb_ajax_mpp.php', { 
 
-				action_code_js		:	1,
-				prod_barcode_js		:	get_Element_Value_By_ID('prod_barcode'),
-				prod_qty_js			:	get_Element_Value_By_ID('product_qty'),
+				action_code_js		:	3,
 				loc_barcode_js		:	get_Element_Value_By_ID('location_barcode')
 
 			},
@@ -194,6 +154,7 @@ if ($login->isUserLoggedIn() == true)
 					//empty_Element_By_ID('product_details');
 					//append_HTML_to_Element_By_ID('product_details', obje.html);
 					empty_Element_By_ID('location_details');
+					empty_Element_By_ID('product_details');
 					empty_Element_By_ID('error_details')
 					append_HTML_to_Element_By_ID('location_details', obje.html);
 
@@ -202,9 +163,52 @@ if ($login->isUserLoggedIn() == true)
 				{
 					//$.alertable.error(obje.control, obje.msg);
 					empty_Element_By_ID('location_details');
+					empty_Element_By_ID('product_details');
 					empty_Element_By_ID('error_details');
 					append_HTML_to_Element_By_ID('error_details', obje.html);
 
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('107555', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+		function get_product_details()
+		{
+
+			$.post('geb_ajax_mpp.php', { 
+
+				action_code_js			:	1,
+				location_barcode_js		:	get_Element_Value_By_ID('location_barcode'),
+				product_barcode_js		:	get_Element_Value_By_ID('product_barcode')
+
+			},
+
+			function(output)
+			{
+alert(output);
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+					empty_Element_By_ID('error_details');
+					append_HTML_to_Element_By_ID('product_details', obje.html);
+				}
+				else
+				{
+					//$.alertable.error(obje.control, obje.msg);
+					empty_Element_By_ID('product_details');
+					empty_Element_By_ID('error_details');
+					append_HTML_to_Element_By_ID('error_details', obje.html);
 				}
 
 			}).fail(function() {
@@ -222,10 +226,10 @@ if ($login->isUserLoggedIn() == true)
 		function confirm_action()
 		{
 
-			$.post('geb_ajax_mpa.php', { 
+			$.post('geb_ajax_mpp.php', { 
 
 				action_code_js		:	2,
-				prod_barcode_js		:	get_Element_Value_By_ID('prod_barcode'),
+				product_barcode_js		:	get_Element_Value_By_ID('product_barcode'),
 				prod_qty_js			:	get_Element_Value_By_ID('product_qty'),
 				loc_barcode_js		:	get_Element_Value_By_ID('location_barcode')
 
@@ -244,8 +248,8 @@ if ($login->isUserLoggedIn() == true)
 					empty_Element_By_ID('product_details');
 					empty_Element_By_ID('location_details');
 					empty_Element_By_ID('error_details');
-					set_Element_Value_By_ID("prod_barcode", "");
-					set_Focus_On_Element_By_ID("prod_barcode");
+					set_Element_Value_By_ID("product_barcode", "");
+					set_Focus_On_Element_By_ID("product_barcode");
 
 				}
 				else
@@ -308,11 +312,11 @@ if ($login->isUserLoggedIn() == true)
 	echo			'<div class="field has-addons is-marginless">
 
 						<p class="control is-expanded">
-							<input class="input is-fullwidth" type="text" id="prod_barcode" placeholder="' . $mylang['product_code'] . '">
+							<input class="input is-fullwidth" type="text" id="location_barcode" placeholder="' . $mylang['location_barcode'] . '">
 						</p>
 
 						<p class="control">
-							<button class="button inventory_class iconSearch" style="width:50px;" onClick="get_product_details();"></button>
+							<button class="button inventory_class iconSearch" style="width:50px;" onClick="get_location_details();"></button>
 						</p>
 
 						<p class="control">
@@ -320,7 +324,7 @@ if ($login->isUserLoggedIn() == true)
 						</p>
 
 						<p class="control">
-							<button class="button inventory_class iconFocus" style="width:50px;" onClick="clear_product_barcode();"></button>
+							<button class="button inventory_class iconFocus" style="width:50px;" onClick="clear_location_barcode();"></button>
 						</p>
 
 
@@ -328,8 +332,8 @@ if ($login->isUserLoggedIn() == true)
 					</div>';
 
 
-	echo		'<div class="is-marginless" id="product_details"></div>';
 	echo		'<div class="is-marginless" id="location_details"></div>';
+	echo		'<div class="is-marginless" id="product_details"></div>';
 	echo		'<div class="is-marginless" id="error_details"></div>';
 
 //is-fullwidth table is-bordered 

@@ -102,7 +102,7 @@ if ($login->isUserLoggedIn() == true) {
 				$html_results		.=		'<th>' . $mylang['warehouse'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['location'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['barcode'] . '</th>';
-				$html_results		.=		'<th>' . $mylang['description'] . '</th>';
+				$html_results		.=		'<th>' . $mylang['note'] . '</th>';
 				$html_results		.=	'</tr>';
 
 				$html_results		.=	'</thead>';
@@ -184,6 +184,7 @@ if ($login->isUserLoggedIn() == true) {
 					geb_location.loc_cat_c,
 					geb_location.loc_cat_d,
 					geb_location.loc_magic_product,
+					geb_location.loc_max_qty,
 					geb_location.loc_note,
 					geb_location.loc_disabled,
 
@@ -218,19 +219,20 @@ if ($login->isUserLoggedIn() == true) {
 
 						$data_results	=	array(
 						
-							'wh_pkey'			=>	$row['wh_pkey'],
-							'loc_pkey'			=>	$row['loc_pkey'],
-							'loc_code'			=>	$row['loc_code'],
-							'loc_barcode'		=>	$row['loc_barcode'],
-							'loc_function'		=>	$row['loc_function'],
-							'loc_type'			=>	$row['loc_type'],
-							'loc_blocked'		=>	$row['loc_blocked'],
-							'loc_cat_a'			=>	$row['loc_cat_a'],
-							'loc_cat_b'			=>	$row['loc_cat_b'],
-							'loc_cat_c'			=>	$row['loc_cat_c'],
-							'loc_cat_d'			=>	$row['loc_cat_d'],
-							'loc_note'			=>	$row['loc_note'],
-							'loc_disabled'		=>	$row['loc_disabled'],
+							'wh_pkey'			=>	leave_numbers_only($row['wh_pkey']),
+							'loc_pkey'			=>	leave_numbers_only($row['loc_pkey']),
+							'loc_code'			=>	trim($row['loc_code']),
+							'loc_barcode'		=>	trim($row['loc_barcode']),
+							'loc_function'		=>	leave_numbers_only($row['loc_function']),
+							'loc_type'			=>	leave_numbers_only($row['loc_type']),
+							'loc_blocked'		=>	leave_numbers_only($row['loc_blocked']),
+							'loc_max_qty'		=>	leave_numbers_only($row['loc_max_qty']),
+							'loc_cat_a'			=>	leave_numbers_only($row['loc_cat_a']),
+							'loc_cat_b'			=>	leave_numbers_only($row['loc_cat_b']),
+							'loc_cat_c'			=>	leave_numbers_only($row['loc_cat_c']),
+							'loc_cat_d'			=>	leave_numbers_only($row['loc_cat_d']),
+							'loc_note'			=>	trim($row['loc_note']),
+							'loc_disabled'		=>	leave_numbers_only($row['loc_disabled']),
 							'prod_code'			=>	trim($row['prod_code'])
 
 						);
@@ -369,6 +371,7 @@ if ($login->isUserLoggedIn() == true) {
 				$cat_c			=	leave_numbers_only($_POST['loc_cat_c_js']);
 				$cat_d			=	leave_numbers_only($_POST['loc_cat_d_js']);
 				$magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
+				$max_qty		=	leave_numbers_only($_POST['max_qty_js']);
 				$function		=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
@@ -550,6 +553,7 @@ if ($login->isUserLoggedIn() == true) {
 									loc_function,
 									loc_type,
 									loc_magic_product,
+									loc_max_qty,
 									loc_cat_a,
 									loc_cat_b,
 									loc_cat_c,
@@ -568,6 +572,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iloc_function,
 									:iloc_type,
 									:iloc_magic_product,
+									:iloc_max_qty,
 									:iloc_cat_a,
 									:iloc_cat_b,
 									:iloc_cat_c,
@@ -589,6 +594,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iloc_function',			$function,				PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_type',				$type,					PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_magic_product',		$magic_product_uid,		PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_max_qty',			$max_qty,				PDO::PARAM_INT);
 
 							$stmt->bindValue(':iloc_cat_a',				$cat_a,					PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_cat_b',				$cat_b,					PDO::PARAM_INT);
@@ -684,8 +690,13 @@ if ($login->isUserLoggedIn() == true) {
 				$loc_function	=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
+				$magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
+				$max_qty		=	leave_numbers_only($_POST['max_qty_js']);
 				$disabled		=	leave_numbers_only($_POST['disabled_js']);
 				$loc_uid		=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
+
+				$magic_product_uid	=	0;	//	default! Means no product has been provided. I am converting the string to a number!
+
 
 
 				if ($loc_uid >= 0)
@@ -788,6 +799,92 @@ if ($login->isUserLoggedIn() == true) {
 							//	Need to do something about this some time...
 						}
 
+
+
+
+
+					//	This entire Magic Product section of code needs to be redone. Once done here it will have to be done in the
+					//	add section as well! For now it will do as it works, but not looking good me thinks!
+
+
+					if (strlen($magic_product) >= 1)	//	Some product has been provided...
+					{
+
+						$magic_arr	=	array();	//	all of the magic product matches that I can find.
+													//	I will check if there is more than one product code found etc
+													//	Better to check for errors just to be on the safe side!
+
+						//	Run the query and see what I get!
+
+						$sql	=	'
+
+							SELECT
+
+							prod_pkey
+
+							FROM geb_product
+
+							WHERE
+
+							prod_code = :sprod_code
+
+						';
+
+
+						if ($stmt = $db->prepare($sql))
+						{
+
+							$stmt->bindValue(':sprod_code',		$magic_product,		PDO::PARAM_STR);
+							$stmt->execute();
+
+							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+							{
+								$magic_arr[]	=	$row;
+							}
+
+
+
+							if (count($magic_arr) == 1)
+							{
+								//	!!! WINNER !!!
+								//	One product found! Allocated the $magic_product_uid to the prod_pkey
+								$magic_product_uid	=	$magic_arr[0]['prod_pkey'];
+								//	!!! WINNER !!!
+							}
+
+							elseif (count($magic_arr) == 0)	//	No match based on the product name has been found in the geb_product table!
+							{
+								$found_match	=	3;	//	No match has been found!
+							}
+
+							elseif (count($magic_arr) > 1)
+							{
+								$found_match	=	4;	//	Multiple products with the same name! Needs to be investigated by the sys admin!
+							}
+
+
+						}
+						// show an error if the query has an error?
+						else
+						{
+						}
+
+					}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						//	0	means no issues!
 						if ($found_match == 0)
 						{
@@ -805,6 +902,8 @@ if ($login->isUserLoggedIn() == true) {
 								loc_barcode		=		:uloc_barcode,
 								loc_function	=		:uloc_function,
 								loc_type		=		:uloc_type,
+								loc_magic_product		=		:uloc_magic_product,
+								loc_max_qty		=		:uloc_max_qty,
 								loc_cat_a		=		:uloc_cat_a,
 								loc_cat_b		=		:uloc_cat_b,
 								loc_cat_c		=		:uloc_cat_c,
@@ -823,20 +922,22 @@ if ($login->isUserLoggedIn() == true) {
 							if ($stmt = $db->prepare($sql))
 							{
 
-								$stmt->bindValue(':uloc_wh_pkey',	$warehouse,		PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_code',		$location,		PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_barcode',	$barcode,		PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_function',	$loc_function,	PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_type',		$type,			PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_a',		$cat_a,			PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_b',		$cat_b,			PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_c',		$cat_c,			PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_d',		$cat_d,			PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_blocked',	$blocked,		PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_note',		$loc_desc,		PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_disabled',	$disabled,		PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_wh_pkey',	$warehouse,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_code',		$location,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_barcode',	$barcode,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_function',	$loc_function,					PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_type',		$type,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_magic_product',		$magic_product_uid,		PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_max_qty',			$max_qty,				PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_a',		$cat_a,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_b',		$cat_b,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_c',		$cat_c,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_d',		$cat_d,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_blocked',	$blocked,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_note',		$loc_desc,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_disabled',	$disabled,						PDO::PARAM_INT);
 
-								$stmt->bindValue(':sloc_pkey',		$loc_uid,		PDO::PARAM_INT);
+								$stmt->bindValue(':sloc_pkey',		$loc_uid,						PDO::PARAM_INT);
 								$stmt->execute();
 								$db->commit();
 
@@ -859,6 +960,18 @@ if ($login->isUserLoggedIn() == true) {
 								$message_id		=	102204;
 								$message2op		=	$mylang['barcode_already_exists'];
 							}
+
+							elseif ($found_match == 3)
+							{
+								$message_id		=	102201;
+								$message2op		=	'No matching product found!!!';//$mylang['barcode_already_exists'];
+							}
+							elseif ($found_match == 4)
+							{
+								$message_id		=	102201;
+								$message2op		=	'Multiple products with the same name found';//$mylang['barcode_already_exists'];
+							}
+
 
 						}
 

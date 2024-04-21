@@ -173,6 +173,13 @@ if ($login->isUserLoggedIn() == true)
 		$user_warehouse_uid		=	leave_numbers_only($_SESSION['user_warehouse']);
 		$warehouse_name			=	$mylang['all'];
 
+		//	The company that the user is a part of.
+		$user_company_uid		=	leave_numbers_only($_SESSION['user_company']);
+		$company_name			=	$mylang['all'];	//	This most likely will be ONLY the super admin! No normal operator should be in ALL since
+													//	it will be a major issue with barcodes of products etc etc
+
+
+
 
 		//	Run the query only if it is NOT all warehouses!
 		if ($user_warehouse_uid > 0)
@@ -194,9 +201,6 @@ if ($login->isUserLoggedIn() == true)
 
 				wh_pkey = :swh_uid
 
-				AND
-
-				wh_disabled = 0
 
 			';
 
@@ -217,17 +221,83 @@ if ($login->isUserLoggedIn() == true)
 			// show an error if the query has an error
 			else
 			{
-
+				//	FIX
 			}
 
 
 		}
+
+
+
+
+		//	Run the query only if it is NOT all companies!
+		if ($user_company_uid > 0)
+		{
+
+
+			$sql	=	'
+
+
+				SELECT
+
+				company_code
+
+				FROM 
+
+				geb_company
+
+				WHERE
+
+				company_pkey = :scompany_uid
+
+
+			';
+
+
+
+			if ($stmt = $db->prepare($sql))
+			{
+
+				$stmt->bindValue(':scompany_uid',	$user_company_uid,	PDO::PARAM_INT);
+				$stmt->execute();
+
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					$company_name		=	trim($row['company_code']);
+				}
+
+			}
+			// show an error if the query has an error
+			else
+			{
+				//	FIX
+			}
+
+
+		}
+
+
+
+
+
+
+
+
+
+
+
 
 		//	Get the warehouse code here (it will be a string usually) and jam it in to some tiny table.
 		//	Maybe other things can be placed in it later on.
 		$info_table_html	=	'';
 
 		$info_table_html	=	'<table class="is-fullwidth table is-bordered">';
+
+
+			$info_table_html	.=	'<tr>';
+				$info_table_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['company'] . ':</td>';
+				$info_table_html	.=	'<td style="background-color: ' . $backclrB . ';">' . $company_name . '</td>';
+			$info_table_html	.=	'</tr>';
 
 			$info_table_html	.=	'<tr>';
 				$info_table_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $mylang['warehouse'] . ':</td>';
