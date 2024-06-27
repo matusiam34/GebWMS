@@ -20,7 +20,7 @@ if ($login->isUserLoggedIn() == true)
 	if (is_it_enabled($_SESSION['menu_adm_category']))
 	{
 
-
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 
 
 ?>
@@ -70,6 +70,12 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
+			// When the Admin selects a new company!
+			$('#id_company').change(function() {
+				get_all_category_a();
+			});
+			
+			
 			// Triggers a function every time the row in the table id_category_a_table is clicked !
 			$('#id_category_a_table').on('click', 'tr', function()
 			{
@@ -173,17 +179,81 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_all_category_a()
+
+		// Get all companies for the selectbox!
+		function get_all_companies()
 		{
 
-			$.post('geb_ajax_category.php', { 
+			$.post('geb_ajax_company.php', { 
 
-				action_code_js				:	0
+				action_code_js		:	20
 
 			},
 
 			function(output)
 			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_company');
+
+			<?php
+				
+				//	Add ----- to the selectbox only for Admin!
+				//	Maybe this can be done in a better way but for now it does not matter.
+				//	FIX
+				if ($user_company_uid == 0)
+				{
+					echo "addOption2SelectBox('id_company', 0, '-----');";
+				}
+
+			?>
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_company', obje.data[i].company_pkey, obje.data[i].company_code);	
+						}
+
+					}
+
+				}
+				else
+				{
+					$.alertable.info(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+		function get_all_category_a()
+		{
+
+			$.post('geb_ajax_category.php', { 
+
+				action_code_js	:	0,
+				company_uid_js	:	get_Element_Value_By_ID('id_company')
+
+			},
+
+			function(output)
+			{
+
 				// Parse the json  !!
 				var obje = jQuery.parseJSON(output);
 
@@ -214,7 +284,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	1,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -249,7 +320,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	2,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -285,7 +357,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	3,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -322,7 +395,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	5,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 			function(output)
@@ -360,7 +434,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	6,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 			function(output)
@@ -399,7 +474,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	7,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 			function(output)
@@ -436,7 +512,8 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_category.php', { 
 
 				action_code_js		:	8,
-				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catd')
+				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catd'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 			function(output)
@@ -477,7 +554,8 @@ if ($login->isUserLoggedIn() == true)
 
 				action_code_js		:	10,
 				cata_name_js		:	get_Element_Value_By_ID('id_cata_name'),
-				cata_status_js		:	get_Element_Value_By_ID('id_cata_status')
+				cata_status_js		:	get_Element_Value_By_ID('id_cata_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -534,10 +612,11 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js			:	11,
-				cat_master_uid_js		:	get_Element_Value_By_ID('id_hidden_cata'),
-				cat_name_js				:	get_Element_Value_By_ID('id_catb_name'),
-				cat_status_js			:	get_Element_Value_By_ID('id_catb_status')
+				action_code_js		:	11,
+				cat_master_uid_js	:	get_Element_Value_By_ID('id_hidden_cata'),
+				cat_name_js			:	get_Element_Value_By_ID('id_catb_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_catb_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -591,10 +670,11 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js			:	12,
-				cat_master_uid_js		:	get_Element_Value_By_ID('id_hidden_catb'),
-				cat_name_js				:	get_Element_Value_By_ID('id_catc_name'),
-				cat_status_js			:	get_Element_Value_By_ID('id_catc_status')
+				action_code_js		:	12,
+				cat_master_uid_js	:	get_Element_Value_By_ID('id_hidden_catb'),
+				cat_name_js			:	get_Element_Value_By_ID('id_catc_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_catc_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -637,10 +717,11 @@ if ($login->isUserLoggedIn() == true)
 
 			$.post('geb_ajax_category.php', { 
 
-				action_code_js			:	13,
-				cat_master_uid_js		:	get_Element_Value_By_ID('id_hidden_catc'),
-				cat_name_js				:	get_Element_Value_By_ID('id_catd_name'),
-				cat_status_js			:	get_Element_Value_By_ID('id_catd_status')
+				action_code_js		:	13,
+				cat_master_uid_js	:	get_Element_Value_By_ID('id_hidden_catc'),
+				cat_name_js			:	get_Element_Value_By_ID('id_catd_name'),
+				cat_status_js		:	get_Element_Value_By_ID('id_catd_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -686,7 +767,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	15,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_cata'),
 				cat_name_js			:	get_Element_Value_By_ID('id_cata_name'),
-				cat_status_js		:	get_Element_Value_By_ID('id_cata_status')
+				cat_status_js		:	get_Element_Value_By_ID('id_cata_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -747,7 +829,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	16,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catb'),
 				cat_name_js			:	get_Element_Value_By_ID('id_catb_name'),
-				cat_status_js		:	get_Element_Value_By_ID('id_catb_status')
+				cat_status_js		:	get_Element_Value_By_ID('id_catb_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -802,7 +885,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	17,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catc'),
 				cat_name_js			:	get_Element_Value_By_ID('id_catc_name'),
-				cat_status_js		:	get_Element_Value_By_ID('id_catc_status')
+				cat_status_js		:	get_Element_Value_By_ID('id_catc_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -853,7 +937,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	18,
 				cat_uid_js			:	get_Element_Value_By_ID('id_hidden_catd'),
 				cat_name_js			:	get_Element_Value_By_ID('id_catd_name'),
-				cat_status_js		:	get_Element_Value_By_ID('id_catd_status')
+				cat_status_js		:	get_Element_Value_By_ID('id_catd_status'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -947,7 +1032,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_category_a();'>
+<body onLoad='get_all_category_a(); get_all_companies();'>
 
 
 <?php
@@ -959,9 +1044,25 @@ if ($login->isUserLoggedIn() == true)
 		echo	'<div class="container box has-background-light">';
 
 
-				$page_form	=	'<p class="control">';
-				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
-				$page_form	.=	'</p>';
+/*
+
+$page_form	=	'
+
+<div class="columns is-mobile">
+	<div class="column is-narrow">
+		<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>
+	</div>
+	<div class="column is-fullwidth">
+		<div class="field is-narrow">
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="id_company">
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>';
 
 
 				// The menu!
@@ -978,7 +1079,40 @@ if ($login->isUserLoggedIn() == true)
 
 				</nav>';
 
+*/
 
+	$top_menu	=	'';
+
+
+	$top_menu	.=	'<div class="columns">';
+	$top_menu	.=	'<div class="column is-3">';
+
+	$top_menu	.=	'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
+
+	$top_menu	.=	'</div>';
+
+
+	$top_menu	.=	'<div class="column is-3">';
+
+
+$top_menu	.=	'
+		<div class="field">
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="id_company">
+					</select>
+				</div>
+			</div>
+		</div>';
+
+
+	$top_menu	.=	'</div>';
+
+
+	$top_menu	.=	'</div>';
+
+
+	echo $top_menu;
 
 
 	$layout_details_html	=	'';

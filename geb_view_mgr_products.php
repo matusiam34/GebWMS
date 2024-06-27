@@ -28,11 +28,21 @@ if ($login->isUserLoggedIn() == true)
 		require_once("lib_db_conn.php");
 
 		$product_or_barcode		=	"";
+		$company_uid			=	0;
 		
 		if (isset($_GET["product"]))
 		{
 			$product_or_barcode		=	trim($_GET["product"]);
 		}
+
+		if (isset($_GET["comp"]))
+		{
+			$company_uid		=	trim($_GET["comp"]);
+		}
+
+
+		//	Get the company of the currently logged in user!
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 
 
 
@@ -121,7 +131,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	1,
 				action_format_js	:	1,
 				action_disabled_js	:	0,
-				cat_uid_js			:	get_Element_Value_By_ID('id_category_a')
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_a'),
+				company_uid_js		:	get_Element_Value_By_ID('comp')
 
 			},
 
@@ -175,7 +186,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	2,
 				action_format_js	:	1,
 				action_disabled_js	:	0,
-				cat_uid_js			:	get_Element_Value_By_ID('id_category_b')
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_b'),
+				company_uid_js		:	get_Element_Value_By_ID('comp')
 
 			},
 
@@ -229,7 +241,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js		:	3,
 				action_format_js	:	1,
 				action_disabled_js	:	0,
-				cat_uid_js			:	get_Element_Value_By_ID('id_category_c')
+				cat_uid_js			:	get_Element_Value_By_ID('id_category_c'),
+				company_uid_js		:	get_Element_Value_By_ID('comp')
 
 			},
 
@@ -294,6 +307,8 @@ if ($login->isUserLoggedIn() == true)
 				case_qty_js:				get_Element_Value_By_ID('id_case_qty'),
 				min_qty_js:					get_Element_Value_By_ID('id_min_qty'),
 				max_qty_js:					get_Element_Value_By_ID('id_max_qty'),
+
+				company_uid_js			:	get_Element_Value_By_ID('comp'),
 				disabled_js: 				get_Element_Value_By_ID('id_disabled')
 			};
 
@@ -343,6 +358,7 @@ if ($login->isUserLoggedIn() == true)
 				case_qty_js				:	get_Element_Value_By_ID('id_case_qty'),
 				min_qty_js				:	get_Element_Value_By_ID('id_min_qty'),
 				max_qty_js				:	get_Element_Value_By_ID('id_max_qty'),
+				company_uid_js			:	get_Element_Value_By_ID('comp'),
 				disabled_js				:	get_Element_Value_By_ID('id_disabled')
 
 			},
@@ -398,54 +414,147 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		$page_form	=	'';
-
-		$page_form	.=	'<form action="geb_view_mgr_products.php" name="product_form" id="product_form" method="get">';
-
-			$page_form	.=	'<div class="field has-addons">';
-
-				$page_form	.=	'<p class="control">';
-				$page_form	.=		'<input class="input" type="text" id="product" name="product" placeholder="' . $mylang['product_code'] . '" value="' . $product_or_barcode . '">';
-				$page_form	.=	'</p>';
-
-				$page_form	.=	'<p class="control">';
-				$page_form	.=		'<button class="button manager_class iconSearch" style="width:50px;" type="submit"></button>';
-				$page_form	.=	'</p>';
-
-			$page_form	.=	'</div>';
-
-		$page_form	.=	'</form>';
-
-		$page_form	.=	'<p class="control">';
-		$menu_link	=	"'index.php'";
-		$page_form	.=		'<button class="button manager_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
-		$page_form	.=	'</p>';
-
-		$page_form	.=	'<p class="control">';
-		$page_form	.=		'<button class="button manager_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
-		$page_form	.=	'</p>';
+		$columns_html	=	'';
+		$details_html	=	'';
 
 
 
-				// The menu!
-				echo '<nav class="level">
 
-					<!-- Left side -->
-					<div class="level-left">
 
-					<div class="level-item">
-				' . $page_form . '
-					</div>
+			//	SQL the companies!
+			$company_arr	=	array();
 
-					</div>
+			$sql	=	'
 
-				</nav>';
+				SELECT
+
+				company_code,
+				company_pkey
+
+				FROM geb_company
+
+			';
+
+
+			//	Ugly.. but works!
+			if ($user_company_uid > 0)
+			{
+				$sql	.=	'	WHERE	company_pkey = :scompany_uid	';
+			}
+
+
+			if ($stmt = $db->prepare($sql))
+			{
+
+				if ($user_company_uid > 0)
+				{
+					$stmt->bindValue(':scompany_uid',	$user_company_uid,		PDO::PARAM_INT);
+				}
+
+				$stmt->execute();
+
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					$company_arr[$row['company_pkey']] = $row['company_code'];
+				}
+
+			}
+			else
+			{
+				// Crash message here! FIX
+			}
+
+
+		$which_option_2_select	=	1;	//	keep the default to be safe!
+
+		if ($user_company_uid == 0)		//	means sys admin is here...
+		{
+			if (isset($_GET["comp"]))
+			{
+				$which_option_2_select		=	trim($_GET["comp"]);
+			}
+		}
+
+
+		$company_select_html	=	'';
+		$company_select_html	=	generate_select_options($company_arr, $which_option_2_select, '');	//	''	means row 0 will not exist!
+
+
+
+
+$columns_html	=	'<div class="columns">';
+
+$columns_html	.=	'<div class="column is-3">';
+
+$columns_html	.=	'<form action="geb_view_mgr_products.php" name="product_form" id="product_form" method="get">';
+
+$columns_html	.=	'<div class="field has-addons">';
+$columns_html	.=		'<div class="control">';
+$columns_html	.=			'<input class="input" type="text" id="product" name="product" placeholder="' . $mylang['product_code'] . '" value="' . $product_or_barcode . '" >';
+$columns_html	.=		'</div>';
+
+$columns_html	.=		'<div class="control">';
+$columns_html	.=			'<button class="button manager_class iconSearch" style="width:50px;" type="submit"></button>';
+$columns_html	.=		'</div>';
+
+$menu_link		=	"'index.php'";
+
+$columns_html	.=		'<div class="control">';
+$columns_html	.=			'<button class="button manager_class iconHome" style="width:50px;" type="button" onClick="open_link(' . $menu_link . ');"></button>';
+$columns_html	.=		'</div>';
+
+
+$columns_html	.=	'</div>';
+
+
+
+
+
+$columns_html	.=	'</div>';
+
+
+$columns_html	.=	'<div class="column is-3">';
+
+$columns_html	.=	'<div class="field">';
+
+
+$columns_html	.=	'
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="comp" name="comp">' . $company_select_html . '
+					</select>
+				</div>
+			</div>';
+
+
+$columns_html .= '</div>';
+$columns_html .= '</div>';
+
+$columns_html .= '</form>';
+
+
+
+
+
+$columns_html .= '</div>';
+
+
+
+
+
+
+
+		//	Make sure some protections are in place. Ugly,.. FIX
+		if (($user_company_uid == 0) AND ($company_uid > 0))
+		{
+			$user_company_uid	=	$company_uid;
+		}
+
+
+
 
 	try
 	{
-
-
-		//	NOTE:	query all of the categories and store them in an array. Populate the corresponding entries from there! JD!
 
 
 		//	Start with no product ID.
@@ -475,17 +584,20 @@ if ($login->isUserLoggedIn() == true)
 		if ($is_barcode)
 		{
 			// Search by barcode: Fixed 13 Oct 2022
-			$sql	.=	' prod_each_barcode = :iprod_each_bar OR prod_case_barcode = :iprod_case_bar ';
+			$sql	.=	' prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar ';
 		}
 		else
 		{
 			// Search for a product by name
-			$sql	.=	' prod_code = :iprod_code ';
+			$sql	.=	' prod_code = :sprod_code ';
 		}
 
 
-		$columns_html	=	'';
-		$details_html	=	'';
+		$sql	.=	' AND prod_owner = :sprod_owner ';
+
+
+
+
 
 
 		// A fix for now... Look at it at a later stage for a better solution...
@@ -513,13 +625,17 @@ if ($login->isUserLoggedIn() == true)
 
 			if ($is_barcode)
 			{
-				$stmt->bindValue(':iprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':iprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
-				$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_code',	$product_or_barcode,		PDO::PARAM_STR);
 			}
+
+			$stmt->bindValue(':sprod_owner',	$user_company_uid,			PDO::PARAM_INT);
+
+
 
 
 			$stmt->execute();
@@ -551,7 +667,7 @@ if ($login->isUserLoggedIn() == true)
 			$sql	=	'
 
 
-					SELECT 
+					SELECT
 
 					cat_a_pkey,
 					cat_a_name,
@@ -572,6 +688,9 @@ if ($login->isUserLoggedIn() == true)
 					LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
 					LEFT JOIN geb_category_d ON geb_category_c.cat_c_pkey = geb_category_d.cat_d_c_level
 
+					WHERE
+					
+					cat_a_owner = :scat_a_owner
 
 			';
 
@@ -580,6 +699,7 @@ if ($login->isUserLoggedIn() == true)
 			if ($stmt = $db->prepare($sql))
 			{
 
+				$stmt->bindValue(':scat_a_owner',	$user_company_uid,		PDO::PARAM_INT);
 				$stmt->execute();
 
 				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -643,13 +763,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+
 			$columns_html	.=	'<div class="columns">';
 
 			$columns_html	.=	'<div class="column is-3">';
 
 
 
-
+			//	Totally needs a FIX
 			$status_options =
 			[
 				0 => $mylang['active'],
@@ -662,6 +784,7 @@ if ($login->isUserLoggedIn() == true)
 				$selected = ($prod_disabled == $value) ? ' selected' : '';
 				$status_html .= '"<option value="' . $value . '" ' . $selected . '>' . $label . ' </option>"';
 			}
+
 
 
 

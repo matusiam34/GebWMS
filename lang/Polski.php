@@ -53,7 +53,7 @@ $mylang = array(
 
 'products_found_with_the_same_barcode'		=>	'Znaleziono produkty z tym samym kodem kreskowym!',
 'location_found_with_the_same_barcode'		=>	'Znaleziono lokalizacje z tym samym kodem kreskowym!',
-
+'insufficient_space_available'				=>	'Niewystarczająca ilość dostępnego miejsca!',
 
 
 
@@ -165,7 +165,6 @@ $mylang = array(
 'incorrect_uid'				=>	'Niepoprawny UID!',
 'incorrect_qty'				=>	'Niepoprawna ilość!',
 'invalid_qty'				=>	'Błędna ilość!',
-
 
 
 );

@@ -46,6 +46,9 @@ if ($login->isUserLoggedIn() == true) {
 
     // the user is logged in.
 
+	//	Now, make sure that ADD and UPDATE only work for the Admin of the entire system. Nobody else needs this kind of power!
+
+
 	try
 	{
 
@@ -56,10 +59,24 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
+		$action_code		=	leave_numbers_only($_POST['action_code_js']);		// this should be a number
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+/*
+		//	Simple way to keep !Admins out of the game!
+		if ($user_company_uid > 0)
+		{
+			$action_code	=	777;
+			$message_id		=	777;
+			$message2op		=	'ERR';		
+		}
+		else
+		{
+*/
 
 
-		//	Get all warehouses. The action code for this is 0
+
+		//	Get all companies. The action code for this is 0!
 		if
 		(
 			($action_code == 0)		//	Get all companies in HTML table form.
@@ -90,13 +107,27 @@ if ($login->isUserLoggedIn() == true) {
 
 						geb_company
 
-
 				';
+
 
 				if ($action_code == 20)
 				{
 					$sql	.=	'	WHERE company_disabled = 0';
+
+					if ($user_company_uid > 0)
+					{
+						$sql	.=	'	AND company_pkey = ' . $user_company_uid;
+					}
 				}
+				elseif ($action_code == 0)
+				{
+					if ($user_company_uid > 0)
+					{
+						$sql	.=	'	WHERE company_pkey = ' . $user_company_uid;
+					}
+				}
+
+
 
 				$sql	.=	'	ORDER BY company_disabled ASC, company_code';
 
@@ -203,7 +234,7 @@ if ($login->isUserLoggedIn() == true) {
 		}	//	Action 1 end!
 
 
-		//	Add one!
+		//	Add one company to the system!
 
 		else if ($action_code == 2)
 		{
@@ -476,7 +507,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-
+	//	}	//	$user_company_uid chk
 
 
 	}
@@ -506,6 +537,9 @@ if ($login->isUserLoggedIn() == true) {
 		break;
 		case 20:	//	Get all active companies!
 		print_message_data_payload($message_id, $message2op, $data_results);
+		break;
+		case 777:	//	Not good! Someone is trying to be naughty!
+		print_message($message_id, $message2op);
 		break;
 		default:
 		print_message(101945, 'X2X');

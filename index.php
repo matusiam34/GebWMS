@@ -81,6 +81,14 @@ if ($login->isUserLoggedIn() == true)
 				window.history.replaceState( null, null, window.location.href );
 			}
 
+
+			function clear_product_input()
+			{
+				set_Element_Value_By_ID("product", "");
+				set_Focus_On_Element_By_ID("product");
+			}
+
+
 		</script>
 
 
@@ -135,6 +143,11 @@ if ($login->isUserLoggedIn() == true)
 									<p class="control">
 										<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
 									</p>
+
+									<p class="control">
+										<button class="button inventory_class iconFocus" style="width:50px;" type="button" onClick="clear_product_input();"></button>
+									</p>
+
 
 								</div>
 

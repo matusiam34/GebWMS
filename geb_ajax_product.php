@@ -50,7 +50,35 @@ if ($login->isUserLoggedIn() == true) {
 		require_once('lib_system.php');
 		require_once('lib_db_conn.php');
 
+
+
+		//	Get the company of the currently logged in user!
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+
+		//	*******************************************************************************************************
+		//
+		//	Ohhh... such an ugly solution right here! FIX
+		//
+		$company_uid_js		=	0;
+
+		if (isset($_POST["company_uid_js"]))
+		{
+			$company_uid_js		=	leave_numbers_only($_POST['company_uid_js']);	// this should be a number
+		}
+
+		if (($user_company_uid == 0) AND ($company_uid_js > 0))
+		{
+			$user_company_uid	=	$company_uid_js;
+		}
+
+		//
+		//	*******************************************************************************************************
+
+
+
 		//	Error codes defined... Good / bad?
+		//	FIX and find another solution... at some point in the future! For now good enough!
 		define('ERROR_SUCCESS', 0);
 		define('ERROR_PRODUCT_CODE_SHORT', 1);
 		define('ERROR_EACH_BARCODE_SHORT', 2);
@@ -217,6 +245,8 @@ if ($login->isUserLoggedIn() == true) {
 
 						WHERE
 
+						(
+						
 						prod_code = :sprod_code
 
 						OR
@@ -239,6 +269,12 @@ if ($login->isUserLoggedIn() == true) {
 
 						)
 
+						)
+
+						AND
+
+						prod_owner = :sprod_owner
+
 
 					';
 
@@ -249,6 +285,7 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':sprod_code',				$product_arr['product_code'],	PDO::PARAM_STR);
 						$stmt->bindValue(':sprod_each_barcode',		$product_arr['each_barcode'],	PDO::PARAM_STR);
 						$stmt->bindValue(':sprod_case_barcode',		$product_arr['case_barcode'],	PDO::PARAM_STR);
+						$stmt->bindValue(':sprod_owner',			$user_company_uid,				PDO::PARAM_INT);
 						$stmt->execute();
 
 						while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -315,6 +352,7 @@ if ($login->isUserLoggedIn() == true) {
 								geb_product
 								
 								(
+									prod_owner,
 									prod_code,
 									prod_desc,
 									prod_category_a,
@@ -333,6 +371,7 @@ if ($login->isUserLoggedIn() == true) {
 								VALUES
 
 								(
+									:iprod_owner,
 									:iprod_code,
 									:iprod_desc,
 									:iprod_category_a,
@@ -355,6 +394,7 @@ if ($login->isUserLoggedIn() == true) {
 						{
 
 
+							$stmt->bindValue(':iprod_owner',			$user_company_uid,							PDO::PARAM_INT);
 							$stmt->bindValue(':iprod_code',				$product_arr['product_code'],				PDO::PARAM_STR);
 							$stmt->bindValue(':iprod_desc',				$product_arr['product_description'],		PDO::PARAM_STR);
 							$stmt->bindValue(':iprod_category_a',		$product_arr['product_category_a'],			PDO::PARAM_INT);
@@ -498,27 +538,6 @@ if ($login->isUserLoggedIn() == true) {
 				$max_qty				=	leave_numbers_only($_POST['max_qty_js']);	//	this should be a number
 				$disabled				=	leave_numbers_only($_POST['disabled_js']);	//	this should be a number
 
-/*
-
-				$product_arr = array
-				(
-					'product_code' 				=> trim($_POST['product_code_js']),
-					'product_description'		=> trim($_POST['product_description_js']),
-					'product_category_a'		=> leave_numbers_only($_POST['product_category_a_js']),
-					'product_category_b'		=> leave_numbers_only($_POST['product_category_b_js']),
-					'product_category_c'		=> leave_numbers_only($_POST['product_category_c_js']),
-					'product_category_d'		=> leave_numbers_only($_POST['product_category_d_js']),
-					'each_barcode'				=> trim($_POST['each_barcode_js']),
-					'each_weight'				=> trim($_POST['each_weight_js']),
-					'case_barcode'				=> trim($_POST['case_barcode_js']),
-					'case_qty'					=> leave_numbers_only($_POST['case_qty_js']),
-					'min_qty'					=> leave_numbers_only($_POST['min_qty_js']),
-					'max_qty'					=> leave_numbers_only($_POST['max_qty_js']),
-					'disabled'					=> leave_numbers_only($_POST['disabled_js'])
-				);
-
-*/
-
 
 				if ($product_uid >= 0)
 				{
@@ -656,6 +675,10 @@ if ($login->isUserLoggedIn() == true) {
 
 							)
 
+							AND
+							
+							prod_owner = :sprod_owner
+
 
 						';
 
@@ -664,10 +687,11 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':sprod_pkey',				$product_uid,	PDO::PARAM_INT);
-							$stmt->bindValue(':sprod_code',				$product_code,	PDO::PARAM_STR);
-							$stmt->bindValue(':sprod_each_barcode',		$each_barcode,	PDO::PARAM_STR);
-							$stmt->bindValue(':sprod_case_barcode',		$case_barcode,	PDO::PARAM_STR);
+							$stmt->bindValue(':sprod_pkey',				$product_uid,		PDO::PARAM_INT);
+							$stmt->bindValue(':sprod_code',				$product_code,		PDO::PARAM_STR);
+							$stmt->bindValue(':sprod_each_barcode',		$each_barcode,		PDO::PARAM_STR);
+							$stmt->bindValue(':sprod_case_barcode',		$case_barcode,		PDO::PARAM_STR);
+							$stmt->bindValue(':sprod_owner',			$user_company_uid,	PDO::PARAM_INT);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))

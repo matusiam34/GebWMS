@@ -409,7 +409,7 @@ if ($login->isUserLoggedIn() == true)
 					$html_results	.=	'</tr>';
 
 
-					//	Add any extra info that has b een provided!
+					//	Add any extra info that has been provided!
 					if (count($messageXtra) > 0)
 					{
 						//	There is some extra info here so get busy!

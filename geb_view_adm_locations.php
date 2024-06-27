@@ -25,6 +25,10 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
+		//	Get the company of the currently logged in user!
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+
 		// needs a db connection...
 		require_once('lib_db_conn.php');
 
@@ -76,6 +80,10 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
+			// When the Admin selects a new location!
+			$('#id_company').change(function() {
+				get_all_locations();
+			});
 
 			$('#curr_table').on('click', 'tr', function()
 			{
@@ -127,13 +135,17 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+
+
 		// Grab all locations !
 		function get_all_locations()
 		{
 
 			$.post('geb_ajax_location.php', { 
 
-				action_code_js				:	0
+				action_code_js		:	0,
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 
 			},
 
@@ -165,12 +177,77 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+
+		// Get all companies for the selectbox!
+		function get_all_companies()
+		{
+
+			$.post('geb_ajax_company.php', { 
+
+				action_code_js		:	20
+
+			},
+
+			function(output)
+			{
+
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
+
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
+				{
+
+					var len = obje.data.length;
+
+					emptySelectBox('id_company');
+					//addOption2SelectBox('id_company', 0, '-----');
+
+					emptySelectBox('id_location_owner');
+					//addOption2SelectBox('id_location_owner', 0, '-----');
+
+
+					if(len > 0)
+					{
+
+						for (var i = 0; i < len; i++)
+						{
+							addOption2SelectBox('id_company', obje.data[i].company_pkey, obje.data[i].company_code);	
+							addOption2SelectBox('id_location_owner', obje.data[i].company_pkey, obje.data[i].company_code);	
+						}
+
+					}
+
+					get_all_locations();
+
+
+				}
+				else
+				{
+					$.alertable.info(obje.control, obje.msg);
+				}
+
+			}).fail(function() {
+						// something went wrong -> could not execute php script most likely !
+						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
+					});
+
+		}
+
+
+
+
+
 		function get_location()
 		{
 
 			$.post('geb_ajax_location.php', {
-				action_code_js: 1,
-				loc_uid_js: get_Element_Value_By_ID('id_hidden')
+
+				action_code_js		:	1,
+				loc_uid_js			:	get_Element_Value_By_ID('id_hidden'),
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
+
 			},
 
 			function (output)
@@ -182,6 +259,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 					// Set element values
+					set_Element_Value_By_ID('id_location_owner', obje.data.loc_owner);
 					set_Element_Value_By_ID('id_warehouse', obje.data.wh_pkey);
 					set_Element_Value_By_ID('id_location_name', obje.data.loc_code);
 					set_Element_Value_By_ID('id_barcode', obje.data.loc_barcode);
@@ -224,6 +302,7 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_location.php', { 
 
 				action_code_js		:	2,
+				owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
 				warehouse_js		:	get_Element_Value_By_ID('id_warehouse'),
 				location_js			:	get_Element_Value_By_ID('id_location_name'),
 				barcode_js			:	get_Element_Value_By_ID('id_barcode'),
@@ -274,6 +353,7 @@ if ($login->isUserLoggedIn() == true)
 			$.post('geb_ajax_location.php', { 
 
 				action_code_js		:	3,
+				owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
 				loc_uid_js			:	get_Element_Value_By_ID('id_hidden'),
 				warehouse_js		:	get_Element_Value_By_ID('id_warehouse'),
 				location_js			:	get_Element_Value_By_ID('id_location_name'),
@@ -304,6 +384,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 					get_all_locations();	// repopulate the table !
+					set_Element_Value_By_ID('id_location_owner', 0);
 					set_Element_Value_By_ID('id_warehouse', 0);
 					set_Element_Value_By_ID('id_location_name', '');
 					set_Element_Value_By_ID('id_barcode', '');
@@ -341,7 +422,7 @@ if ($login->isUserLoggedIn() == true)
 
 		$.post('geb_ajax_warehouse.php', {
 
-			action_code_js: 20
+			action_code_js	:	20
 
 		})
 		.done(function (output)
@@ -387,17 +468,17 @@ if ($login->isUserLoggedIn() == true)
 			const category_a_val = get_Element_Value_By_ID('id_category_a');
 			const postData =
 			{
-				action_code_js:			1,
-				action_format_js:		1,
-				action_disabled_js:		0,
-				cat_uid_js:				category_a_val
+				action_code_js		:	1,
+				action_format_js	:	1,
+				action_disabled_js	:	0,
+				cat_uid_js			:	category_a_val,
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
 			$.post('geb_ajax_category.php', postData)
 				.done(function (output)
 				{
 					const obje = jQuery.parseJSON(output);
-					
 					if (obje.control === 0)
 					{
 						var len = obje.data.length;
@@ -436,7 +517,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js:			2,
 				action_format_js:		1,
 				action_disabled_js:		0,
-				cat_uid_js: 			category_b_val
+				cat_uid_js: 			category_b_val,
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
 			$.post('geb_ajax_category.php', postData)
@@ -480,7 +562,8 @@ if ($login->isUserLoggedIn() == true)
 				action_code_js:			3,
 				action_format_js:		1,
 				action_disabled_js:		0,
-				cat_uid_js: 			category_c_val
+				cat_uid_js: 			category_c_val,
+				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
 			$.post('geb_ajax_category.php', postData)
@@ -555,7 +638,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_warehouses(); get_all_locations();'>
+<body onLoad='get_all_warehouses(); get_all_companies();'>
 
 
 
@@ -570,10 +653,33 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
+$page_form	=	'
+
+<div class="columns is-mobile">
+	<div class="column is-narrow">
+		<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>
+	</div>
+	<div class="column is-fullwidth">
+		<div class="field is-narrow">
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="id_company">
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>';
+
+
+/*
+	//	DELETE
+
 				$page_form	=	'<p class="control">';
 				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
 				$page_form	.=	'</p>';
-
+*/
 
 				// The "menu"!
 				echo '<nav class="level">
@@ -614,6 +720,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 					<div class="column is-3">
+
+
+						<div class="field" style="<?php echo $box_size_str; ?>">
+							<p class="help"><?php	echo $mylang['company'];		?></p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-fullwidth">
+									<select id="id_location_owner">
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
 
 						<div class="field" style="<?php echo $box_size_str; ?>">
 							<p class="help"><?php	echo $mylang['warehouse'];		?></p>

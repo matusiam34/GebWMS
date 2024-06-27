@@ -87,9 +87,10 @@ $loc_types_arr	=	array(
 	'20'	=>	$mylang['multi'] . ' (A)',
 	'21'	=>	$mylang['multi'] . ' (E)',
 	'22'	=>	$mylang['multi'] . ' (C)',
-	'30'	=>	$mylang['mixed'] . ' (A)',
-	'31'	=>	$mylang['mixed'] . ' (E)',
-	'32'	=>	$mylang['mixed'] . ' (C)'
+//	//	Only uncomment what is supported!
+//	'30'	=>	$mylang['mixed'] . ' (A)',
+//	'31'	=>	$mylang['mixed'] . ' (E)',
+//	'32'	=>	$mylang['mixed'] . ' (C)'
 
 );
 
@@ -106,9 +107,9 @@ $loc_type_codes_arr	=	array(
 	'20'	=>	'MUA',	//	"Multi" A
 	'21'	=>	'MUE',	//	"Multi" E
 	'22'	=>	'MUC',	//	"Multi" C
-	'30'	=>	'MXA',	//	"Multi Mixed" A
-	'31'	=>	'MXE',	//	"Multi Mixed" E
-	'32'	=>	'MXC'	//	"Multi Mixed" C
+//	'30'	=>	'MXA',	//	"Multi Mixed" A
+//	'31'	=>	'MXE',	//	"Multi Mixed" E
+//	'32'	=>	'MXC'	//	"Multi Mixed" C
 
 );
 
@@ -136,24 +137,27 @@ $loc_types_codes_reverse_arr	=	array(
 
 $loc_functions_arr	=	array(
 
-	'300'	=>	$mylang['goodsin'],
+//
+//	Only uncomment what is supported /implemented!
+//
+//	'300'	=>	$mylang['goodsin'],
 	'310'	=>	$mylang['pickface'],
 	'320'	=>	$mylang['bulk'],
 	'330'	=>	$mylang['storage'],
-	'340'	=>	$mylang['returns'],
-	'399'	=>	$mylang['despatch']
+//	'340'	=>	$mylang['returns'],
+//	'399'	=>	$mylang['despatch']
 
 );
 
 
 $loc_function_codes_arr	=	array(
 
-	'300'	=>	'GI',	//	Goods IN
+//	'300'	=>	'GI',	//	Goods IN
 	'310'	=>	'PF',	//	Pick face
 	'320'	=>	'BU',	//	Bulk
 	'330'	=>	'ST',	//	Storage
-	'340'	=>	'RT',	//	Returns
-	'399'	=>	'DE'	//	Despatch
+//	'340'	=>	'RT',	//	Returns
+//	'399'	=>	'DE'	//	Despatch
 
 );
 
@@ -479,6 +483,51 @@ function magic_product_and_category_filter_chk($location_arr, $product_data, $pr
 	}
 
 
+/*
+	if ($control == 0)
+	{
+		
+		//	Checks of the magic product and category filter are ok so far...
+						
+		if ($product_count == 0)
+		{
+			//	Location empty!
+
+			//	Check if the qty provided is under max_qty for this location!
+			//	Now, make sure that we only check the MultiE and MultiC since MultiA is the wild wild west!
+			//	Also, when checking the Multi E&C make sure to check if the figure is > 0, because if it is
+			//	0 than that means that there is no limit there either. MultiA max_qty gets ignored!
+
+			if
+			(
+
+				($location_type == 21)	//	MULTI (E) AND EACH only!
+
+				OR
+
+				($location_type == 22)	//	MULTI (C) AND CASE only!
+
+			)
+			{
+				
+				//	Check 
+				if ($product_qty > $location_arr['loc_max_qty'])
+				{
+					
+					
+				}
+				
+			}
+
+		}
+
+
+	}
+*/
+
+
+
+
 
 	$result['control']			=	$control;
 	$result['msg']				=	$msg;
@@ -498,7 +547,8 @@ function magic_product_and_category_filter_chk($location_arr, $product_data, $pr
 //
 //
 
-function get_product_data_via_barcode($db, $product_barcode, $product_qty)
+//function get_product_data_via_barcode($db, $product_barcode, $product_qty)
+function get_product_data_via_barcode($db, $product_barcode)
 {
 
     global $mylang;
@@ -509,7 +559,7 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 	$product_arr		=	array();	//	all product details will be stored here from the SQL!
 
 	$mimic				=	0;			//	Not a MIMIC by default! 1 = MIMIC!
-	$product_final_qty	=	0;			//	0 by default! The final quantity that will be INSERTED / UPDATED!
+	//$product_final_qty	=	0;			//	0 by default! The final quantity that will be INSERTED / UPDATED!
 	$product_unit		=	0;			//	Wrong! Has to be at least 1 (each) or 3 (case), 0 by default to show it it BAD!
 
 
@@ -577,13 +627,13 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 			if		(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
 			{
 				$product_unit		=	1;
-				$product_final_qty	=	$product_qty;
+				//$product_final_qty	=	$product_qty;
 			}
 			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
 			{
 				$product_unit		=	1;
 				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
-				$product_final_qty	=	$product_qty;
+				//$product_final_qty	=	$product_qty;
 				$mimic				=	1;	//	Totally a mimic product using the mimic each barcode!
 			}
 			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
@@ -591,13 +641,13 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 				$product_unit		=	3;
 				//	Always in CASES and describes the total amount that will be INSERTED / UPDATED in the location!
 				//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty']) * $product_qty;		//	Normal case qty!
-				$product_final_qty	=	$product_qty;		//	Normal case qty! We now use actual numbers of EACHES or CASES AND NOT all EACHES!
+				//$product_final_qty	=	$product_qty;		//	Normal case qty! We now use actual numbers of EACHES or CASES AND NOT all EACHES!
 			}
 			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
 			{
 				$product_unit		=	3;
 				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
-				$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
+				//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
 				$mimic				=	1;	//	Totally a mimic product using the mimic case barcode and new case qty!
 			}
 
@@ -626,12 +676,14 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 			$control	=	107203;
 			$msg		=	$mylang['products_found_with_the_same_barcode'];
 		}
-		elseif ($product_final_qty == 0)
-		{
+
+//		elseif ($product_final_qty == 0)
+//		{
 			//	The final qty can't be 0 = ERR somewhere!
-			$control	=	107203;
-			$msg		=	$mylang['products_found_with_the_same_barcode'];
-		}
+//			$control	=	107203;
+//			$msg		=	$mylang['products_found_with_the_same_barcode'];
+//		}
+
 		elseif ($product_unit == 0)
 		{
 			//	The product unit can't be 0 = ERR somewhere!
@@ -661,7 +713,7 @@ function get_product_data_via_barcode($db, $product_barcode, $product_qty)
 
 	$result['product_arr']		=	$product_arr;
 	$result['unit']				=	$product_unit;		//	1:	EACH;	3:	CASE
-	$result['final_qty']		=	$product_final_qty;	//	always in EACH
+	//$result['final_qty']		=	$product_final_qty;	//	always in EACH
 	$result['is_mimic']			=	$mimic;
 
 	return $result;
@@ -737,6 +789,7 @@ function get_location_data_via_barcode($db, $location_barcode)
 		loc_cat_c,
 		loc_cat_d,
 		loc_magic_product,
+		loc_max_qty,
 
 		stk_pkey,
 		stk_loc_pkey,
@@ -765,7 +818,7 @@ function get_location_data_via_barcode($db, $location_barcode)
 	if ($user_warehouse_uid > 0)
 	{
 		//	Add a warehouse filter to the location!
-		//	THis is to comply with the user settings!
+		//	This is to comply with the user settings!
 		$sql	.=	' AND geb_location.loc_wh_pkey = :swarehouse_uid ';
 	}
 
@@ -825,6 +878,7 @@ function get_location_data_via_barcode($db, $location_barcode)
 					'loc_cat_c'				=>	leave_numbers_only($row['loc_cat_c']),
 					'loc_cat_d'				=>	leave_numbers_only($row['loc_cat_d']),
 					'loc_magic_product'		=>	leave_numbers_only($row['loc_magic_product']),
+					'loc_max_qty'			=>	leave_numbers_only($row['loc_max_qty']),
 					'loc_disabled'			=>	leave_numbers_only($row['loc_disabled']),
 					'loc_blocked'			=>	leave_numbers_only($row['loc_blocked']),
 					
@@ -934,7 +988,7 @@ function get_location_data_via_barcode($db, $location_barcode)
 //	Provide a product and location + other info and it will insert it to the location!
 //	This works for NOT occupied locations!
 //	A different function will be used to UPDATE the location stock about a product!
-function insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_final_qty, $mimic)
+function insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_qty, $mimic)
 {
 
     global $mylang;
@@ -982,7 +1036,7 @@ function insert_product_2_location($db, $location_uid, $product_uid, $product_un
 		$stmt->bindValue(':istk_loc_pkey',		$location_uid,				PDO::PARAM_INT);
 		$stmt->bindValue(':istk_prod_pkey',		$product_uid,				PDO::PARAM_INT);
 		$stmt->bindValue(':istk_unit',			$product_unit,				PDO::PARAM_INT);
-		$stmt->bindValue(':istk_qty',			$product_final_qty,			PDO::PARAM_INT);
+		$stmt->bindValue(':istk_qty',			$product_qty,				PDO::PARAM_INT);
 		$stmt->bindValue(':istk_mimic',			$mimic,						PDO::PARAM_INT);
 
 		$stmt->execute();
@@ -1103,7 +1157,8 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 		//	Get all the required info about the product like if it is a mimic, product_uid etc
 		//	All of that information based on the product barcode! This will also run checks if 
 		//	duplicate barcodes exists etc
-		$product_data	=	get_product_data_via_barcode($db, $product_barcode, $product_qty);
+//		$product_data	=	get_product_data_via_barcode($db, $product_barcode, $product_qty);
+		$product_data	=	get_product_data_via_barcode($db, $product_barcode);
 
 		//	If control is == 0 that means that I can move to the next stage!
 		//	Otherwise assign the $message_id and $message2op variables!
@@ -1114,7 +1169,7 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 			$mimic				=	$product_data['is_mimic'];						//	0:	NO;	1:	YES!
 			$product_uid		=	$product_data['product_arr'][0]['prod_pkey'];	//	The unique key of the product!
 			$product_unit		=	$product_data['unit'];							//	1:	EACH;	3:	CASE
-			$product_final_qty	=	$product_data['final_qty'];
+			//$product_final_qty	=	$product_data['final_qty'];
 
 
 			//	Gets all location specs + entire stock off the location!
@@ -1130,6 +1185,11 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 				$location_type		=	$location_arr['loc_type'];
 				$location_uid		=	$location_arr['loc_pkey'];
 
+				$stock_data			=	$location_data['stock_arr'];
+
+
+
+				//	At some point need to find a better way to get this done!
 				$product_ids_arr	=	array_unique($location_data['product_ids_arr']);		//	Total number of products in location!
 				$product_count		=	count($product_ids_arr);
 
@@ -1211,7 +1271,7 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 							}
 							else if ($dryrun == 1)
 							{
-								$insert_now	=	insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_final_qty, $mimic);
+								$insert_now	=	insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_qty, $mimic);
 								$message_id	=	$insert_now['control'];
 								$message2op	=	$insert_now['msg'];
 							}
@@ -1252,17 +1312,157 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 				)
 				{
 
-
-
 					//	Check magic product and category filter!
 					$magic_category_chk_arr		=	magic_product_and_category_filter_chk($location_arr, $product_data, $product_uid);
 
-					$message_id		=	$magic_category_chk_arr['control'];
-					$message2op		=	$magic_category_chk_arr['msg'];
-					$messageXtra	=	$magic_category_chk_arr['xtra'];
+					$magic_chk		=	321;	//	No pass!
+					$magic_chk		=	$magic_category_chk_arr['control'];
+
+					//	Still good... carry on!
+					if ($magic_chk == 0)
+					{
+
+						$max_qty_per_location	=	leave_numbers_only($location_arr['loc_max_qty']);
+						$qty_chk_pass			=	998;	//	Tests if location availability and max_qty is good to INSERT / UPDATE!
+
+
+						if ($product_count == 0)
+						{
+							//	Location empty!
+
+							//	Check if the qty provided is under max_qty for this location!
+							//	Now, make sure that we only check the MultiE and MultiC since MultiA is the wild wild west!
+							//	Also, when checking the Multi E&C make sure to check if the figure is > 0, because if it is
+							//	0 than that means that there is no limit there either. MultiA max_qty gets ignored!
+
+							if
+							(
+
+								(($location_type == 21)	//	MULTI (E) AND EACH only!
+
+								OR
+
+								($location_type == 22))	//	MULTI (C) AND CASE only!
+
+								AND
+
+								($max_qty_per_location > 0)
+
+							)
+							{
+
+								//	Check 
+								if ($product_qty > $max_qty_per_location)
+								{
+									$message_id	=	341;
+									$message2op	=	$mylang['insufficient_space_available'];
+
+									$messageXtra = array(
+										array($mylang['location'], $location_arr['loc_code_str'], $location_arr['loc_code_style']),
+										array($mylang['max_qty'], $max_qty_per_location)
+									);
+
+								}
+
+							}
+							else
+							{
+								//	Here everything else!
+								//	And yes, this includes the Multi ALL location! I treat them as if they are an endless empty
+								//	space to throw stuff at! And this is regardless what the MAX_QTY field says!
+								$qty_chk_pass	=	0;	//	For an empty location the QTY chk is a green light! 
+							}
+
+						}
+						else
+						{
+							//	If location is not empty == it has stock!
+							//	First of all since this is a MULTI location that means that the product ID that is already
+							//	in this location is the only one I can UPDATE! Any other product is just NOT ALLOWED!
+							//	So establish first if the scanned product ID is the same as the product already in this location!
+							
+							
+							$message_id	=	222;
+
+
+/*
+							$stock_arr[] =
+							// Add stock information to the location's stock_info array
+							[
+								'stk_pkey'		=>	leave_numbers_only($row['stk_pkey']),
+								'stk_loc_pkey'	=>	leave_numbers_only($row['stk_loc_pkey']),
+								'stk_prod_pkey' =>	leave_numbers_only($row['stk_prod_pkey']),
+								'stk_unit'		=>	leave_numbers_only($row['stk_unit']),
+								'stk_qty'		=>	leave_numbers_only($row['stk_qty']),
+								'stk_mimic'		=>	leave_numbers_only($row['stk_mimic'])
+							];
+*/
+
+
+							
+							
+							
+						}
 
 
 
+
+
+
+
+
+
+
+
+
+						//	Check if all of the things are fine!
+						if ($qty_chk_pass == 0)
+						{
+
+							if ($dryrun == 0)
+							{
+								//	This is the DRY RUN! No INSERT, UPDATE or DELETE happening here!
+								//	Despite everything going well I can still give the operator some details!
+								$message_id	=	0;
+								$message2op	=	$mylang['success'];
+
+								//	Location basic info is always a good thing!
+								$messageXtra = array(
+									array($mylang['location'], $location_arr['loc_code_str'], $location_arr['loc_code_style'])
+								);
+							}
+							else if ($dryrun == 1)
+							{
+								$insert_now	=	insert_product_2_location($db, $location_uid, $product_uid, $product_unit, $product_qty, $mimic);
+								$message_id	=	$insert_now['control'];
+								$message2op	=	$insert_now['msg'];
+							}
+
+						}
+
+
+
+
+
+
+
+					}	
+					else
+					{
+						$message_id		=	$magic_category_chk_arr['control'];
+						$message2op		=	$magic_category_chk_arr['msg'];
+						$messageXtra	=	$magic_category_chk_arr['xtra'];
+					}
+
+
+
+
+
+
+
+
+
+/*
 					if ($message_id == 0)
 					{
 
@@ -1289,7 +1489,7 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 						}
 
 					}
-
+*/
 
 
 /*
@@ -1542,14 +1742,23 @@ function update_order_status($db, $status_code, $order_uid)
 function generate_select_options($options, $selectedValue, $defaultLabel)
 {
 
-	$html = '<option value="0"';
+	//	Make a rule that if the $defaultLabel is empty aka '' than make sure not to have
+	//	the value=0 row AT ALL!
 
-	if ($selectedValue == 0)
-	{ 
-		$html .= ' selected'; 
+	$html	=	'';
+
+	if (strlen($defaultLabel) > 0)
+	{
+		$html = '<option value="0"';
+
+		if ($selectedValue == 0)
+		{ 
+			$html .= ' selected'; 
+		}
+
+		$html .= '>' . $defaultLabel . '</option>';
 	}
 
-	$html .= '>' . $defaultLabel . '</option>';
 
 	foreach ($options as $key => $value)
 	{

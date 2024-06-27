@@ -53,6 +53,29 @@ if ($login->isUserLoggedIn() == true) {
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
+		//	Get the company of the currently logged in user!
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+		//	*******************************************************************************************************
+		//
+		//	Ohhh... such an ugly solution right here! FIX
+		//
+		$company_uid_js		=	0;
+
+		if (isset($_POST["company_uid_js"]))
+		{
+			$company_uid_js		=	leave_numbers_only($_POST['company_uid_js']);	// this should be a number
+		}
+
+		if (($user_company_uid == 0) AND ($company_uid_js > 0))
+		{
+			$user_company_uid	=	$company_uid_js;
+		}
+
+		//
+		//	*******************************************************************************************************
+
+
 
 		//	Get all locations. The action code for this is 0
 		if ($action_code == 0)
@@ -87,6 +110,10 @@ if ($login->isUserLoggedIn() == true) {
 
 				geb_warehouse.wh_disabled = 0
 
+				AND
+				
+				geb_location.loc_owner = :sowner
+
 
 				ORDER BY wh_code, loc_code
 
@@ -111,6 +138,8 @@ if ($login->isUserLoggedIn() == true) {
 
 				if ($stmt = $db->prepare($sql))
 				{
+
+					$stmt->bindValue(':sowner',		$user_company_uid,		PDO::PARAM_INT);
 					$stmt->execute();
 
 
@@ -173,6 +202,7 @@ if ($login->isUserLoggedIn() == true) {
 
 					geb_warehouse.wh_pkey,
 					geb_location.loc_pkey,
+					geb_location.loc_owner,
 					geb_location.loc_code,
 
 					geb_location.loc_barcode,
@@ -201,6 +231,10 @@ if ($login->isUserLoggedIn() == true) {
 
 					geb_location.loc_pkey = :sloc
 
+					AND
+
+					geb_location.loc_owner = :sowner
+
 
 					ORDER BY wh_code, loc_code
 
@@ -211,7 +245,8 @@ if ($login->isUserLoggedIn() == true) {
 				{
 
 
-					$stmt->bindValue(':sloc',		$loc_uid,		PDO::PARAM_INT);
+					$stmt->bindValue(':sloc',		$loc_uid,				PDO::PARAM_INT);
+					$stmt->bindValue(':sowner',		$user_company_uid,		PDO::PARAM_INT);
 					$stmt->execute();
 
 					while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -221,6 +256,7 @@ if ($login->isUserLoggedIn() == true) {
 						
 							'wh_pkey'			=>	leave_numbers_only($row['wh_pkey']),
 							'loc_pkey'			=>	leave_numbers_only($row['loc_pkey']),
+							'loc_owner'			=>	leave_numbers_only($row['loc_owner']),
 							'loc_code'			=>	trim($row['loc_code']),
 							'loc_barcode'		=>	trim($row['loc_barcode']),
 							'loc_function'		=>	leave_numbers_only($row['loc_function']),
@@ -265,6 +301,10 @@ if ($login->isUserLoggedIn() == true) {
 							LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
 							LEFT JOIN geb_category_d ON geb_category_c.cat_c_pkey = geb_category_d.cat_d_c_level
 
+							WHERE
+							
+							geb_category_a.cat_a_owner = :sowner
+
 
 					';
 
@@ -272,6 +312,7 @@ if ($login->isUserLoggedIn() == true) {
 					if ($stmt = $db->prepare($sql))
 					{
 
+						$stmt->bindValue(':sowner',		$user_company_uid,		PDO::PARAM_INT);
 						$stmt->execute();
 
 						while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -363,6 +404,7 @@ if ($login->isUserLoggedIn() == true) {
 
 				// Data from the user to process...
 				$warehouse		=	leave_numbers_only($_POST['warehouse_js']);
+				$loc_owner		=	leave_numbers_only($_POST['owner_uid_js']);		//	geb_company table!
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
 				$type			=	leave_numbers_only($_POST['type_js']);
@@ -548,6 +590,7 @@ if ($login->isUserLoggedIn() == true) {
 								
 								(
 									loc_wh_pkey,
+									loc_owner,
 									loc_code,
 									loc_barcode,
 									loc_function,
@@ -567,6 +610,7 @@ if ($login->isUserLoggedIn() == true) {
 
 								(
 									:iloc_wh_pkey,
+									:iloc_owner,
 									:iloc_code,
 									:iloc_barcode,
 									:iloc_function,
@@ -589,6 +633,7 @@ if ($login->isUserLoggedIn() == true) {
 						{
 
 							$stmt->bindValue(':iloc_wh_pkey',			$warehouse,				PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_owner',				$loc_owner,				PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_code',				$location,				PDO::PARAM_STR);
 							$stmt->bindValue(':iloc_barcode',			$barcode,				PDO::PARAM_STR);
 							$stmt->bindValue(':iloc_function',			$function,				PDO::PARAM_INT);
@@ -665,7 +710,7 @@ if ($login->isUserLoggedIn() == true) {
 		else if ($action_code == 3)
 		{
 
-			//	Only an Admin of this system can update a group!
+			//	Only an Admin of this system can update a location!
 			if
 			(
 
@@ -679,6 +724,7 @@ if ($login->isUserLoggedIn() == true) {
 			{
 
 				// Data from the user to process...
+				$loc_owner		=	leave_numbers_only($_POST['owner_uid_js']);		//	geb_company table!
 				$warehouse		=	leave_numbers_only($_POST['warehouse_js']);
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
@@ -745,15 +791,16 @@ if ($login->isUserLoggedIn() == true) {
 							
 							)
 
+
 						';
 
 
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':sloc_barcode',			$barcode,		PDO::PARAM_STR);
-							$stmt->bindValue(':sloc_warehouse_pkey',	$warehouse,		PDO::PARAM_INT);
-							$stmt->bindValue(':sloc_code',				$location,		PDO::PARAM_STR);
+							$stmt->bindValue(':sloc_barcode',			$barcode,			PDO::PARAM_STR);
+							$stmt->bindValue(':sloc_warehouse_pkey',	$warehouse,			PDO::PARAM_INT);
+							$stmt->bindValue(':sloc_code',				$location,			PDO::PARAM_STR);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -876,15 +923,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-
-
-
-
-
-
-
-
-
 						//	0	means no issues!
 						if ($found_match == 0)
 						{
@@ -897,20 +935,21 @@ if ($login->isUserLoggedIn() == true) {
 
 								SET
 
-								loc_wh_pkey		=		:uloc_wh_pkey,
-								loc_code		=		:uloc_code,
-								loc_barcode		=		:uloc_barcode,
-								loc_function	=		:uloc_function,
-								loc_type		=		:uloc_type,
-								loc_magic_product		=		:uloc_magic_product,
-								loc_max_qty		=		:uloc_max_qty,
-								loc_cat_a		=		:uloc_cat_a,
-								loc_cat_b		=		:uloc_cat_b,
-								loc_cat_c		=		:uloc_cat_c,
-								loc_cat_d		=		:uloc_cat_d,
-								loc_blocked		=		:uloc_blocked,
-								loc_note		=		:uloc_note,
-								loc_disabled	=		:uloc_disabled
+								loc_wh_pkey			=		:uloc_wh_pkey,
+								loc_owner			=		:uloc_owner,
+								loc_code			=		:uloc_code,
+								loc_barcode			=		:uloc_barcode,
+								loc_function		=		:uloc_function,
+								loc_type			=		:uloc_type,
+								loc_magic_product	=		:uloc_magic_product,
+								loc_max_qty			=		:uloc_max_qty,
+								loc_cat_a			=		:uloc_cat_a,
+								loc_cat_b			=		:uloc_cat_b,
+								loc_cat_c			=		:uloc_cat_c,
+								loc_cat_d			=		:uloc_cat_d,
+								loc_blocked			=		:uloc_blocked,
+								loc_note			=		:uloc_note,
+								loc_disabled		=		:uloc_disabled
 
 								WHERE
 
@@ -923,6 +962,7 @@ if ($login->isUserLoggedIn() == true) {
 							{
 
 								$stmt->bindValue(':uloc_wh_pkey',	$warehouse,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_owner',		$loc_owner,						PDO::PARAM_INT);
 								$stmt->bindValue(':uloc_code',		$location,						PDO::PARAM_STR);
 								$stmt->bindValue(':uloc_barcode',	$barcode,						PDO::PARAM_STR);
 								$stmt->bindValue(':uloc_function',	$loc_function,					PDO::PARAM_INT);

@@ -1,10 +1,14 @@
 
+		function openLink(url) {
+			window.location.href = url;
+		}
+
 
 		// open a link in the same tag!
 		function open_link(mylink)
 		{
 			// open link in the same window
-            window.open(mylink, "_self")
+			window.open(mylink, "_self")
 		}
 
 

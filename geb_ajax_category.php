@@ -70,17 +70,42 @@ if ($login->isUserLoggedIn() == true) {
 		require_once('lib_db_conn.php');
 
 
-
-
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 		$action_format		=	0;	//	by default provide HTML for actions that have the ability to provide different formats.
 		$action_disabled	=	1;	//	by default provide EVERYTHING!
 
 
+
+		//	Get the company of the currently logged in user!
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+
+		//	*******************************************************************************************************
+		//
+		//	Ohhh... such an ugly solution right here! FIX
+		//
+		$company_uid_js		=	0;
+
+		if (isset($_POST["company_uid_js"]))
+		{
+			$company_uid_js		=	leave_numbers_only($_POST['company_uid_js']);	// this should be a number
+		}
+
+		if (($user_company_uid == 0) AND ($company_uid_js > 0))
+		{
+			$user_company_uid	=	$company_uid_js;
+		}
+
+		//
+		//	*******************************************************************************************************
+
+
+
+
 		//	if it is set grab it!
 		if (isset($_POST["action_format_js"]))
 		{
-			$action_format		=	leave_numbers_only($_POST['action_format_js']);	// this should be a number
+			$action_format		=	leave_numbers_only($_POST['action_format_js']);			// this should be a number
 		}
 
 		//	if it is set grab it!
@@ -130,7 +155,6 @@ if ($login->isUserLoggedIn() == true) {
 
 						geb_category_' . $which_cat . '
 
-
 				';
 
 
@@ -138,38 +162,33 @@ if ($login->isUserLoggedIn() == true) {
 				{
 					//	Do not need any criteria by default to get all category A entries!
 					//	WHERE statement only needed if disabled flag is = 0... So...
+					$sql		.=	'	WHERE		cat_a_owner	=	:scat_owner_uid	';		//	category A owner
 				}
 				else if ($action_code == 1)
 				{
-					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
-					$sql		.=	'	WHERE	cat_b_a_level	=	:scat_uid	';		//	category B
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);				//	this should be a number
+					$sql		.=	'	WHERE	cat_b_a_level	=	:scat_uid	';			//	category B
+					$sql		.=	'	AND		cat_b_owner		=	:scat_owner_uid	';		//	category B owner
+
 				}
 				else if ($action_code == 2)
 				{
-					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
-					$sql		.=	'	WHERE	cat_c_b_level	=	:scat_uid	';		//	category C
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);				//	this should be a number
+					$sql		.=	'	WHERE	cat_c_b_level	=	:scat_uid	';			//	category C
+					$sql		.=	'	AND		cat_c_owner		=	:scat_owner_uid	';		//	category C owner
 				}
 				else if ($action_code == 3)
 				{
-					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);			//	this should be a number
-					$sql		.=	'	WHERE	cat_d_c_level	=	:scat_uid	';		//	category D
+					$cat_uid	=	leave_numbers_only($_POST['cat_uid_js']);				//	this should be a number
+					$sql		.=	'	WHERE	cat_d_c_level	=	:scat_uid	';			//	category D
+					$sql		.=	'	AND		cat_d_owner		=	:scat_owner_uid	';		//	category D owner
 				}
 
 
 				//	Get all categories that are active. Otherwise get EVERYTHING!
 				if ($action_disabled == 0)
 				{
-
-					if ($action_code == 0)
-					{
-						$sql	.=	'	WHERE	';
-					}
-					elseif (($action_code == 1) OR ($action_code == 2) OR ($action_code == 3))
-					{
-						$sql	.=	'	AND	';
-					}
-
-					$sql	.=	'	cat_' . $which_cat . '_disabled = 0	';
+					$sql	.=	'	AND	cat_' . $which_cat . '_disabled = 0	';
 				}
 
 
@@ -179,12 +198,17 @@ if ($login->isUserLoggedIn() == true) {
 				if ($stmt = $db->prepare($sql))
 				{
 
-					if
+					if ($action_code == 0)
+					{
+						$stmt->bindValue(':scat_owner_uid',	$user_company_uid,		PDO::PARAM_INT);
+					}
+					elseif
 					(
 						($action_code == 1) OR ($action_code == 2) OR ($action_code == 3)
 					)
 					{
-						$stmt->bindValue(':scat_uid',	$cat_uid,		PDO::PARAM_INT);
+						$stmt->bindValue(':scat_uid',		$cat_uid,				PDO::PARAM_INT);
+						$stmt->bindValue(':scat_owner_uid',	$user_company_uid,		PDO::PARAM_INT);
 					}
 
 
@@ -269,16 +293,19 @@ if ($login->isUserLoggedIn() == true) {
 
 					cat_' . $which_cat . '_pkey = :scat_uid
 
+					AND
+					
+					cat_' . $which_cat . '_owner = :scat_owner_uid    
+
 			';
 
 
 			if ($stmt = $db->prepare($sql))
 			{
 
-
-				$stmt->bindValue(':scat_uid',		$cat_uid,		PDO::PARAM_INT);
+				$stmt->bindValue(':scat_uid',			$cat_uid,				PDO::PARAM_INT);
+				$stmt->bindValue(':scat_owner_uid',		$user_company_uid,		PDO::PARAM_INT);
 				$stmt->execute();
-
 
 				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 				{
@@ -348,6 +375,10 @@ if ($login->isUserLoggedIn() == true) {
 						WHERE
 
 						cat_a_name = :scata_name
+						
+						AND
+						
+						cat_a_owner = :scata_owner
 
 					';
 
@@ -355,7 +386,8 @@ if ($login->isUserLoggedIn() == true) {
 					if ($stmt = $db->prepare($sql))
 					{
 
-						$stmt->bindValue(':scata_name',	$cata_name,	PDO::PARAM_STR);
+						$stmt->bindValue(':scata_name',		$cata_name,			PDO::PARAM_STR);
+						$stmt->bindValue(':scata_owner',	$user_company_uid,	PDO::PARAM_INT);
 						$stmt->execute();
 
 						while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -384,6 +416,7 @@ if ($login->isUserLoggedIn() == true) {
 								
 								(
 									cat_a_name,
+									cat_a_owner,
 									cat_a_disabled
 								) 
 
@@ -391,6 +424,7 @@ if ($login->isUserLoggedIn() == true) {
 
 								(
 									:icat_a_name,
+									:icat_a_owner,
 									:icat_a_disabled
 								)
 
@@ -400,8 +434,10 @@ if ($login->isUserLoggedIn() == true) {
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':icat_a_name',		$cata_name,		PDO::PARAM_STR);
-							$stmt->bindValue(':icat_a_disabled',	$cata_status,	PDO::PARAM_INT);
+							$stmt->bindValue(':icat_a_name',		$cata_name,			PDO::PARAM_STR);
+							$stmt->bindValue(':icat_a_owner',		$user_company_uid,	PDO::PARAM_INT);
+							$stmt->bindValue(':icat_a_disabled',	$cata_status,		PDO::PARAM_INT);
+
 							$stmt->execute();
 							$db->commit();
 
@@ -433,7 +469,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-		//	Add category B and C!
+		//	Add category B, C and D!
 
 		else if 
 		(
@@ -516,6 +552,10 @@ if ($login->isUserLoggedIn() == true) {
 							
 							cat_' . $which_cat . '_name = :scat_name
 
+							AND
+							
+							cat_' . $which_cat . '_owner = :scat_owner
+
 						';
 
 
@@ -524,6 +564,7 @@ if ($login->isUserLoggedIn() == true) {
 
 							$stmt->bindValue(':scat_master_uid',	$cat_master_uid,	PDO::PARAM_INT);
 							$stmt->bindValue(':scat_name',			$cat_name,			PDO::PARAM_STR);
+							$stmt->bindValue(':scat_owner',			$user_company_uid,	PDO::PARAM_INT);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -553,6 +594,7 @@ if ($login->isUserLoggedIn() == true) {
 									(
 										cat_' . $which_cat . '_name,
 										cat_' . $level . '_level,
+										cat_' . $which_cat . '_owner,
 										cat_' . $which_cat . '_disabled
 									) 
 
@@ -561,6 +603,7 @@ if ($login->isUserLoggedIn() == true) {
 									(
 										:icat_' . $which_cat . '_name,
 										:icat_' . $level . '_level,
+										:icat_' . $which_cat . '_owner,
 										:icat_' . $which_cat . '_disabled
 									)
 
@@ -572,6 +615,7 @@ if ($login->isUserLoggedIn() == true) {
 
 								$stmt->bindValue(':icat_' . $which_cat . '_name',		$cat_name,			PDO::PARAM_STR);
 								$stmt->bindValue(':icat_' . $level . '_level',			$cat_master_uid,	PDO::PARAM_INT);
+								$stmt->bindValue(':icat_' . $which_cat . '_owner',		$user_company_uid,	PDO::PARAM_INT);
 								$stmt->bindValue(':icat_' . $which_cat . '_disabled',	$cat_status,		PDO::PARAM_INT);
 								$stmt->execute();
 								$db->commit();
@@ -673,9 +717,7 @@ if ($login->isUserLoggedIn() == true) {
 						if 		($action_code == 16)	{	$which_cat	=	'b';	}
 						elseif	($action_code == 17)	{	$which_cat	=	'c';	}
 						elseif	($action_code == 18)	{	$which_cat	=	'd';	}
-						
-						
-						
+
 						//	Here check if the name already maybe exists. If so ==>> notify the user!
 						$found_match	=	0;
 
@@ -691,13 +733,18 @@ if ($login->isUserLoggedIn() == true) {
 
 							cat_' . $which_cat . '_name = :scat_name
 
+							AND
+							
+							cat_' . $which_cat . '_owner = :scat_owner
+
 						';
 
 
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':scat_name',		$cat_name,		PDO::PARAM_STR);
+							$stmt->bindValue(':scat_name',		$cat_name,			PDO::PARAM_STR);
+							$stmt->bindValue(':scat_owner',		$user_company_uid,	PDO::PARAM_INT);
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -739,6 +786,7 @@ if ($login->isUserLoggedIn() == true) {
 									SET
 
 									cat_' . $which_cat . '_name		=	:ucat_name,
+									cat_' . $which_cat . '_owner	=	:ucat_owner,
 									cat_' . $which_cat . '_disabled	=	:ucat_disabled
 
 									WHERE
@@ -752,6 +800,7 @@ if ($login->isUserLoggedIn() == true) {
 							{
 
 								$stmt->bindValue(':ucat_name',			$cat_name,			PDO::PARAM_STR);
+								$stmt->bindValue(':ucat_owner',			$user_company_uid,	PDO::PARAM_INT);
 								$stmt->bindValue(':ucat_disabled',		$cat_status,		PDO::PARAM_INT);
 								$stmt->bindValue(':ucat_pkey',			$cat_uid,			PDO::PARAM_INT);
 								$stmt->execute();
