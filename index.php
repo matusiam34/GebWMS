@@ -82,11 +82,20 @@ if ($login->isUserLoggedIn() == true)
 			}
 
 
+			//	For the X on the main page to make navigating easier on a smartphone!
 			function clear_product_input()
 			{
 				set_Element_Value_By_ID("product", "");
 				set_Focus_On_Element_By_ID("product");
 			}
+
+			//	For the X on the main page to make navigating easier on a smartphone!
+			function clear_location_input()
+			{
+				set_Element_Value_By_ID("location", "");
+				set_Focus_On_Element_By_ID("location");
+			}
+
 
 
 		</script>
@@ -174,6 +183,12 @@ if ($login->isUserLoggedIn() == true)
 								<p class="control">
 									<button class="button inventory_class iconSearch" style="width:50px;" type="submit"></button>
 								</p>
+
+									<p class="control">
+										<button class="button inventory_class iconFocus" style="width:50px;" type="button" onClick="clear_location_input();"></button>
+									</p>
+
+
 
 							</div>
 						</form>

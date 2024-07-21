@@ -173,7 +173,7 @@ if ($login->isUserLoggedIn() == true)
 								$qty_adjust_input	=	'';
 
 
-								$input_disabled	=	' readonly ';	// for kicks lets make the product_qty read only! this could change after revision.
+								$input_disabled	=	' readonly ';	// for kicks lets make the product_qty read only! this could change after revision!
 
 								//	Here provide the ability to increase the QTY of products the operator wants to add to the location!
 								$qty_adjust_input	.=	'<div class="field has-addons">';
@@ -437,7 +437,7 @@ if ($login->isUserLoggedIn() == true)
 				{
 
 
-					//	Add any extra info that has b een provided! Here this will be in a form of a table!
+					//	Add any extra info that has been provided! Here this will be in a form of a table!
 					if (count($messageXtra) > 0)
 					{
 

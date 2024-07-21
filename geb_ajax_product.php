@@ -645,33 +645,37 @@ if ($login->isUserLoggedIn() == true) {
 
 							WHERE
 
-							((prod_pkey	<>	:sprod_pkey) AND (prod_code = :sprod_code))
-
-							OR
-
 							(
 
-								(
-
-									(prod_each_barcode = :sprod_each_barcode)
+								(	(prod_pkey	<>	:sprod_pkey) AND (prod_code = :sprod_code)	)
 
 									OR
 
-									(prod_case_barcode = :sprod_case_barcode)
+									(
 
-									OR
+										(
 
-									(prod_each_barcode = :sprod_case_barcode)
+											(prod_each_barcode = :sprod_each_barcode)
 
-									OR
+											OR
 
-									(prod_case_barcode = :sprod_each_barcode)
+											(prod_case_barcode = :sprod_case_barcode)
 
-								)
+											OR
 
-								AND
+											(prod_each_barcode = :sprod_case_barcode)
 
-								(prod_pkey	<>	:sprod_pkey)
+											OR
+
+											(prod_case_barcode = :sprod_each_barcode)
+
+										)
+
+										AND
+
+										(prod_pkey	<>	:sprod_pkey)
+
+									)
 
 							)
 

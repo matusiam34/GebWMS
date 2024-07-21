@@ -1,5 +1,10 @@
 <?php
 
+/*
+
+	catch(PDOException $e) probably needs looking into at some point to make the error message delivery better!
+
+*/
 
 
 // load the login class
@@ -37,6 +42,7 @@ if ($login->isUserLoggedIn() == true)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -177,7 +183,15 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
+		//	Need to apply some restrictions to who can lookup locations.
+		//	An operator of warehouse X working for company Bingo can't lookup any other locations!
+		//	The system does support multi locations, multi warehouses and multi companies so that all needs to BE
+		//	accounted for in what is being shown.
+
+
+
 		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 		$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
 
 
@@ -239,6 +253,54 @@ if ($login->isUserLoggedIn() == true)
 
 			loc_barcode = :ilocation_barcode
 
+		';
+
+
+		//	Here add so extra filters...
+		//	What company to look for!
+		//	What warehouse to look for!
+
+		if ($user_company_uid > 0)
+		{
+			//	Narrow down to the company the user is allocated to!
+			//	This means that the user is working for one particular company. So limit the 
+			//	query to that company!
+
+			$sql	.=	'
+
+				AND
+				
+				loc_owner = :ilocation_owner
+
+			';
+
+		}
+
+
+		if ($user_warehouse_uid > 0)
+		{
+			//	Narrow down to the warehouse the user is allocated to!
+			//	This means that the user is working in one particular warehouse. So limit the 
+			//	query to that warehouse!
+
+			$sql	.=	'
+
+				AND
+				
+				loc_wh_pkey = :ilocation_warehouse
+
+			';
+
+		}
+
+
+
+
+
+
+
+		$sql	.=	'
+
 
 			GROUP BY wh_code, loc_code, loc_type, loc_function, loc_blocked, loc_note, stk_unit, prod_code, prod_case_qty
 
@@ -252,7 +314,20 @@ if ($login->isUserLoggedIn() == true)
 		if ($stmt = $db->prepare($sql))
 		{
 
-			$stmt->bindValue(':ilocation_barcode',		$location_code,		PDO::PARAM_STR);
+			$stmt->bindValue(':ilocation_barcode',			$location_code,			PDO::PARAM_STR);
+
+			if ($user_company_uid > 0)
+			{
+				$stmt->bindValue(':ilocation_owner',		$user_company_uid,		PDO::PARAM_INT);
+			}
+
+			if ($user_warehouse_uid > 0)
+			{
+				$stmt->bindValue(':ilocation_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
+			}
+
+
+
 			$stmt->execute();
 
 
@@ -392,7 +467,7 @@ if ($login->isUserLoggedIn() == true)
 		// show an error if the query has an error
 		else
 		{
-			echo 'Search Query Failed!';
+			echo '<BR>' . $mylang['sql_error'];	//	Hmmmm...?
 		}
 
 
@@ -402,7 +477,8 @@ if ($login->isUserLoggedIn() == true)
 	}		// Establishing the database connection - end bracket !
 	catch(PDOException $e)
 	{
-		print_message(1, $e->getMessage());
+		//print_message(1, $e->getMessage());
+		echo '<BR>' . $e->getMessage();
 	}
 
 

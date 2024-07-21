@@ -1,7 +1,7 @@
 <?php
 
 
-//	FIX the fact that I can update the warehose to ANY WAREHOUSE! The warehouse uid needs to be not 0!
+//	FIX the fact that I can update the warehouse to ANY WAREHOUSE! The warehouse uid needs to be not 0!
 //	Same applies to adding! You can add a wh with uid = 0 aka ---- 
 
 //	Action 1 needs sanitization of the uid input and few others checks!
@@ -193,6 +193,12 @@ if ($login->isUserLoggedIn() == true) {
 				$category_arr	=	array();
 
 				//	Get the UID of the location hopefully provided from the frontend.
+				
+				//	17/07/24:
+				//
+				//	NOTE:	Maybe check if the location ID is within the company for better security?? Getting paranoid me thinks!
+				//
+				//
 				$loc_uid		=	leave_numbers_only($_POST['loc_uid_js']);	//	this should be a number
 
 				$sql	=	'
@@ -529,13 +535,24 @@ if ($login->isUserLoggedIn() == true) {
 
 							prod_code = :sprod_code
 
+							AND
+
+							prod_owner = :sprod_owner
+
 						';
+
+
+
 
 
 						if ($stmt = $db->prepare($sql))
 						{
 
 							$stmt->bindValue(':sprod_code',		$magic_product,		PDO::PARAM_STR);
+							//	loc_owner in the context of this action is simply company_id, so hopefully
+							//	this makes sense if you look at this code later down the line!
+							$stmt->bindValue(':sprod_owner',	$loc_owner,			PDO::PARAM_INT);
+
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -792,6 +809,7 @@ if ($login->isUserLoggedIn() == true) {
 							)
 
 
+
 						';
 
 
@@ -801,6 +819,10 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':sloc_barcode',			$barcode,			PDO::PARAM_STR);
 							$stmt->bindValue(':sloc_warehouse_pkey',	$warehouse,			PDO::PARAM_INT);
 							$stmt->bindValue(':sloc_code',				$location,			PDO::PARAM_STR);
+
+
+
+
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -861,6 +883,18 @@ if ($login->isUserLoggedIn() == true) {
 													//	I will check if there is more than one product code found etc
 													//	Better to check for errors just to be on the safe side!
 
+
+						//	15/07/24:
+						//
+						//	NOTE:	Since the system is multi company and multi warehouse it is a good idea to make sure
+						//			to actually lookup products that are only WITHIN a company.
+
+						//	17/07/24:
+						//
+						//	UPDATE:	The query includes the check if the product is within the same company!
+						//			It would be great if I could make sure nobody is abusing the dropdown to select and / or add
+						//			a company that they are not in ]:->
+
 						//	Run the query and see what I get!
 
 						$sql	=	'
@@ -875,6 +909,10 @@ if ($login->isUserLoggedIn() == true) {
 
 							prod_code = :sprod_code
 
+							AND
+
+							prod_owner = :sprod_owner
+
 						';
 
 
@@ -882,6 +920,10 @@ if ($login->isUserLoggedIn() == true) {
 						{
 
 							$stmt->bindValue(':sprod_code',		$magic_product,		PDO::PARAM_STR);
+							//	loc_owner in the context of this action is simply company_id, so hopefully
+							//	this makes sense if you look at this code later down the line!
+							$stmt->bindValue(':sprod_owner',	$loc_owner,			PDO::PARAM_INT);
+
 							$stmt->execute();
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))

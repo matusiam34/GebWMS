@@ -1,6 +1,10 @@
 <?php
 
 
+//	For better usability for the main system admin maybe it will be better if the search uses the ID or products?
+//	Something to test and think about!
+
+
 
 // load the login class
 require_once('lib_login.php');
@@ -31,6 +35,14 @@ if ($login->isUserLoggedIn() == true)
 		{
 			$product_or_barcode		=	trim($_GET['product']);
 		}
+
+
+		//	Get the company of the currently logged in user!
+		//	I should only show products that are associated with the company that the user is in.
+		//	The warehouse allocation should be only showing stock of product that is in the warehouse
+		//	that the user is assigned to.
+		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
 
 ?>
 
@@ -178,10 +190,16 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
-		//$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
+		//	$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
+		//	Also keep in mind that I support multi-companies so it also has to reflect here!
+
 
 		$products_arr	=	array();	//	store all found products right here! this is combined with the LIKE in the SELECT
 										//	statement because I want to provide the operator with a better search functionality
+
+
+		$columns_html	=	'';
+		$details_html	=	'';
 
 
 		// Figure out is the $product variable is numeric only (barcode) or alphanumeric aka Product!
@@ -189,7 +207,14 @@ if ($login->isUserLoggedIn() == true)
 
 		if (is_numeric($product_or_barcode))	{	$is_barcode	=	true;	}
 
-		$sql	=	'
+
+		//	21/07/2024:
+		//	What a world where I used AI to fix an odd issue I had with
+		//	making sure that the barcode search works correctly...
+		//	But it worked, so moving on to the next thing! It did not write it all for me but just
+		//	figured out where the pain point was. Amazing!
+
+		$sql = '
 
 			SELECT
 
@@ -204,70 +229,79 @@ if ($login->isUserLoggedIn() == true)
 			LEFT JOIN geb_category_c ON geb_product.prod_category_c = geb_category_c.cat_c_pkey
 			LEFT JOIN geb_category_d ON geb_product.prod_category_d = geb_category_d.cat_d_pkey
 
+			LEFT JOIN geb_company ON geb_product.prod_owner = geb_company.company_pkey
 
-			WHERE
-
+			WHERE 1=1
 
 		';
-
 
 		if ($is_barcode)
 		{
 			// Search by barcode
-			$sql	.=	'
-			
-			prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar
+			$sql .= '
+				AND (
+					
+					prod_each_barcode = :sprod_each_bar 
 
-			OR
+					OR
 
-			CASE
-				WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
-			END;
+					prod_case_barcode = :sprod_case_bar
+					
+					OR
+					(
+						prod_mimic = 1 
 
+						AND
+
+						(prod_each_barcode_mimic = :smimic_bar OR prod_case_barcode_mimic = :smimic_bar)
+					)
+				)
 			';
 		}
 		else
 		{
 			// Search for a product by name
-			$sql	.=	' prod_code LIKE "%' . $product_or_barcode . '%"';
+			$sql .= ' AND prod_code LIKE :sprod_code ';
 		}
-		
-		
-		//	The warehouse filter here... Keep in mind that the product needs to exist in the warehouse that the operator is in.
-		//	This is because I have things like physical_qty and allocated_qty etc etc
-		//$sql	.=	' AND prod_warehouse = :iuser_warehouse ';
 
 
-		$columns_html	=	'';
-		$details_html	=	'';
-
-
+		// if $user_company_uid == 0 that means it is the admin = nothing to do really!
+		// However, if the $user_company_uid is > 0 that means that someone with an assigned company is using the page.
+		if ($user_company_uid > 0)
+		{
+			$sql .= ' AND prod_owner = :sprod_owner ';
+		}
 
 		if ($stmt = $db->prepare($sql))
 		{
 
 			if ($is_barcode)
 			{
-				$stmt->bindValue(':sprod_each_bar',		$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':sprod_case_bar',		$product_or_barcode,	PDO::PARAM_STR);
-				$stmt->bindValue(':smimic_bar',			$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_each_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_case_bar',	$product_or_barcode,	PDO::PARAM_STR);
+				$stmt->bindValue(':smimic_bar',		$product_or_barcode,	PDO::PARAM_STR);
 			}
 			else
 			{
-				//	Can't have this if I am using the LIKE in the query. I need to revist this at some point...
-				//	Maybe totally remove it.. no idea for now. Works so I am going to leave it be.
-				//$stmt->bindValue(':iprod_code',	$product_or_barcode,		PDO::PARAM_STR);
+				$stmt->bindValue(':sprod_code', '%' . $product_or_barcode . '%',	PDO::PARAM_STR);
 			}
 
+			// Need to narrow it down to the company that the user is a part of!
+			if ($user_company_uid > 0)
+			{
+				$stmt->bindValue(':sprod_owner',	$user_company_uid,	PDO::PARAM_INT);
+			}
 
-			//$stmt->bindValue(':iuser_warehouse',	$user_warehouse_uid,	PDO::PARAM_INT);
 			$stmt->execute();
+
+
 
 
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
 				$products_arr[]	=	$row;
 			}
+
 
 			// Analyise what the products_arr has to offer...
 			if (count($products_arr) == 1)
@@ -284,8 +318,6 @@ if ($login->isUserLoggedIn() == true)
 					$mimic_enabled	=	true;
 					$mimic_status	=	$mylang['enabled'];
 				}
-
-
 
 
 				$columns_html	.=	'<div class="columns">';
@@ -708,7 +740,17 @@ if ($login->isUserLoggedIn() == true)
 			}
 			elseif (count($products_arr) > 1)
 			{
+
+
+				//
 				//	Found few matches. Show them in a tiny table with short info about them?!
+				//
+/*
+		if ($user_company_uid > 0)
+		{
+			$sql .= ' AND prod_owner = :sprod_owner ';
+		}
+*/
 
 				$columns_html	.=	'<div class="columns">';
 
@@ -727,6 +769,14 @@ if ($login->isUserLoggedIn() == true)
 							$details_html	.=	'<tr>';
 								$details_html	.=	'<td style="width:40%; background-color: ' . $backclrA . '; font-weight: bold;">' . $product_details_lnk . '</td>';
 								$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($product['prod_desc']) . '</td>';
+
+								//	Add a column at the end that tells the admin which company the product exists in.
+								if ($user_company_uid == 0)
+								{
+									$details_html	.=	'<td style="background-color: ' . $backclrB . ';">' . trim($product['company_code']) . '</td>';
+								}
+
+
 							$details_html	.=	'</tr>';
 
 					}

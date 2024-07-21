@@ -1,7 +1,7 @@
 <?php
 
 
-//	NOTE:	If you are using only numbers for a product code... This will mess this script up a bit at the momemnt...
+//	NOTE:	If you are using only numbers for a product code... This will mess this script up a bit at the moment...
 //			Need to find a nice solution for this! Maybe not allow to search via barcode?
 
 
@@ -308,7 +308,7 @@ if ($login->isUserLoggedIn() == true)
 				min_qty_js:					get_Element_Value_By_ID('id_min_qty'),
 				max_qty_js:					get_Element_Value_By_ID('id_max_qty'),
 
-				company_uid_js			:	get_Element_Value_By_ID('comp'),
+				company_uid_js:				get_Element_Value_By_ID('comp'),
 				disabled_js: 				get_Element_Value_By_ID('id_disabled')
 			};
 
@@ -320,8 +320,7 @@ if ($login->isUserLoggedIn() == true)
 
 					if (obje.control === 0)
 					{
-						//	Ugly, but does the job!
-						location.reload();
+						$.alertable.info(obje.control, obje.msg).always(function() {	});
 					}
 					else
 					{

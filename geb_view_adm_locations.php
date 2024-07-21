@@ -369,7 +369,7 @@ if ($login->isUserLoggedIn() == true)
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
 				max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
-				
+
 
 			},
 

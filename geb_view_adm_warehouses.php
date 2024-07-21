@@ -294,24 +294,17 @@ if ($login->isUserLoggedIn() == true)
 		echo	'<div class="container box has-background-light">';
 
 
-				$page_form	=	'<p class="control">';
-				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
-				$page_form	.=	'</p>';
+	//	"Menu" here
+	$top_menu	=	'';
 
+	$top_menu	.=	'<div class="columns">';
+	$top_menu	.=	'<div class="column is-4">';
+	$menu_link	=	"'index.php'";
+	$top_menu	.=	'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
+	$top_menu	.=	'</div>';
+	$top_menu	.=	'</div>';
 
-				// The menu!
-				echo '<nav class="level">
-
-					<!-- Left side -->
-					<div class="level-left">
-
-					<div class="level-item">
-				' . $page_form . '
-					</div>
-
-					</div>
-
-				</nav>';
+	echo $top_menu;
 
 
 
@@ -338,17 +331,13 @@ if ($login->isUserLoggedIn() == true)
 								<tbody>
 								</tbody>
 							</table>
-						</div>
-
-					</div>';
+						</div>';
 
 
 
 	// Details
 	$layout_details_html	.=	'
 
-
-					<div class="column is-2">
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['warehouse'] . ':</p>
@@ -358,12 +347,6 @@ if ($login->isUserLoggedIn() == true)
 						</div>
 
 
-
-					</div>
-
-
-					<div class="column is-4">
-
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
@@ -371,11 +354,7 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
-					</div>
 
-
-
-					<div class="column is-2">
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['status'] . ':</p>
@@ -391,13 +370,7 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>
-
-
-
-						';
-
-
+						</div>';
 
 
 
@@ -419,12 +392,6 @@ if ($login->isUserLoggedIn() == true)
 						</div>
 
 						';
-
-
-	$layout_details_html	.=	'
-
-					</div>';
-
 
 
 

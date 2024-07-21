@@ -1299,7 +1299,7 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 				elseif	//	MULTI LOCATION Checks!
 				(
 				
-					($location_type == 20)								//	MULTI (A) AND Anything can go here!
+					($location_type == 20)								//	MULTI (A). Anything can go here! As in EACH, CASES etc
 
 					OR
 
@@ -1323,17 +1323,22 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 					{
 
 						$max_qty_per_location	=	leave_numbers_only($location_arr['loc_max_qty']);
-						$qty_chk_pass			=	998;	//	Tests if location availability and max_qty is good to INSERT / UPDATE!
+						$qty_chk_pass			=	998;	//	Tests if location availability and max_qty is good not in conflict!
+															//	If location has space I must make sure that the qty that the operator is trying to
+															//	add is not above max_qty including what already is in the location!
 
 
 						if ($product_count == 0)
 						{
 							//	Location empty!
 
-							//	Check if the qty provided is under max_qty for this location!
+							//	Check if the qty provided is lower or equal to max_qty for this location!
 							//	Now, make sure that we only check the MultiE and MultiC since MultiA is the wild wild west!
 							//	Also, when checking the Multi E&C make sure to check if the figure is > 0, because if it is
 							//	0 than that means that there is no limit there either. MultiA max_qty gets ignored!
+							//
+							//	Also, pallets or any in house generated barcode items are not implemented here!
+							//
 
 							if
 							(
@@ -1344,14 +1349,11 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 
 								($location_type == 22))	//	MULTI (C) AND CASE only!
 
-								AND
-
-								($max_qty_per_location > 0)
-
 							)
 							{
 
-								//	Check 
+								//	Since this is a MULTI E or C location that is empty just check if the amount of product the operator
+								//	want to allocate here does not exceed the maximum location qty.
 								if ($product_qty > $max_qty_per_location)
 								{
 									$message_id	=	341;
@@ -1367,11 +1369,52 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 							}
 							else
 							{
-								//	Here everything else!
-								//	And yes, this includes the Multi ALL location! I treat them as if they are an endless empty
-								//	space to throw stuff at! And this is regardless what the MAX_QTY field says!
-								$qty_chk_pass	=	0;	//	For an empty location the QTY chk is a green light! 
+
+								if
+								(
+									($location_type == 20)	//	MULTI (A) == Everything!
+								)
+								{
+									if ($max_qty_per_location == 0)
+									{
+										//	So in order to set a bottomless pit of a MULTI (A) location all you need to do is to 
+										//	set max_qty to 0.
+										
+										//	Note:	Not sure what to do is the bottomless pit has a max_qty set to anything > 0...
+										//			That will be confusing to the system me thinks...
+										
+										$qty_chk_pass	=	0;	//	For an empty location the QTY chk is a green light! 
+									}
+									elseif ($max_qty_per_location > 0)
+									{
+										//	Should I just check if the limit applies? I think so... Will need to have a think
+										//	but for now if there is a limit on the bottomless MULTI A location than I will take that
+										//	as a choice of the system admins!
+
+										if ($product_qty > $max_qty_per_location)
+										{
+											$message_id	=	342;
+											$message2op	=	$mylang['insufficient_space_available'];
+
+											$messageXtra = array(
+												array($mylang['location'], $location_arr['loc_code_str'], $location_arr['loc_code_style']),
+												array($mylang['max_qty'], $max_qty_per_location)
+											);
+
+										}
+										else
+										{
+											//	Seems like there is enough space so give it a green light!
+											$qty_chk_pass	=	0;
+										}
+
+									}
+								
+								}
+
 							}
+
+
 
 						}
 						else
@@ -1398,10 +1441,6 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 							];
 */
 
-
-							
-							
-							
 						}
 
 

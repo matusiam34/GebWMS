@@ -73,6 +73,23 @@ if ($login->isUserLoggedIn() == true)
 			// When the Admin selects a new company!
 			$('#id_company').change(function() {
 				get_all_category_a();
+
+				set_Element_Value_By_ID('id_catb_name',		'');
+				set_Element_Value_By_ID('id_catb_status',	0);
+				set_Element_Value_By_ID('id_hidden_catb',	0);
+				$('#id_category_b_table > tbody').empty();
+
+
+				set_Element_Value_By_ID('id_catc_name',		'');
+				set_Element_Value_By_ID('id_catc_status',	0);
+				set_Element_Value_By_ID('id_hidden_catc',	0);
+				$('#id_category_c_table > tbody').empty();
+
+				set_Element_Value_By_ID('id_catd_name',		'');
+				set_Element_Value_By_ID('id_catd_status',	0);
+				set_Element_Value_By_ID('id_hidden_catd',	0);
+				$('#id_category_d_table > tbody').empty();
+
 			});
 			
 			
@@ -263,6 +280,10 @@ if ($login->isUserLoggedIn() == true)
 					$('#id_category_a_table > tbody').empty();
 					$('#id_category_a_table > tbody').append(obje.html);
 
+					set_Element_Value_By_ID('id_cata_name',		'');
+					set_Element_Value_By_ID('id_cata_status',	0);
+					set_Element_Value_By_ID('id_hidden_cata',	0);
+
 				}
 				else
 				{
@@ -299,7 +320,9 @@ if ($login->isUserLoggedIn() == true)
 				{
 					$('#id_category_b_table > tbody').empty();
 					$('#id_category_b_table > tbody').append(obje.html);
-
+					set_Element_Value_By_ID('id_catb_name',		'');
+					set_Element_Value_By_ID('id_catb_status',	0);
+					set_Element_Value_By_ID('id_hidden_catb',	0);
 				}
 				else
 				{
@@ -335,7 +358,9 @@ if ($login->isUserLoggedIn() == true)
 				{
 					$('#id_category_c_table > tbody').empty();
 					$('#id_category_c_table > tbody').append(obje.html);
-
+					set_Element_Value_By_ID('id_catc_name',		'');
+					set_Element_Value_By_ID('id_catc_status',	0);
+					set_Element_Value_By_ID('id_hidden_catc',	0);
 				}
 				else
 				{
@@ -372,6 +397,9 @@ if ($login->isUserLoggedIn() == true)
 				{
 					$('#id_category_d_table > tbody').empty();
 					$('#id_category_d_table > tbody').append(obje.html);
+					set_Element_Value_By_ID('id_catd_name',		'');
+					set_Element_Value_By_ID('id_catd_status',	0);
+					set_Element_Value_By_ID('id_hidden_catd',	0);
 
 				}
 				else
@@ -1044,42 +1072,6 @@ if ($login->isUserLoggedIn() == true)
 		echo	'<div class="container box has-background-light">';
 
 
-/*
-
-$page_form	=	'
-
-<div class="columns is-mobile">
-	<div class="column is-narrow">
-		<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>
-	</div>
-	<div class="column is-fullwidth">
-		<div class="field is-narrow">
-			<div class="control">
-				<div class="select is-fullwidth">
-					<select id="id_company">
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>';
-
-
-				// The menu!
-				echo '<nav class="level">
-
-					<!-- Left side -->
-					<div class="level-left">
-
-					<div class="level-item">
-				' . $page_form . '
-					</div>
-
-					</div>
-
-				</nav>';
-
-*/
 
 	$top_menu	=	'';
 
