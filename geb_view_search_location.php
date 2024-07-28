@@ -190,10 +190,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		//	Warehouse code set for the operator is in the session. Can be changed by the admin in the USERS tab
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
-		$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
-
 
 
 		$product_id		=	0;	// for stock query of the product

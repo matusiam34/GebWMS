@@ -60,7 +60,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);		// this should be a number
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 
 /*
 		//	Simple way to keep !Admins out of the game!

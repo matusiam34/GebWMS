@@ -10,8 +10,13 @@ $login = new Login();
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true)
 {    
+
+
 	// load the supporting functions....
 	require_once('lib_system.php');
+
+
+
 
 ?>
 
@@ -292,33 +297,48 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				// Basic tool to manage companies!
-				if (is_it_enabled($_SESSION['menu_adm_company']))
+				//	Basic tool to manage companies!
+				//	Only show this if the user is the admin + has the access level toggled!
+				if	($user_company_uid == 0)
 				{
-					$company_link		=	"location.href='geb_view_adm_companies.php'";
 
-					echo	'<div class="field">
-								<div class="control">
-									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $company_link . '">' . $mylang['companies'] . '</a>
-								</div>
-							</div>';
+					if	(is_it_enabled($_SESSION['menu_adm_company']))
+					{
+						$company_link		=	"location.href='geb_view_adm_companies.php'";
+
+						echo	'<div class="field">
+									<div class="control">
+										<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $company_link . '">' . $mylang['companies'] . '</a>
+									</div>
+								</div>';
+					}
+
+				}
+
+				//	Basic tool to manage warehouses!
+				//	Only show this if the user is the admin + has the access level toggled!
+				if	($user_company_uid == 0)
+				{
+
+					if (is_it_enabled($_SESSION['menu_adm_warehouse']))
+					{
+						$warehouses_link		=	"location.href='geb_view_adm_warehouses.php'";
+
+						echo	'<div class="field">
+									<div class="control">
+										<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouses_link . '">' . $mylang['warehouses'] . '</a>
+									</div>
+								</div>';
+					}
+
 				}
 
 
-
-				if (is_it_enabled($_SESSION['menu_adm_warehouse']))
-				{
-					$warehouses_link		=	"location.href='geb_view_adm_warehouses.php'";
-
-					echo	'<div class="field">
-								<div class="control">
-									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $warehouses_link . '">' . $mylang['warehouses'] . '</a>
-								</div>
-							</div>';
-				}
-
-
-
+				//	Locations... Hmmm... The main system admin can obviously manage locations... but for now the 
+				//	admin of company X can also manage their locations... But since GebWMS is more of a warehouse share
+				//	system for another company I am not sure if I want to give someone such amount of power... unless... 
+				//	I limit what they can edit aka Location barcode and name etc but allow them to change what the location type
+				//	is and what is the max qty etc etc
 				if (is_it_enabled($_SESSION['menu_adm_warehouse_loc']))
 				{
 					$warehouse_locations_link		=	"location.href='geb_view_adm_locations.php'";
@@ -332,7 +352,8 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				// Basic user management + Access Control tool
+				//	Basic user management + Access Control tool.
+				//	This probably can be allowed for the big boss admin and specific business managers!
 				if (is_it_enabled($_SESSION['menu_adm_users']))
 				{
 					$users_link		=	"location.href='geb_view_adm_users.php'";

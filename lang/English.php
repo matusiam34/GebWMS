@@ -51,8 +51,8 @@ $mylang = array(
 'product_loc_nt_compatible'	=>	'Product not compatible with location type!',
 
 
-'products_found_with_the_same_barcode'		=>	'Products founds with the same barcode!',
-'location_found_with_the_same_barcode'		=>	'Locations founds with the same barcode!',
+'products_found_with_the_same_barcode'		=>	'Products found with the same barcode!',
+'location_found_with_the_same_barcode'		=>	'Locations found with the same barcode!',
 'insufficient_space_available'				=>	'Insufficient space available!',
 
 

@@ -9,6 +9,35 @@
 
 
 
+
+//
+//	Very important since this is used across the entire system!
+//
+//	27/07/2024:
+//
+//	Maybe do some checks to make sure that nobody is messing around with the IDs. Basic stuff like making sure it is not < 0
+//	Totally something to think about in the future!
+//
+//
+//	Get the company of the currently logged in user!
+//
+$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
+//
+//	This is the warehouse set!
+//
+$user_warehouse_uid	=	leave_numbers_only($_SESSION['user_warehouse']);
+
+
+
+
+
+
+
+
+
+
+
 //	20/05/2023:	
 
 
@@ -47,8 +76,10 @@ $date_display_style	=	0;		//	Default is GebWMS style = 	25/11/2022 at 18:04:33
 
 
 //	Global settings for the min lenght of fields!
-define('min_product_len', 4);
+define('min_product_len', 4);			//	Product code / name has to be at least this long! 0 is not an option as things will go south!
 define('min_product_barcode_len', 4);	//	Applies to both each and case barcode! Had two (each and case) but it is not needed really.
+										//	Introducing more complexity to the system without a good reason is not a good idea!
+
 //	needs fixing!!
 define('min_each_barcode_len', 4);
 define('min_case_barcode_len', 4);
@@ -60,8 +91,9 @@ define('each_barcode_alphanumeric', 0);		//	0:	Each barcode is numbers only!	1:	
 define('case_barcode_alphanumeric', 0);		//	0:	Case barcode is numbers only!	1:	Alphanumeric:	BAR57072 allowed!
 
 
-//	A min location barcode?? Go with 4 at least...
-define('min_location_barcode_len', 4);
+//	Warehouse location min character lenght to be at least 6 characters. This allows for 100k locations even if you think at the moment
+//	that you do not need it, UNLESS you know you will never need it. Keep in mind the IPv4 range history :)
+define('min_location_barcode_len', 6);
 
 
 //	Cancelled for now
@@ -542,170 +574,218 @@ function magic_product_and_category_filter_chk($location_arr, $product_data, $pr
 
 //
 //
-//	Provide a barcode and get an error code if the product does not meet certain criteria!
-//	Will be used in many places in GebWMS
+//	Get the product details based on the barcode. Also takes into account the company ID!
+//	Keep in mind that GebWMS supports several companies to exist in one system!
+//	Trying to keep the system as modular as possible so that making changes and adding 
+//	new features is rather pain free!
 //
 //
 
-//function get_product_data_via_barcode($db, $product_barcode, $product_qty)
-function get_product_data_via_barcode($db, $product_barcode)
+function get_product_data_via_barcode($db, $product_barcode, $company_uid)
 {
 
     global $mylang;
 
-	$msg				=	'';			//	An error message typically!
+
 	$control			=	666;		//	0 = all good, anything else means an error occured!
+	$msg				=	'';			//	An error message typically!
 	$result				=	array();	//	the final array!
 	$product_arr		=	array();	//	all product details will be stored here from the SQL!
 
 	$mimic				=	0;			//	Not a MIMIC by default! 1 = MIMIC!
-	//$product_final_qty	=	0;			//	0 by default! The final quantity that will be INSERTED / UPDATED!
-	$product_unit		=	0;			//	Wrong! Has to be at least 1 (each) or 3 (case), 0 by default to show it it BAD!
+	//$product_final_qty	=	0;		//	0 by default! The final quantity that will be INSERTED / UPDATED!
+	$product_unit		=	0;			//	Wrong! Has to be at least 1 (each) or 3 (case), 0 by default to show it is BAD!
 
 
-	$sql	=	'
+	//	Before any SQL is done make sure to check the input data to be at least what I am expecting!
 
-		SELECT
-
-		prod_pkey,
-		prod_category_a,
-		prod_category_b,
-		prod_category_c,
-		prod_category_d,
-		prod_mimic,
-		prod_each_barcode,
-		prod_each_barcode_mimic,
-		prod_case_barcode,
-		prod_case_barcode_mimic,
-		prod_case_qty,
-		prod_case_qty_mimic
-
-		FROM 
-
-		geb_product
-
-		WHERE
-
-		prod_each_barcode = :sprod_each_bar OR prod_case_barcode = :sprod_case_bar
-
-		OR
-
-		CASE
-			WHEN prod_mimic = 1 THEN ((prod_each_barcode_mimic = :smimic_bar) OR (prod_case_barcode_mimic = :smimic_bar))
-		END;
-
-		AND
-		
-		prod_disabled = 0
-
-
-	';
+	$input_checks	=	243;			//	No joy!
 
 
 
-	if ($stmt = $db->prepare($sql))
+	if (strlen($product_barcode) < min_product_len)	//	Set io lib_system
 	{
-
-		$stmt->bindValue(':sprod_each_bar',		$product_barcode,	PDO::PARAM_STR);
-		$stmt->bindValue(':sprod_case_bar',		$product_barcode,	PDO::PARAM_STR);
-		$stmt->bindValue(':smimic_bar',			$product_barcode,	PDO::PARAM_STR);
-
-		$stmt->execute();
-
-
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-		{
-			$product_arr[]	=	$row;
-		}
-
-
-		//	Only process the product if ONLY 1 is returned! If > 1 means that barcodes are a mess!!
-		//	That would require the Admin to fix the duplicates!!!
-		if (count($product_arr) == 1)
-		{
-
-			if		(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
-			{
-				$product_unit		=	1;
-				//$product_final_qty	=	$product_qty;
-			}
-			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
-			{
-				$product_unit		=	1;
-				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
-				//$product_final_qty	=	$product_qty;
-				$mimic				=	1;	//	Totally a mimic product using the mimic each barcode!
-			}
-			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
-			{
-				$product_unit		=	3;
-				//	Always in CASES and describes the total amount that will be INSERTED / UPDATED in the location!
-				//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty']) * $product_qty;		//	Normal case qty!
-				//$product_final_qty	=	$product_qty;		//	Normal case qty! We now use actual numbers of EACHES or CASES AND NOT all EACHES!
-			}
-			elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
-			{
-				$product_unit		=	3;
-				//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
-				//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
-				$mimic				=	1;	//	Totally a mimic product using the mimic case barcode and new case qty!
-			}
-
-
-		}
-
-
-		//	Note:	Maybe check if the product_qty provided is not 0?
-
-		//
-		//	Do some checks here!
-		//
-
-		if
-		(
-			(count($product_arr) == 0)
-		)
-		{
-			//	No product found!
-			$control	=	107203;
-			$msg		=	$mylang['product_not_found'];
-		}
-		elseif (count($product_arr) > 1)
-		{
-			//	Two or more products found with the same barcode... Needs to be fixed ASAP by the Admin!
-			$control	=	107203;
-			$msg		=	$mylang['products_found_with_the_same_barcode'];
-		}
-
-//		elseif ($product_final_qty == 0)
-//		{
-			//	The final qty can't be 0 = ERR somewhere!
-//			$control	=	107203;
-//			$msg		=	$mylang['products_found_with_the_same_barcode'];
-//		}
-
-		elseif ($product_unit == 0)
-		{
-			//	The product unit can't be 0 = ERR somewhere!
-			//	Basically the scanned product is neither a case or an each! Big boo boo!
-			$control	=	107203;
-			$msg		=	$mylang['unit_mismatch'];
-		}
-		else
-		{
-			//	Seems like all checks are a-Ok if you got here!
-			$control	=	0;
-		}
-
-
-
+		// Product barcode doesn't meet the length requirements! 
+		$control	=	107301;
+		$msg		=	$mylang['barcode_too_short'];		
+	}
+	else if (is_numeric($product_barcode) == false)
+	{
+		// Product barcode is not numeric! Abort!
+		$control	=	107302;
+		$msg		=	$mylang['invalid_barcode'];
 	}
 	else
 	{
-		//	Something did not go well!
-		$control	=	667;
+		// Success! All checks are good so far!
+		$input_checks = 0;
 	}
 
+
+	if ($input_checks == 0)
+	{
+
+
+
+		$sql	=	'
+
+			SELECT
+
+				prod_code,
+				prod_desc,
+				prod_pkey,
+				prod_category_a,
+				prod_category_b,
+				prod_category_c,
+				prod_category_d,
+				prod_mimic,
+				prod_each_barcode,
+				prod_each_barcode_mimic,
+				prod_case_barcode,
+				prod_case_barcode_mimic,
+				prod_case_qty,
+				prod_case_qty_mimic
+
+			FROM 
+
+				geb_product
+
+			WHERE
+
+
+			(
+				prod_each_barcode = :sprod_each_bar
+				
+				OR
+				
+				prod_case_barcode = :sprod_case_bar
+				
+				OR
+				
+				(prod_mimic = 1 AND (prod_each_barcode_mimic = :smimic_bar OR prod_case_barcode_mimic = :smimic_bar))
+			)
+
+
+			AND	prod_disabled = 0
+
+			AND prod_owner = :sprod_owner
+
+
+		';
+
+
+
+		if ($stmt = $db->prepare($sql))
+		{
+
+			$stmt->bindValue(':sprod_each_bar',		$product_barcode,	PDO::PARAM_STR);
+			$stmt->bindValue(':sprod_case_bar',		$product_barcode,	PDO::PARAM_STR);
+			$stmt->bindValue(':smimic_bar',			$product_barcode,	PDO::PARAM_STR);
+			$stmt->bindValue(':sprod_owner',		$company_uid	,	PDO::PARAM_INT);
+
+			$stmt->execute();
+
+
+			while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+			{
+				$product_arr[]	=	$row;
+			}
+
+
+			//	Only process the product if ONLY 1 is returned! If > 1 means that barcodes are a mess!!
+			//	That would require the Admin to fix the duplicates!!!
+			if (count($product_arr) == 1)
+			{
+
+				if		(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode'])) === 0 )
+				{
+					$product_unit		=	1;
+					//$product_final_qty	=	$product_qty;
+				}
+				elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_each_barcode_mimic'])) === 0 )
+				{
+					$product_unit		=	1;
+					//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+					//$product_final_qty	=	$product_qty;
+					$mimic				=	1;	//	Totally a mimic product using the mimic each barcode!
+				}
+				elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode'])) === 0 )
+				{
+					$product_unit		=	3;
+					//	Always in CASES and describes the total amount that will be INSERTED / UPDATED in the location!
+					//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty']) * $product_qty;		//	Normal case qty!
+					//$product_final_qty	=	$product_qty;		//	Normal case qty! We now use actual numbers of EACHES or CASES AND NOT all EACHES!
+				}
+				elseif	(strcmp($product_barcode, trim($product_arr[0]['prod_case_barcode_mimic'])) === 0 )
+				{
+					$product_unit		=	3;
+					//	Always in EACH and describes the total amount that will be INSERTED / UPDATED in the location!
+					//$product_final_qty	=	leave_numbers_only($product_arr[0]['prod_case_qty_mimic']) * $product_qty;	//	Mimic case qty!
+					$mimic				=	1;	//	Totally a mimic product using the mimic case barcode and new case qty!
+				}
+
+
+			}
+
+
+			//	Note:	Maybe check if the product_qty provided is not 0?
+
+			//
+			//	Do some checks here!
+			//
+
+			if
+			(
+				(count($product_arr) == 0)
+			)
+			{
+				//	No product found!
+				$control	=	107203;
+				$msg		=	$mylang['product_not_found'];
+			}
+			elseif (count($product_arr) > 1)
+			{
+				//	Two or more products found with the same barcode... Needs to be fixed ASAP by the Admin!
+				$control	=	107203;
+				$msg		=	$mylang['products_found_with_the_same_barcode'];
+			}
+
+	//		elseif ($product_final_qty == 0)
+	//		{
+				//	The final qty can't be 0 = ERR somewhere!
+	//			$control	=	107203;
+	//			$msg		=	$mylang['products_found_with_the_same_barcode'];
+	//		}
+
+
+			//	I probably should rewrite this to check for all of the system supported unit types 
+			//	and throw an error when the provided figure is not in that array!
+			elseif ($product_unit == 0)
+			{
+				//	The product unit can't be 0 = ERR somewhere!
+				//	Basically the scanned product is neither a case or an each! Big boo boo!
+				$control	=	107203;
+				$msg		=	$mylang['unit_mismatch'];
+			}
+			else
+			{
+				//	Seems like all checks are a-Ok if you got here!
+				$control	=	0;
+			}
+
+
+
+		}
+		else
+		{
+			//	Something did not go well!
+			$control	=	667;
+		}
+
+
+
+
+	}	//	if ($input_checks == 0) END
 
 
 	$result['control']			=	$control;
@@ -735,6 +815,9 @@ function get_location_data_via_barcode($db, $location_barcode)
     global $mylang;
 	global $loc_function_codes_arr;
 	global $loc_type_codes_arr;
+
+	global $user_company_uid;
+	global $user_warehouse_uid;
 
 
 	$msg			=	'';			//	An error message typically!
@@ -1079,7 +1162,7 @@ function insert_product_2_location($db, $location_uid, $product_uid, $product_un
 //	1	:	perform the same checks but take action and make changes to the DB! The do-er!!!
 //
 //
-function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product_qty)
+function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product_qty, $company_uid)
 {
 
     global $mylang;
@@ -1158,7 +1241,7 @@ function do_magic_IN($dryrun, $db, $product_barcode, $location_barcode, $product
 		//	All of that information based on the product barcode! This will also run checks if 
 		//	duplicate barcodes exists etc
 //		$product_data	=	get_product_data_via_barcode($db, $product_barcode, $product_qty);
-		$product_data	=	get_product_data_via_barcode($db, $product_barcode);
+		$product_data	=	get_product_data_via_barcode($db, $product_barcode, $company_uid);
 
 		//	If control is == 0 that means that I can move to the next stage!
 		//	Otherwise assign the $message_id and $message2op variables!

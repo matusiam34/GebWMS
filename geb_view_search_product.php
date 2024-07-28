@@ -37,11 +37,9 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
-		//	Get the company of the currently logged in user!
 		//	I should only show products that are associated with the company that the user is in.
 		//	The warehouse allocation should be only showing stock of product that is in the warehouse
 		//	that the user is assigned to.
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 
 
 ?>

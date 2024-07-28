@@ -552,12 +552,51 @@ if ($login->isUserLoggedIn() == true)
 
 <?php
 
-		// A little gap at the top to make it look better a notch.
-		echo '<div class="blank_space_12px"></div>';
+	// A little gap at the top to make it look better a notch.
+	echo '<div class="blank_space_12px"></div>';
 
-		echo '<section class="section is-paddingless">';
-		echo	'<div class="container box has-background-light">';
+	echo '<section class="section is-paddingless">';
+	echo	'<div class="container box has-background-light">';
 
+
+	//	"Menu" here
+	$top_menu	=	'';
+
+	$top_menu	.=	'<div class="columns">';
+	$top_menu	.=	'<div class="column is-4">';
+	$menu_link	=	"'index.php'";
+	$top_menu	.=	'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
+	$top_menu	.=	'</div>';
+/*
+	$top_menu	.=	'<div class="column is-4">';
+
+
+	$top_menu	.=	'<div class="columns is-mobile">
+	<div class="column is-fullwidth">
+		<div class="field is-narrow">
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="id_company">
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>';
+
+
+
+
+	$top_menu	.=	'</div>';
+*/
+	$top_menu	.=	'</div>';
+
+	echo $top_menu;
+
+
+
+
+/*
 
 				$page_form	=	'<p class="control">';
 				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
@@ -578,7 +617,7 @@ if ($login->isUserLoggedIn() == true)
 
 				</nav>';
 
-
+*/
 
 
 	//	The user table + details + update button?

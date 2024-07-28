@@ -41,10 +41,6 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
-		//	Get the company of the currently logged in user!
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
-
-
 
 ?>
 

@@ -25,10 +25,6 @@ if ($login->isUserLoggedIn() == true)
 	{
 
 
-		//	Get the company of the currently logged in user!
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
-
-
 		// needs a db connection...
 		require_once('lib_db_conn.php');
 
@@ -645,21 +641,26 @@ if ($login->isUserLoggedIn() == true)
 <?php
 
 
-		// A little gap at the top to make it look better a notch.
-		echo '<div class="blank_space_12px"></div>';
+	// A little gap at the top to make it look better a notch.
+	echo '<div class="blank_space_12px"></div>';
 
-		echo '<section class="section is-paddingless">';
-		echo	'<div class="container box has-background-light">';
-
-
+	echo '<section class="section is-paddingless">';
+	echo	'<div class="container box has-background-light">';
 
 
-$page_form	=	'
+	//	"Menu" here
+	$top_menu	=	'';
 
-<div class="columns is-mobile">
-	<div class="column is-narrow">
-		<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>
-	</div>
+	$top_menu	.=	'<div class="columns">';
+	$top_menu	.=	'<div class="column is-4">';
+	$menu_link	=	"'index.php'";
+	$top_menu	.=	'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
+	$top_menu	.=	'</div>';
+
+	$top_menu	.=	'<div class="column is-4">';
+
+
+	$top_menu	.=	'<div class="columns is-mobile">
 	<div class="column is-fullwidth">
 		<div class="field is-narrow">
 			<div class="control">
@@ -673,6 +674,36 @@ $page_form	=	'
 </div>';
 
 
+
+
+	$top_menu	.=	'</div>';
+
+	$top_menu	.=	'</div>';
+
+	echo $top_menu;
+
+
+/*
+
+$page_form	=	'
+
+<div class="columns is-mobile">
+	<div class="column is-fullwidth">
+		<div class="field is-narrow">
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select id="id_company">
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>';
+
+
+
+*/
+
 /*
 	//	DELETE
 
@@ -681,6 +712,8 @@ $page_form	=	'
 				$page_form	.=	'</p>';
 */
 
+
+/*
 				// The "menu"!
 				echo '<nav class="level">
 
@@ -694,7 +727,7 @@ $page_form	=	'
 					</div>
 
 				</nav>';
-
+*/
 
 
 

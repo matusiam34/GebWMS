@@ -20,7 +20,6 @@ if ($login->isUserLoggedIn() == true)
 	if (is_it_enabled($_SESSION['menu_adm_category']))
 	{
 
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
 
 
 ?>
@@ -1078,9 +1077,8 @@ if ($login->isUserLoggedIn() == true)
 
 	$top_menu	.=	'<div class="columns">';
 	$top_menu	.=	'<div class="column is-3">';
-
-	$top_menu	.=	'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
-
+	$menu_link	=	"'index.php'";
+	$top_menu	.=	'<button class="button admin_class iconHome" style="width:50px;" onClick="open_link(' . $menu_link . ');"></button>';
 	$top_menu	.=	'</div>';
 
 

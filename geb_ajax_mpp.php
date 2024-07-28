@@ -473,7 +473,6 @@ if ($login->isUserLoggedIn() == true)
 
 						geb_location.loc_barcode = :sloc_barcode
 
-
 						ORDER BY loc_code
 
 					';
