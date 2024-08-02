@@ -615,7 +615,7 @@ if ($login->isUserLoggedIn() == true)
 							}
 							else
 							{
-								//	Entry does not exist = add it
+								//	Entry does not exist so add it
 								$location_totals_arr[$loc_function]['E']	=	$location_stock_qty;
 							}
 

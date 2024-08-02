@@ -8,7 +8,6 @@ $mylang = array(
 'min_qty'					=>	'Min Qty',
 'max_qty'					=>	'Max Qty',
 
-
 'each'						=>	'EACH',
 'case'						=>	'CASE',
 

@@ -217,7 +217,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		//	Commit the changes that the operator wasnt to do. Obviouslly will run the checks again before performing the
+		//	Commit the changes that the operator wants to do. Obviouslly will run the checks again before performing the
 		//	changes to the database!
 		function confirm_action()
 		{
@@ -240,7 +240,6 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-
 					empty_Element_By_ID('product_details');
 					empty_Element_By_ID('location_details');
 					empty_Element_By_ID('error_details');

@@ -251,7 +251,7 @@ if ($login->isUserLoggedIn() == true)
 				//	1	:	check if everything is ok and JUST insert / update etc It will give user an error
 				//			if there are issues with the action he is trying to execute!
 
-				$outcome				=	do_magic_IN(0, $db, $product_barcode, $location_barcode, $product_qty, $user_company_uid);
+				$outcome				=	do_magic_IN(0, $db, $product_barcode, $location_barcode, $product_qty, $user_company_uid, $user_warehouse_uid);
 
 				$message_id				=	$outcome['control'];
 				$message2op				=	$outcome['msg'];
@@ -378,7 +378,7 @@ if ($login->isUserLoggedIn() == true)
 				//	1	:	check if everything is ok and JUST insert / update etc It will give user an error
 				//			if there are issues with the action he is trying to execute!
 
-				$outcome				=	do_magic_IN(1, $db, $product_barcode, $location_barcode, $product_qty, $user_company_uid);
+				$outcome				=	do_magic_IN(1, $db, $product_barcode, $location_barcode, $product_qty, $user_company_uid, $user_warehouse_uid);
 
 				$message_id				=	$outcome['control'];
 				$message2op				=	$outcome['msg'];

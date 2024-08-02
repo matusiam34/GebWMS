@@ -8,7 +8,6 @@ $mylang = array(
 'min_qty'					=>	'Minimalna ilość',
 'max_qty'					=>	'Maksymalna ilość',
 
-
 'each'						=>	'SZTUKA',//'JEDNOSTEK',
 'case'						=>	'PACZKA',//'SKRZYŃ',	//	Paczka!?
 
