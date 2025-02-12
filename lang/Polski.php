@@ -8,7 +8,7 @@ $mylang = array(
 'min_qty'					=>	'Minimalna ilość',
 'max_qty'					=>	'Maksymalna ilość',
 
-'each'						=>	'SZTUKA',//'JEDNOSTEK',
+'each'						=>	'SZTUK',//'JEDNOSTEK',
 'case'						=>	'PACZKA',//'SKRZYŃ',	//	Paczka!?
 
 'single'					=>	'Pojedynczy',
@@ -33,6 +33,8 @@ $mylang = array(
 'no'						=>	'Nie',
 'yes'						=>	'Tak',
 
+'admin'						=>	'Admin',
+
 'server_error'				=>	'Błąd serwera! Skontaktuj się z administratorem systemu GebWMS!',
 'barcode_already_exists'	=>	'Ten kod kreskowy już istnieje!',
 'invalid_barcode'			=>	'Nieprawidłowy kod kreskowy!',
@@ -44,6 +46,7 @@ $mylang = array(
 'unit_mismatch'				=>	'Niedopasowanie jednostek!',
 'category_mismatch'			=>	'Niezgodność kategorii!',
 'location_full'				=>	'Lokalizacja pełna!',
+'location_empty'			=>	'Lokalizacja pusta!',
 'location_blocked'			=>	'Lokalizacja zablokowana!',
 'location_disabled'			=>	'Lokalizacja dezaktywowana!',
 'location_not_found'		=>	'Lokalizacja nie znaleziona!',
@@ -64,6 +67,8 @@ $mylang = array(
 'language'					=>	'Język',
 'type'						=>	'Typ',
 'product'					=>	'Produkt',
+'product_line'				=>	'Linia Produktów',
+'stock_keeping_unit'		=>	'Jednostka Magazynowa',
 'to_location'				=>	'Do lokalizacji',
 'qty'						=>	'Ilość',
 'when'						=>	'Kiedy',
@@ -85,6 +90,15 @@ $mylang = array(
 'case_barcode'				=>	'PACZKA Kod kreskowy',//'SKRZYŃ Kod Kreskowy',
 'case_qty'					=>	'PACZKA Ilość',//'SKRZYŃ Ilość',
 'pallet_qty'				=>	'PALET Ilość',
+
+
+'count'						=>	'Liczba',
+'weight'					=>	'Waga',
+'volume'					=>	'Objętość',
+
+'measurement_type'			=>	'Typ miary',
+
+
 'note'						=>	'Notatka',
 'location_details'			=>	'Szczegóły lokalizacji',
 'order_details'				=>	'Szczegóły zamówienia',
@@ -113,10 +127,14 @@ $mylang = array(
 'shipping_address'			=>	'Adres wysyłki',
 'billing_address'			=>	'Adres rozliczeniowy',
 'magic_product'				=>	'Magiczny Produkt',
+'set_password'				=>	'Ustaw hasło',
+'enter_new_password'		=>	'Wprowadź nowe hasło',
 
 
 //	Main menu Search lines
 'product_code'				=>	'Kod produktu',
+'sku_code'					=>	'Kod SKU',
+'group_code'				=>	'Kod grupowy',
 'location_barcode'			=>	'Kod lokalizacji',
 'order_number'				=>	'Numer zamówienia',
 'product_barcode'			=>	'Kod kreskowy produktu',
@@ -133,6 +151,9 @@ $mylang = array(
 'warehouses'				=>	'Magazyny',
 'warehouse_locations'		=>	'Lokalizacje w Magazynach',
 'categories'				=>	'Kategorie',
+'package_unit'				=>	'Jednostka opakowania',
+'uom'						=>	'Jednostka Miary',	//	most likely obsolete...
+'measurement_unit'			=>	'Jednostka Miary',
 'my_account'				=>	'Moje Konto',
 'pick_order'				=>	'Spikuj zamówienie',
 
@@ -148,22 +169,31 @@ $mylang = array(
 
 
 //	Error Messages and Messages
-'a_OK'						=>	'Wszystko OK!',
-'error'						=>	'Błąd',
-'sql_error'					=>	'Błąd SQL!',
-'could_not_get_data'		=>	'Nie można uzyskać danych!',
-'could_not_update'			=>	'Nie można zaktualizować!',
-'user_uid_incorrect'		=>	'UID użytkownika jest nieprawidłowy!',
-'permissions_error'			=>	'Błąd uprawnień!',
-'warehouse_already_exists'	=>	'Magazyn już istnieje!',
-'company_already_exists'	=>	'Firma już istnieje!',
-'user_already_exists'		=>	'Użytkownik już istnieje!',
-'name_too_short'			=>	'Nazwa za krótka!',
-'barcode_too_short'			=>	'Kod kreskowy za krótki!',
-'identical_barcodes'		=>	'Identyczne kody kreskowe!',
-'incorrect_uid'				=>	'Niepoprawny UID!',
-'incorrect_qty'				=>	'Niepoprawna ilość!',
-'invalid_qty'				=>	'Błędna ilość!',
+'a_OK'							=>	'Wszystko OK!',
+'error'							=>	'Błąd',
+'sql_error'						=>	'Błąd SQL!',
+'could_not_get_data'			=>	'Nie można uzyskać danych!',
+'could_not_update'				=>	'Nie można zaktualizować!',
+'user_uid_incorrect'			=>	'UID użytkownika jest nieprawidłowy!',
+'permissions_error'				=>	'Błąd uprawnień!',
+'warehouse_already_exists'		=>	'Magazyn już istnieje!',
+'uom_already_exists'			=>	'Jednostka miary już istnieje!',
+'package_unit_already_exists'	=>	'Jednostka opakowania już istnieje!',
+'company_already_exists'		=>	'Firma już istnieje!',
+'user_already_exists'			=>	'Użytkownik już istnieje!',
+'name_too_short'				=>	'Nazwa za krótka!',
+'barcode_too_short'				=>	'Kod kreskowy za krótki!',
+'password_too_short'			=>	'Hasło za krótkie!',
+'identical_barcodes'			=>	'Identyczne kody kreskowe!',
+'incorrect_uid'					=>	'Niepoprawny UID!',
+'incorrect_qty'					=>	'Niepoprawna ilość!',
+'invalid_qty'					=>	'Błędna ilość!',
+'nothing_selected'				=>	'Wybierz coś!',
+'select_warehouse'				=>	'Wybierz magazyn!',
+'select_uom'					=>	'Wybierz jednostke miary!',
+'select_package_unit'			=>	'Wybierz jednostka opakowania!',
+'select_user'					=>	'Wybierz użytkownika!',
+'conv_factor'					=>	'Współczynnik konwersji',
 
 
 );

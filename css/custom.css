@@ -175,9 +175,10 @@
 
 /*	red: same as admin_class; abort,cancel buttons, red divs with text of errors etc	*/
 .red_class {
-	background-color: #ef5350;
+	background-color: #ef5350 !important;
 	color: white;
 }
+
 
 /*  Notifications use this for errors!  */
 .red_modal_class {
@@ -483,4 +484,3 @@
 		background-repeat: no-repeat;
         background-position: center;
 	}
-

@@ -33,6 +33,8 @@ $mylang = array(
 'no'						=>	'No',
 'yes'						=>	'Yes',
 
+'admin'						=>	'Admin',
+
 'server_error'				=>	'Server error! Contact GebWMS system administrator!',
 'barcode_already_exists'	=>	'Barcode already exists!',
 'invalid_barcode'			=>	'Invalid barcode!',
@@ -44,6 +46,7 @@ $mylang = array(
 'unit_mismatch'				=>	'Unit mismatch!',
 'category_mismatch'			=>	'Category mismatch!',
 'location_full'				=>	'Location full!',
+'location_empty'			=>	'Location empty!',
 'location_blocked'			=>	'Location blocked!',
 'location_disabled'			=>	'Location disabled!',
 'location_not_found'		=>	'Location not found!',
@@ -65,6 +68,8 @@ $mylang = array(
 'language'					=>	'Language',
 'type'						=>	'Type',
 'product'					=>	'Product',
+'product_line'				=>	'Product Line',
+'stock_keeping_unit'		=>	'Stock Keeping Unit',
 'to_location'				=>	'To location',
 'qty'						=>	'Qty',
 'when'						=>	'When',
@@ -88,6 +93,15 @@ $mylang = array(
 'case_barcode'				=>	'CASE Barcode',
 'case_qty'					=>	'CASE Qty',
 'pallet_qty'				=>	'PALLET Qty',
+
+
+'count'						=>	'Count',
+'weight'					=>	'Weight',
+'volume'					=>	'Volume',
+
+'measurement_type'			=>	'Measurement type',
+
+
 'note'						=>	'Note',
 'location_details'			=>	'Location details',
 'order_details'				=>	'Order details',
@@ -116,10 +130,14 @@ $mylang = array(
 'shipping_address'			=>	'Shipping address',
 'billing_address'			=>	'Billing address',
 'magic_product'				=>	'Magic Product',
+'set_password'				=>	'Set password',
+'enter_new_password'		=>	'Enter new password',
 
 
 //	Main menu Search lines
 'product_code'				=>	'Product code',
+'sku_code'					=>	'SKU code',
+'group_code'				=>	'Group code',
 'location_barcode'			=>	'Location barcode',
 'order_number'				=>	'Order number',
 'product_barcode'			=>	'Product barcode',
@@ -136,6 +154,9 @@ $mylang = array(
 'warehouses'				=>	'Warehouses',
 'warehouse_locations'		=>	'Warehouse Locations',
 'categories'				=>	'Categories',
+'package_unit'				=>	'Package Unit',
+'uom'						=>	'Unit of Measure',	//	probably will delete this
+'measurement_unit'			=>	'Measurement Unit',
 'my_account'				=>	'My Account',
 'pick_order'				=>	'Pick Order',
 
@@ -151,22 +172,31 @@ $mylang = array(
 
 
 //	Error Messages and Messages
-'a_OK'						=>	'a-OK',
-'error'						=>	'Error',
-'sql_error'					=>	'SQL Error!',
-'could_not_get_data'		=>	'Could not get data!',
-'could_not_update'			=>	'Could not update!',
-'user_uid_incorrect'		=>	'User UID incorrect!',
-'permissions_error'			=>	'Permissions error!',
-'warehouse_already_exists'	=>	'Warehouse already exists!',
-'company_already_exists'	=>	'Company already exists!',
-'user_already_exists'		=>	'User already exists!',
-'name_too_short'			=>	'Name too short!',
-'barcode_too_short'			=>	'Barcode too short!',
-'identical_barcodes'		=>	'Identical barcodes!',
-'incorrect_uid'				=>	'Incorrect UID!',
-'incorrect_qty'				=>	'Incorrect qty!',
-'invalid_qty'				=>	'Invalid qty!',
+'a_OK'							=>	'a-OK',
+'error'							=>	'Error',
+'sql_error'						=>	'SQL Error!',
+'could_not_get_data'			=>	'Could not get data!',
+'could_not_update'				=>	'Could not update!',
+'user_uid_incorrect'			=>	'User UID incorrect!',
+'permissions_error'				=>	'Permissions error!',
+'warehouse_already_exists'		=>	'Warehouse already exists!',
+'uom_already_exists'			=>	'UOM already exists!',
+'package_unit_already_exists'	=>	'Package unit already exists!',
+'company_already_exists'		=>	'Company already exists!',
+'user_already_exists'			=>	'User already exists!',
+'name_too_short'				=>	'Name too short!',
+'barcode_too_short'				=>	'Barcode too short!',
+'password_too_short'			=>	'Password too short!',
+'identical_barcodes'			=>	'Identical barcodes!',
+'incorrect_uid'					=>	'Incorrect UID!',
+'incorrect_qty'					=>	'Incorrect qty!',
+'invalid_qty'					=>	'Invalid qty!',
+'nothing_selected'				=>	'Nothing selected!',
+'select_warehouse'				=>	'Select warehouse!',
+'select_uom'					=>	'Select UOM!',
+'select_package_unit'			=>	'Select package unit!',
+'select_user'					=>	'Select user!',
+'conv_factor'					=>	'Conversion factor',
 
 
 );

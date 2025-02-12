@@ -193,3 +193,42 @@
 		}
 
 
+		function highlightRowByDataId(selectedId, tableId)
+		{
+			// Remove highlight from all rows
+			//$(`#${tableId} tr`).removeClass('highlighted');
+			
+			// Find the row with the matching data-id and add the highlight class
+			$(`#${tableId} tr[data-id="${selectedId}"]`).addClass('highlighted');
+		}
+
+
+		function updateRow(selectedId, tableId, newValues)
+		{
+			// Find the row with the matching data-id
+			let row = $(`#${tableId} tr[data-id="${selectedId}"]`);
+			
+			// Loop through each cell and update its value
+			row.find('td').each(function(index)
+			{
+				$(this).text(newValues[index]);
+			});
+		}
+		
+		
+		function disableRowByDataId(selectedId, tableId)
+		{
+			// Find the row with the matching data-id and add the highlight class
+			//$(`#${tableId} tr[data-id="${selectedId}"]`).removeClass('highlighted');
+			$(`#${tableId} tr[data-id="${selectedId}"]`).addClass('red_class');
+		}
+
+
+		function enableRowByDataId(selectedId, tableId)
+		{
+			// Find the row with the matching data-id and add the highlight class
+			$(`#${tableId} tr[data-id="${selectedId}"]`).removeClass('red_class');
+			$(`#${tableId} tr[data-id="${selectedId}"]`).addClass('highlighted');
+		}
+		
+		

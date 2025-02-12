@@ -5,7 +5,7 @@
 //
 // Licensed under the MIT license: http://opensource.org/licenses/MIT
 //
-if(jQuery) (function($) {
+if (jQuery)(function ($) {
   'use strict';
 
   var modal;
@@ -37,63 +37,33 @@ if(jQuery) (function($) {
     cancelButton = $(options.cancelButton);
 
     // Add message
-    if(options.html)
-	{
-	
-		//	Different layout for different types of alert... This is all basic AH!
-		if (type === 'info')
-		{
-			modal.find('.alertable-message').html('<p class="alert_info_text_class has-text-dark"><br>' + message + '</p>');
-		}
-		else if (type === 'error')
-		{
-			modal.find('.alertable-message').html('<p class="alert_error_text_class">Err: ' + title + '<br><br>' + message + '</p>');
-		//	modal.find('.alertable-message').html('<p class="alert_error_text_class is-paddingless">Err: ' + title + '</p><div class="blank_space_10px is-paddingless"></div>' + '<p class="alert_error_text_class is-paddingless">' + message + '</p>');
-		}
-
-
-
-    }
-	else
-	{
+    if (options.html) {
+      if (type === 'info') {
+        modal.find('.alertable-message').html('<p class="alert_info_text_class has-text-dark"><br>' + message + '</p>');
+      } else if (type === 'error') {
+        modal.find('.alertable-message').html('<p class="alert_error_text_class">Err: ' + title + '<br><br>' + message + '</p>');
+      } else if (type === 'noButton') {
+        modal.find('.alertable-message').html('<p class="">' + message + '</p>');
+      }
+    } else {
       modal.find('.alertable-message').text(message);
     }
 
-
-
-
-
     // Add prompt
-    if(type === 'prompt') {
+    if (type === 'prompt') {
       modal.find('.alertable-prompt').html(options.prompt);
     } else {
       modal.find('.alertable-prompt').remove();
     }
 
-
-
-    //	Add buttons
-	//
-	//	Need the following styles:
-	//	-	Error	:	when stuff goes sideways (very red please)
-	//	-	Info	:	general user information popups like "Warehouse already exists" etc (blue themed?)
-	//
-    if(type === 'error')
-	{
-		$(modal).find('.alertable-buttons').append(errorOKbutton);
+    // Add buttons
+    if (type === 'error') {
+      $(modal).find('.alertable-buttons').append(errorOKbutton);
+    } else if (type === 'info') {
+      $(modal).find('.alertable-buttons').append(infoOKbutton);
+    } else if (type === 'noButton') {
+      $(modal).find('.alertable-buttons').remove(); // No buttons
     }
-	else if(type === 'info')
-	{
-		$(modal).find('.alertable-buttons').append(infoOKbutton);
-	}
-
-
-
-	
-	//$(modal).find('.alertable-buttons').append(type === 'alert' ? '' : cancelButton).append(okButton);
-
-
-
 
     // Add to container
     $(options.container).append(overlay).append(modal);
@@ -105,26 +75,21 @@ if(jQuery) (function($) {
     });
 
     // Set focus
-    if(type === 'prompt') {
-      // First input in the prompt
+    if (type === 'prompt') {
       $(modal).find('.alertable-prompt :input:first').focus();
-    } else {
-      // OK button
-      // Do not need the focus to be on the button at all
-	  //$(modal).find(':input[type="submit"]').focus();
     }
 
     // Watch for submit
-    $(modal).on('submit.alertable', function(event) {
+    $(modal).on('submit.alertable', function (event) {
       var i;
       var formData;
       var values = [];
 
       event.preventDefault();
 
-      if(type === 'prompt') {
+      if (type === 'prompt') {
         formData = $(modal).serializeArray();
-        for(i = 0; i < formData.length; i++) {
+        for (i = 0; i < formData.length; i++) {
           values[formData[i].name] = formData[i].value;
         }
       } else {
@@ -136,14 +101,14 @@ if(jQuery) (function($) {
     });
 
     // Watch for cancel
-    cancelButton.on('click.alertable', function() {
+    cancelButton.on('click.alertable', function () {
       hide(options);
       defer.reject();
     });
 
     // Cancel on escape
-    $(document).on('keydown.alertable', function(event) {
-      if(event.keyCode === 27) {
+    $(document).on('keydown.alertable', function (event) {
+      if (event.keyCode === 27) {
         event.preventDefault();
         hide(options);
         defer.reject();
@@ -151,8 +116,8 @@ if(jQuery) (function($) {
     });
 
     // Prevent focus from leaving the modal
-    $(document).on('focus.alertable', '*', function(event) {
-      if(!$(event.target).parents().is('.alertable')) {
+    $(document).on('focus.alertable', '*', function (event) {
+      if (!$(event.target).parents().is('.alertable')) {
         event.stopPropagation();
         event.target.blur();
         $(modal).find(':input:first').focus();
@@ -161,8 +126,6 @@ if(jQuery) (function($) {
 
     return defer.promise();
   }
-
-
 
   function hide(options) {
     // Hide it
@@ -180,38 +143,36 @@ if(jQuery) (function($) {
     activeElement.focus();
   }
 
-
-
   // Defaults
   $.alertable = {
     // Show an info dialog box
-    error: function(title ,message, options) {
+    error: function (title, message, options) {
       return show('error', title, message, options);
     },
 
-
-    info: function(title ,message, options) {
+    info: function (title, message, options) {
       return show('info', title, message, options);
     },
 
-
     // Show a confirmation
-    confirm: function(title ,message, options) {
+    confirm: function (title, message, options) {
       return show('confirm', title, message, options);
     },
 
-
     // Show a prompt
-    prompt: function(title ,message, options) {
+    prompt: function (title, message, options) {
       return show('prompt', title, message, options);
     },
 
-
+    // Show a modal with no buttons
+    noButton: function (title, message, options) {
+      return show('noButton', title, message, options);
+    },
 
     defaults: {
       // Preferences
       container: 'body',
-      html: true,	//	HTML is always enabled!
+      html: true, // HTML is always enabled!
 
       // Templates
       cancelButton: '<button class="alertable-cancel" type="button">Cancel</button>',
@@ -227,16 +188,12 @@ if(jQuery) (function($) {
         '</form>',
 
       // Hooks
-      hide: function() {
+      hide: function () {
         $(this.modal).add(this.overlay).fadeOut(50);
       },
-      show: function() {
+      show: function () {
         $(this.modal).add(this.overlay).fadeIn(50);
       }
     }
-
-
   };
- 
-
 })(jQuery);
