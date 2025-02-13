@@ -433,7 +433,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_packing_units();'>
+<body onLoad=''>
 
 
 <?php
@@ -527,6 +527,8 @@ $columns_html .= '</div>';
 		$prod_disabled		=	0;	// active!
 
 		$category_arr		=	array();	//	store all categories here!
+		$pu_arr				=	array();	//	store all package units!
+
 
 
 		if ($stmt = $db->prepare($sql))
@@ -557,22 +559,6 @@ $columns_html .= '</div>';
 
 			}
 
-
-/*
-	""	INTEGER,
-	"prodsku_prodm_pkey"	INTEGER DEFAULT 0,
-	"prodsku_owner"	INTEGER DEFAULT 0,
-	""	TEXT,
-	""	TEXT,
-	""	TEXT,
-	""	TEXT,
-	"prodsku_pu_pkey"	INTEGER DEFAULT 0,
-	"prodsku_category_a"	INTEGER DEFAULT 0,
-	"prodsku_category_b"	INTEGER DEFAULT 0,
-	"prodsku_category_c"	INTEGER DEFAULT 0,
-	"prodsku_category_d"	INTEGER DEFAULT 0,
-	"prodsku_disabled"	INTEGER DEFAULT 0,
-*/
 
 
 
@@ -660,8 +646,6 @@ $columns_html .= '</div>';
 					$category_D_options[$category['cat_d_pkey']] = $category['cat_d_name'];
 				}
 
-
-
 			}
 
 			$category_a_html	=	generate_select_options($category_A_options, leave_numbers_only($prod_category_a), $mylang['none']);
@@ -676,42 +660,22 @@ $columns_html .= '</div>';
 
 
 
+			//	Generate the HTML code for the package unit...
 
 
-			$columns_html	.=	'<div class="columns">';
-
-			$columns_html	.=	'<div class="column is-3">';
-
-/*
-
-			//	Get all active 
+			//	Here grab the live categories into one array!
 			$sql	=	'
 
 
 					SELECT
 
-					cat_a_pkey,
-					cat_a_name,
-					cat_b_pkey,
-					cat_b_name,
-					cat_b_a_level,
-					cat_c_pkey,
-					cat_c_name,
-					cat_c_b_level,
-					cat_d_pkey,
-					cat_d_name,
-					cat_d_c_level
+					*
 
-
-					FROM geb_category_a
-
-					LEFT JOIN geb_category_b ON geb_category_a.cat_a_pkey = geb_category_b.cat_b_a_level
-					LEFT JOIN geb_category_c ON geb_category_b.cat_b_pkey = geb_category_c.cat_c_b_level
-					LEFT JOIN geb_category_d ON geb_category_c.cat_c_pkey = geb_category_d.cat_d_c_level
+					FROM wms_pack_unit
 
 					WHERE
 					
-					cat_a_owner = :scat_a_owner
+					pu_owner = :scompany_owner
 
 			';
 
@@ -720,68 +684,36 @@ $columns_html .= '</div>';
 			if ($stmt = $db->prepare($sql))
 			{
 
-				$stmt->bindValue(':scat_a_owner',	$user_company_uid,		PDO::PARAM_INT);
+				$stmt->bindValue(':scompany_owner',	$user_company_uid,		PDO::PARAM_INT);
 				$stmt->execute();
 
 				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 				{
 					// drop it into the final array...
-					$category_arr[]	=	$row;
+					$pu_arr[]	=	$row;
 				}
 
 			}
 
 
-			//
-			//	Some AI Generated code here... Because I have asked for some help!
-			//
-			//	<AI>
-			//
 
-			// Generate HTML for Category A, B, C and D
-			$category_A_options = [];
-			$category_B_options = [];
-			$category_C_options = [];
-			$category_D_options = [];
+			$pu_options = [];
 
 			// Populate category options arrays
-			foreach ($category_arr as $category)
+			foreach ($pu_arr as $pu)
 			{
-
-				$category_A_options[$category['cat_a_pkey']] = $category['cat_a_name'];
-
-				// Check if the current category B is associated with the selected category A
-				if ($category['cat_b_a_level'] == $prod_category_a)
-				{
-					$category_B_options[$category['cat_b_pkey']] = $category['cat_b_name'];
-				}
-
-				// Check if the current category C is associated with the selected category B
-				if ($category['cat_c_b_level'] == $prod_category_b)
-				{
-					$category_C_options[$category['cat_c_pkey']] = $category['cat_c_name'];
-				}
-
-				// Check if the current category C is associated with the selected category B
-				if ($category['cat_d_c_level'] == $prod_category_c)
-				{
-					$category_D_options[$category['cat_d_pkey']] = $category['cat_d_name'];
-				}
-
-
-
+				$pu_options[$pu['pu_pkey']] = $pu['pu_code'];
 			}
 
-*/
 
-//			$package_units_list	=	generate_select_options($category_A_options, leave_numbers_only($prod_category_a), $mylang['none']);
-//			echo " NXNXN " . $package_units_list . " NXNXN ";
+			$package_unit_html	=	generate_select_options($pu_options, leave_numbers_only($prod_pu), '');
 
 
 
-			//
-			//	</AI>
-			//
+
+			$columns_html	.=	'<div class="columns">';
+
+			$columns_html	.=	'<div class="column is-3">';
 
 
 			$details_html	=	'
@@ -819,12 +751,13 @@ $columns_html .= '</div>';
 	<div class="field is-narrow">
 	  <div class="control">
 		<div class="select is-fullwidth">
-			<select id="id_package_unit" name="id_package_unit">
+			<select id="id_package_unit" name="id_package_unit">' . $package_unit_html . '
 			</select>
 		</div>
 	  </div>
 	</div>
 </div>
+
 
 
 <div class="field" style="'. $box_size_str .'">
