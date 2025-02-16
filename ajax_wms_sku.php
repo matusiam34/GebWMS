@@ -84,7 +84,7 @@ if ($login->isUserLoggedIn() == true) {
 		//	FIX and find another solution... at some point in the future! For now good enough!
 		define('ERROR_SUCCESS', 0);
 		define('ERROR_PRODUCT_CODE_SHORT', 1);
-		define('ERROR_EACH_BARCODE_SHORT', 2);
+		define('ERROR_BARCODE_SHORT', 2);
 		define('ERROR_EACH_BARCODE_NOT_NUMERIC', 3);
 		define('ERROR_CASE_BARCODE_NOT_NUMERIC', 4);
 		define('ERROR_CASE_BARCODE_SHORT', 5);
@@ -109,7 +109,7 @@ if ($login->isUserLoggedIn() == true) {
 			elseif (strlen($prod_arr['sku_barcode']) < min_sku_barcode_len)	//	barcode lenght does not meet requirements!
 			{
 				//	Each barcode has to be at least $min_each_barcode_len characters long
-				$input_checks	=	ERROR_EACH_BARCODE_SHORT;
+				$input_checks	=	ERROR_BARCODE_SHORT;
 			}
 
 /*
@@ -433,7 +433,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 
-				if ($product_uid >= 0)
+				if ($product_uid > 0)
 				{
 
 
@@ -561,16 +561,13 @@ if ($login->isUserLoggedIn() == true) {
 								}
 								elseif	(strcmp(trim($item['prodsku_barcode']), $sku_arr['sku_barcode']) === 0)
 								{
-									//	Found duplicate each barcode!
+									//	Found duplicate barcode!
 									$found_match	=	2;
 								}
 
 
 							}
 
-							
-							
-							
 						}
 
 
@@ -647,7 +644,7 @@ if ($login->isUserLoggedIn() == true) {
 							elseif ($found_match == 2)
 							{
 								$message_id		=	106212;
-								$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
+								$message2op		=	$mylang['barcode_already_exists'];
 							}
 
 
@@ -667,34 +664,11 @@ if ($login->isUserLoggedIn() == true) {
 						elseif ($input_checks	==	2)
 						{
 							$message_id		=	106217;
-							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_too_short'];
-						}
-						elseif ($input_checks	==	3)
-						{
-							$message_id		=	106218;
-							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['invalid_barcode'];
-						}
-						elseif ($input_checks	==	4)
-						{
-							$message_id		=	106219;
-							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['invalid_barcode'];
-						}
-						elseif ($input_checks	==	5)
-						{
-							$message_id		=	106220;
-							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_too_short'];
-						}
-						elseif ($input_checks	==	6)
-						{
-							$message_id		=	1062221;
-							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['incorrect_qty'];
+							$message2op		=	$mylang['barcode_too_short'];
 						}
 
 
 					}
-
-
-
 
 
 				}

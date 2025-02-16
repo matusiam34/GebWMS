@@ -143,13 +143,24 @@ $measurement_type_arr	=	array(
 
 $loc_types_arr	=	array(
 
-	'10'	=>	$mylang['single'] . ' (A)',
-	'11'	=>	$mylang['single'] . ' (E)',
-	'12'	=>	$mylang['single'] . ' (C)',
-	'20'	=>	$mylang['multi'] . ' (A)',
-	'21'	=>	$mylang['multi'] . ' (E)',
-	'22'	=>	$mylang['multi'] . ' (C)',
+
+	'10'	=>	$mylang['single'],
+	'20'	=>	$mylang['multi']
+
 //	//	Only uncomment what is supported!
+//	//	This could be the old hard coded way. New way is to allow the admin to add
+//	//	any package units so that the only thing that will be left are the 
+//	//	Single, Multi and Mixed.
+
+//	//	DELETE THESE once not needed
+//	//	FIX
+
+//	'10'	=>	$mylang['single'] . ' (A)',
+//	'11'	=>	$mylang['single'] . ' (E)',
+//	'12'	=>	$mylang['single'] . ' (C)',
+//	'20'	=>	$mylang['multi'] . ' (A)',
+//	'21'	=>	$mylang['multi'] . ' (E)',
+//	'22'	=>	$mylang['multi'] . ' (C)',
 //	'30'	=>	$mylang['mixed'] . ' (A)',
 //	'31'	=>	$mylang['mixed'] . ' (E)',
 //	'32'	=>	$mylang['mixed'] . ' (C)'

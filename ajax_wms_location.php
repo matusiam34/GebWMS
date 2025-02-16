@@ -89,21 +89,21 @@ if ($login->isUserLoggedIn() == true) {
 				SELECT
 
 				geb_warehouse.wh_code,
-				geb_location.loc_pkey,
-				geb_location.loc_code,
+				wms_location.loc_pkey,
+				wms_location.loc_code,
 
-				geb_location.loc_barcode,
-				geb_location.loc_function,
-				geb_location.loc_type,
-				geb_location.loc_blocked,
-				geb_location.loc_note,
-				geb_location.loc_magic_product,
-				geb_location.loc_disabled
+				wms_location.loc_barcode,
+				wms_location.loc_function,
+				wms_location.loc_type,
+				wms_location.loc_blocked,
+				wms_location.loc_note,
+				wms_location.loc_magic_product,
+				wms_location.loc_disabled
 
 
-				FROM  geb_location
+				FROM  wms_location
 
-				INNER JOIN geb_warehouse ON geb_location.loc_wh_pkey = geb_warehouse.wh_pkey
+				INNER JOIN geb_warehouse ON wms_location.loc_wh_pkey = geb_warehouse.wh_pkey
 
 
 				WHERE
@@ -112,7 +112,7 @@ if ($login->isUserLoggedIn() == true) {
 
 				AND
 				
-				geb_location.loc_owner = :sowner
+				wms_location.loc_owner = :sowner
 
 
 				ORDER BY wh_code, loc_code
@@ -207,39 +207,40 @@ if ($login->isUserLoggedIn() == true) {
 					SELECT
 
 					geb_warehouse.wh_pkey,
-					geb_location.loc_pkey,
-					geb_location.loc_owner,
-					geb_location.loc_code,
+					wms_location.loc_pkey,
+					wms_location.loc_owner,
+					wms_location.loc_code,
 
-					geb_location.loc_barcode,
-					geb_location.loc_function,
-					geb_location.loc_type,
-					geb_location.loc_blocked,
-					geb_location.loc_cat_a,
-					geb_location.loc_cat_b,
-					geb_location.loc_cat_c,
-					geb_location.loc_cat_d,
-					geb_location.loc_magic_product,
-					geb_location.loc_max_qty,
-					geb_location.loc_note,
-					geb_location.loc_disabled,
+					wms_location.loc_barcode,
+					wms_location.loc_function,
+					wms_location.loc_type,
+					wms_location.loc_pu_pkey,
+					wms_location.loc_blocked,
+					wms_location.loc_cat_a,
+					wms_location.loc_cat_b,
+					wms_location.loc_cat_c,
+					wms_location.loc_cat_d,
+					wms_location.loc_magic_product,
+					wms_location.loc_max_qty,
+					wms_location.loc_note,
+					wms_location.loc_disabled,
 
 					geb_product.prod_code
 
 
-					FROM  geb_location
+					FROM  wms_location
 
-					INNER JOIN geb_warehouse ON geb_location.loc_wh_pkey = geb_warehouse.wh_pkey
-					LEFT JOIN geb_product ON geb_location.loc_magic_product = geb_product.prod_pkey
+					INNER JOIN geb_warehouse ON wms_location.loc_wh_pkey = geb_warehouse.wh_pkey
+					LEFT JOIN geb_product ON wms_location.loc_magic_product = geb_product.prod_pkey
 
 
 					WHERE
 
-					geb_location.loc_pkey = :sloc
+					wms_location.loc_pkey = :sloc
 
 					AND
 
-					geb_location.loc_owner = :sowner
+					wms_location.loc_owner = :sowner
 
 
 					ORDER BY wh_code, loc_code
@@ -267,6 +268,7 @@ if ($login->isUserLoggedIn() == true) {
 							'loc_barcode'		=>	trim($row['loc_barcode']),
 							'loc_function'		=>	leave_numbers_only($row['loc_function']),
 							'loc_type'			=>	leave_numbers_only($row['loc_type']),
+							'loc_pu_pkey'		=>	leave_numbers_only($row['loc_pu_pkey']),
 							'loc_blocked'		=>	leave_numbers_only($row['loc_blocked']),
 							'loc_max_qty'		=>	leave_numbers_only($row['loc_max_qty']),
 							'loc_cat_a'			=>	leave_numbers_only($row['loc_cat_a']),
@@ -1094,7 +1096,8 @@ if ($login->isUserLoggedIn() == true) {
 	$db	=	null;
 
 
-	switch ($action_code) {
+	switch ($action_code)
+	{
 		case 0:	//	Grab all locations
 		print_message_html_payload($message_id, $message2op, $html_results);
 		break;

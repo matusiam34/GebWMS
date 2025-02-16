@@ -110,61 +110,6 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Get active packging units and populate them for a selectbox!
-		function get_all_packing_units()
-		{
-
-			$.post('ajax_wms_uom.php', { 
-
-				action_code_js		:	21
-
-			},
-
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-
-					var len = obje.data.length;
-
-					emptySelectBox('id_package_unit');
-
-
-					if(len > 0)
-					{
-
-						for (var i = 0; i < len; i++)
-						{
-							addOption2SelectBox('id_package_unit', obje.data[i].pu_pkey, obje.data[i].pu_code);	
-						}
-
-					}
-
-
-				}
-				else
-				{
-					$.alertable.info(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong -> could not execute php script most likely !
-						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
-					});
-
-		}
-
-
-
-
-
-
-
 		// Get category B based on category A
 		function get_all_category_b()
 		{
