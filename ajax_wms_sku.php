@@ -106,7 +106,7 @@ if ($login->isUserLoggedIn() == true) {
 				//	Product code too short
 				$input_checks	=	ERROR_PRODUCT_CODE_SHORT;
 			}
-			elseif (strlen($prod_arr['sku_barcode']) < min_sku_barcode_len)	//	each barcode lenght does not meet requirements!
+			elseif (strlen($prod_arr['sku_barcode']) < min_sku_barcode_len)	//	barcode lenght does not meet requirements!
 			{
 				//	Each barcode has to be at least $min_each_barcode_len characters long
 				$input_checks	=	ERROR_EACH_BARCODE_SHORT;
@@ -127,26 +127,6 @@ if ($login->isUserLoggedIn() == true) {
 
 
 		}
-
-
-/*
-
-"wms_prodsku" (
-	"prodsku_pkey"	INTEGER,
-	"prodsku_prodm_pkey"	INTEGER DEFAULT 0,
-	"prodsku_owner"	INTEGER DEFAULT 0,
-	"prodsku_code"	TEXT,
-	"prodsku_group"	TEXT,
-	"prodsku_desc"	TEXT,
-	"prodsku_barcode"	TEXT,
-	"prodsku_pu_pkey"	INTEGER DEFAULT 0,
-	"prodsku_category_a"	INTEGER DEFAULT 0,
-	"prodsku_category_b"	INTEGER DEFAULT 0,
-	"prodsku_category_c"	INTEGER DEFAULT 0,
-	"prodsku_category_d"	INTEGER DEFAULT 0,
-	"prodsku_disabled"	INTEGER DEFAULT 0,
-
-*/
 
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
@@ -245,7 +225,7 @@ if ($login->isUserLoggedIn() == true) {
 								//	Found duplicate product code!
 								$found_match	=	1;
 							}
-							elseif	(strcmp(trim($row['prodsku_barcode']), $sku_arr['sku_code']) === 0)
+							elseif	(strcmp(trim($row['prodsku_barcode']), $sku_arr['sku_barcode']) === 0)
 							{
 								//	Found duplicate each barcode!
 								$found_match	=	2;
@@ -428,49 +408,27 @@ if ($login->isUserLoggedIn() == true) {
 		else if ($action_code == 1)
 		{
 
-			//	Only an Admin of this system can update a product!
+			//	So far only someone who has the right to update
+			//	Maybe make it for admin only as well in the future? FIX
 			if
 			(
 
-				(is_it_enabled($_SESSION['menu_mgr_products']))
+				(is_it_enabled($_SESSION['menu_mgr_product_sku']))
 
 				AND
 
-				(can_user_update($_SESSION['menu_mgr_products']))
+				(can_user_update($_SESSION['menu_mgr_product_sku']))
 
 			)
 			{
 
 				// Data from the user to process...
-				$product_uid			=	leave_numbers_only($_POST['product_uid_js']);	//	this should be a number
-				$product_code			=	trim($_POST['product_code_js']);	//	this should be text
-				$product_description	=	trim($_POST['product_description_js']);	//	this should be text
-				$product_category_a		=	leave_numbers_only($_POST['product_category_a_js']);	//	this should be a number
-				$product_category_b		=	leave_numbers_only($_POST['product_category_b_js']);	//	this should be a number
-				$product_category_c		=	leave_numbers_only($_POST['product_category_c_js']);	//	this should be a number
-				$product_category_d		=	leave_numbers_only($_POST['product_category_d_js']);	//	this should be a number
-				$each_barcode			=	trim($_POST['each_barcode_js']);	//	this should be text
-				$each_weight			=	trim($_POST['each_weight_js']);	//	this should be text
-				$case_barcode			=	trim($_POST['case_barcode_js']);	//	this should be text
-				$case_qty				=	leave_numbers_only($_POST['case_qty_js']);	//	this should be a number
-				$min_qty				=	leave_numbers_only($_POST['min_qty_js']);	//	this should be a number
-				$max_qty				=	leave_numbers_only($_POST['max_qty_js']);	//	this should be a number
-				$disabled				=	leave_numbers_only($_POST['disabled_js']);	//	this should be a number
+				$product_uid			=	leave_numbers_only($_POST['sku_uid_js']);	//	this should be a number
+
+				//	Get all the relevant data into a nice single array! This will help do checks like
+				//	input validation and other in the future.
 
 
-				$sku_arr = array
-				(
-					'sku_code' 				=> trim($_POST['sku_code_js']),
-					'sku_group_code' 		=> trim($_POST['sku_group_code_js']),
-					'sku_description'		=> trim($_POST['sku_description_js']),
-					'sku_barcode'			=> trim($_POST['sku_barcode_js']),
-					'sku_package_unit'		=> leave_numbers_only($_POST['sku_package_unit_js']),
-					'sku_category_a'		=> leave_numbers_only($_POST['sku_category_a_js']),
-					'sku_category_b'		=> leave_numbers_only($_POST['sku_category_b_js']),
-					'sku_category_c'		=> leave_numbers_only($_POST['sku_category_c_js']),
-					'sku_category_d'		=> leave_numbers_only($_POST['sku_category_d_js']),
-					'disabled'				=> leave_numbers_only($_POST['disabled_js'])
-				);
 
 
 
@@ -483,168 +441,138 @@ if ($login->isUserLoggedIn() == true) {
 					//	For example if you provide a case barcode but not the case Qty = we have a problem since the system
 					//	will not be able to scan in any cases of that product.
 
-					$input_checks	=	0;	//	0 means all good;	666 means BAD!
 
-/*
-					if (strlen($product_code) < min_product_len)
-					{
-						//	Product code too short
-						$input_checks	=	1;
-					}
-					elseif (strlen($each_barcode) < min_each_barcode_len)	//	each barcode lenght does not meet requirements!
-					{
-						//	Each barcode has to be at least $min_each_barcode_len characters long
-						$input_checks	=	2;
-					}
-					elseif (each_barcode_alphanumeric == 0)	//	Numbers only barcodes allowed! Defined in lib_system.php!
-					{
-						if (!is_numeric($each_barcode))	//	each barcode is not a string of numbers! ERR!!
-						{
-							//	Each barcode has to be a number!
-							$input_checks	=	3;
-						}
-					}
-*/
+					$input_checks	=	0;			//	0 means all good;	666 means BAD!
+					$dup_arr		=	array();	//	drop all results here when looking for duplicates!
+
+					$sku_arr = array
+					(
+						'sku_code' 				=> trim($_POST['sku_code_js']),
+						'sku_group_code' 		=> trim($_POST['sku_group_code_js']),
+						'sku_description'		=> trim($_POST['sku_description_js']),
+						'sku_barcode'			=> trim($_POST['sku_barcode_js']),
+						'sku_package_unit'		=> leave_numbers_only($_POST['sku_package_unit_js']),
+						'sku_category_a'		=> leave_numbers_only($_POST['sku_category_a_js']),
+						'sku_category_b'		=> leave_numbers_only($_POST['sku_category_b_js']),
+						'sku_category_c'		=> leave_numbers_only($_POST['sku_category_c_js']),
+						'sku_category_d'		=> leave_numbers_only($_POST['sku_category_d_js']),
+						'disabled'				=> leave_numbers_only($_POST['disabled_js'])
+					);
+
+
+					$input_checks	=	validate_product_data($sku_arr);
 
 
 
-
-
-
-					if ($input_checks == 0)	//	All input checks have passed! Move towards further checks!
+					if ($input_checks == 0)	//	All input checks have passed!
 					{
 
 						$db->beginTransaction();
 
 						$found_match	=	0;	//	0 = all good!
 
+
 						//
 						//
 						//
-						//	!!!!!!!!!!!!!!!!!!!
+						//	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 						//
-						//	See if there are duplicates!
+						//	Check for the following duplicates
 						//
-						//	!!!!!!!!!!!!!!!!!!!
+						//	-	barcode
+						//	-	SKU code
+						//
+						//	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 						//
 						//
 						//
+
+
 						$sql	=	'
 
 							SELECT
 
-							prod_pkey,
-							prod_code,
-							prod_each_barcode,
-							prod_case_barcode
+							*
 
-							FROM geb_product
+							FROM wms_prodsku
 
 							WHERE
 
 							(
+							
+								prodsku_code = :sSKU_code
 
-								(	(prod_pkey	<>	:sprod_pkey) AND (prod_code = :sprod_code)	)
+								OR
 
-									OR
-
-									(
-
-										(
-
-											(prod_each_barcode = :sprod_each_barcode)
-
-											OR
-
-											(prod_case_barcode = :sprod_case_barcode)
-
-											OR
-
-											(prod_each_barcode = :sprod_case_barcode)
-
-											OR
-
-											(prod_case_barcode = :sprod_each_barcode)
-
-										)
-
-										AND
-
-										(prod_pkey	<>	:sprod_pkey)
-
-									)
-
+								prodsku_barcode = :sSKU_barcode
 							)
 
 							AND
-							
-							prod_owner = :sprod_owner
 
+							prodsku_owner = :sowner
+
+							AND
+							
+							prodsku_pkey NOT IN (:sSKU_UID)
 
 						';
-
 
 
 						if ($stmt = $db->prepare($sql))
 						{
 
-							$stmt->bindValue(':sprod_pkey',				$product_uid,		PDO::PARAM_INT);
-							$stmt->bindValue(':sprod_code',				$product_code,		PDO::PARAM_STR);
-							$stmt->bindValue(':sprod_each_barcode',		$each_barcode,		PDO::PARAM_STR);
-							$stmt->bindValue(':sprod_case_barcode',		$case_barcode,		PDO::PARAM_STR);
-							$stmt->bindValue(':sprod_owner',			$user_company_uid,	PDO::PARAM_INT);
+							$stmt->bindValue(':sSKU_code',			$sku_arr['sku_code'],			PDO::PARAM_STR);
+							$stmt->bindValue(':sSKU_barcode',		$sku_arr['sku_barcode'],		PDO::PARAM_STR);
+							$stmt->bindValue(':sowner',				$user_company_uid,				PDO::PARAM_INT);
+							$stmt->bindValue(':sSKU_UID',			$product_uid,					PDO::PARAM_INT);
 							$stmt->execute();
+
 
 							while($row = $stmt->fetch(PDO::FETCH_ASSOC))
 							{
-
-
-								if (strcmp(trim($row['prod_code']), $product_code) === 0)
-								{
-									//	Found duplicate product code!
-									$found_match	=	1;
-								}
-								else
-								{
-
-									//	Barcode related checks now!
-									if	(strcmp(trim($row['prod_each_barcode']), $each_barcode) === 0)
-									{
-										//	Found duplicate each barcode!
-										$found_match	=	2;
-									}
-									elseif	(strcmp(trim($row['prod_each_barcode']), $case_barcode) === 0)
-									{
-										//	Found duplicate case barcode in the each column!
-										$found_match	=	3;
-									}
-									elseif (strlen($case_barcode) >= min_case_barcode_len)
-									{
-										if		(strcmp(trim($row['prod_case_barcode']), $each_barcode) === 0)
-										{
-											//	Found duplicate each barcode!
-											$found_match	=	4;
-										}
-										elseif	(strcmp(trim($row['prod_case_barcode']), $case_barcode) === 0)
-										{
-											//	Found duplicate case barcode!
-											$found_match	=	5;
-										}
-
-									}
-
-								}
-
-
+								//	I am very lazy!
+								$dup_arr[]	=	$row;
 							}
 
 						}
-						// show an error if the query has an error?
+						// show an error if the query has an error? FIX
 						else
 						{
 							//	Just in case I ever end up here...
 							$found_match	=	166;
 						}
+
+
+						//	Here find if the array has any duplicate entries...
+						if (count($dup_arr) > 0)
+						{
+							//	We already have a problem! There should be 0 entries in the $dup_arr!
+							$found_match	=	5;
+
+							//	Try and figure out what the exact problem is...
+							foreach ($dup_arr as $item)
+							{
+
+
+								if (strcmp(trim($item['prodsku_code']), $sku_arr['sku_code']) === 0)
+								{
+									//	Found duplicate product code!
+									$found_match	=	1;
+								}
+								elseif	(strcmp(trim($item['prodsku_barcode']), $sku_arr['sku_barcode']) === 0)
+								{
+									//	Found duplicate each barcode!
+									$found_match	=	2;
+								}
+
+
+							}
+
+							
+							
+							
+						}
+
 
 
 
@@ -658,27 +586,24 @@ if ($login->isUserLoggedIn() == true) {
 
 									UPDATE
 
-									geb_product
+									wms_prodsku
 
 									SET
 
-									prod_code			=	:uprod_code,
-									prod_desc			=	:uprod_desc,
-									prod_category_a		=	:uprod_category_a,
-									prod_category_b		=	:uprod_category_b,
-									prod_category_c		=	:uprod_category_c,
-									prod_category_d		=	:uprod_category_d,
-									prod_each_barcode	=	:uprod_each_barcode,
-									prod_each_weight	=	:uprod_each_weight,
-									prod_case_barcode	=	:uprod_case_barcode,
-									prod_case_qty		=	:uprod_case_qty,
-									prod_min_qty		=	:uprod_min_qty,
-									prod_max_qty		=	:uprod_max_qty,
-									prod_disabled		=	:uprod_disabled
+									prodsku_code		=	:uprod_code,
+									prodsku_group		=	:uprod_group,
+									prodsku_desc		=	:uprod_desc,
+									prodsku_barcode		=	:uprod_barcode,
+									prodsku_pu_pkey		=	:uprod_pu_pkey,
+									prodsku_category_a	=	:uprod_category_a,
+									prodsku_category_b	=	:uprod_category_b,
+									prodsku_category_c	=	:uprod_category_c,
+									prodsku_category_d	=	:uprod_category_d,
+									prodsku_disabled	=	:uprod_disabled
 
 									WHERE
 
-									prod_pkey	 		=	:uprod_pkey
+									prodsku_pkey		=	:uprod_pkey
 
 
 							';
@@ -688,19 +613,17 @@ if ($login->isUserLoggedIn() == true) {
 							{
 
 
-								$stmt->bindValue(':uprod_code',				$product_code,				PDO::PARAM_STR);
-								$stmt->bindValue(':uprod_desc',				$product_description,		PDO::PARAM_STR);
-								$stmt->bindValue(':uprod_category_a',		$product_category_a,		PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_category_b',		$product_category_b,		PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_category_c',		$product_category_c,		PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_category_d',		$product_category_d,		PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_each_barcode',		$each_barcode,				PDO::PARAM_STR);
-								$stmt->bindValue(':uprod_each_weight',		$each_weight,				PDO::PARAM_STR);
-								$stmt->bindValue(':uprod_case_barcode',		$case_barcode,				PDO::PARAM_STR);
-								$stmt->bindValue(':uprod_case_qty',			$case_qty,					PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_min_qty',			$min_qty,					PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_max_qty',			$max_qty,					PDO::PARAM_INT);
-								$stmt->bindValue(':uprod_disabled',			$disabled,					PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_code',				$sku_arr['sku_code'],			PDO::PARAM_STR);
+								$stmt->bindValue(':uprod_group',			$sku_arr['sku_group_code'],		PDO::PARAM_STR);
+								$stmt->bindValue(':uprod_desc',				$sku_arr['sku_description'],	PDO::PARAM_STR);
+								$stmt->bindValue(':uprod_barcode',			$sku_arr['sku_barcode'],		PDO::PARAM_STR);
+								$stmt->bindValue(':uprod_pu_pkey',			$sku_arr['sku_package_unit'],	PDO::PARAM_INT);
+
+								$stmt->bindValue(':uprod_category_a',		$sku_arr['sku_category_a'],		PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_category_b',		$sku_arr['sku_category_b'],		PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_category_c',		$sku_arr['sku_category_c'],		PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_category_d',		$sku_arr['sku_category_d'],		PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_disabled',			$sku_arr['disabled'],			PDO::PARAM_INT);
 
 								$stmt->bindValue(':uprod_pkey',				$product_uid,					PDO::PARAM_INT);
 
@@ -726,27 +649,9 @@ if ($login->isUserLoggedIn() == true) {
 								$message_id		=	106212;
 								$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
 							}
-							elseif ($found_match == 3)
-							{
-								$message_id		=	106213;
-								$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
-							}
-							elseif ($found_match == 4)
-							{
-								$message_id		=	106214;
-								$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
-							}
-							elseif ($found_match == 5)
-							{
-								$message_id		=	106215;
-								$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
-							}
-
 
 
 						}
-
-
 
 
 					}
