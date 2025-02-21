@@ -350,7 +350,7 @@ if ($login->isUserLoggedIn() == true)
 		{
 
 
-			$.post('geb_ajax_location.php', { 
+			$.post('ajax_wms_location.php', { 
 
 				action_code_js		:	2,
 				owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
@@ -359,6 +359,7 @@ if ($login->isUserLoggedIn() == true)
 				barcode_js			:	get_Element_Value_By_ID('id_barcode'),
 				function_js			:	get_Element_Value_By_ID('id_function'),
 				type_js				:	get_Element_Value_By_ID('id_type'),
+				pk_unit_js			:	get_Element_Value_By_ID('id_package_unit'),
 				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
 				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
 				loc_cat_a_js		:	get_Element_Value_By_ID('id_category_a'),
@@ -401,7 +402,7 @@ if ($login->isUserLoggedIn() == true)
 		function update_location()
 		{
 
-			$.post('geb_ajax_location.php', { 
+			$.post('ajax_wms_location.php', { 
 
 				action_code_js		:	3,
 				owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
@@ -411,6 +412,7 @@ if ($login->isUserLoggedIn() == true)
 				barcode_js			:	get_Element_Value_By_ID('id_barcode'),
 				function_js			:	get_Element_Value_By_ID('id_function'),
 				type_js				:	get_Element_Value_By_ID('id_type'),
+				pk_unit_js			:	get_Element_Value_By_ID('id_package_unit'),
 				cat_a_js			:	get_Element_Value_By_ID('id_category_a'),
 				cat_b_js			:	get_Element_Value_By_ID('id_category_b'),
 				cat_c_js			:	get_Element_Value_By_ID('id_category_c'),
@@ -420,7 +422,6 @@ if ($login->isUserLoggedIn() == true)
 				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
 				max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
 				disabled_js			:	get_Element_Value_By_ID('id_location_status')
-
 
 			},
 

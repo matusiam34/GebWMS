@@ -53,8 +53,7 @@ if ($login->isUserLoggedIn() == true) {
 
 		$action_code		=	leave_numbers_only($_POST['action_code_js']);	// this should be a number
 
-		//	Get the company of the currently logged in user!
-		$user_company_uid	=	leave_numbers_only($_SESSION['user_company']);
+
 
 		//	*******************************************************************************************************
 		//
@@ -82,6 +81,11 @@ if ($login->isUserLoggedIn() == true) {
 		{
 
 
+			//	Extra problem to solve...
+			//	There can be MANY warehouses assigned to one company. And if the user has a particular warehouse
+			//	set to their name it must only show them locations in the table and not ALL other warehouses!
+			//	Otherwise we have a bit of a mess!
+			
 
 			$sql	=	'
 
@@ -115,10 +119,34 @@ if ($login->isUserLoggedIn() == true) {
 				wms_location.loc_owner = :sowner
 
 
+			';
+
+
+
+
+			if ($user_warehouse_uid > 0)
+			{
+				//	The user has a warehouse assigned to them!
+				//	Only show locations related to it!
+				$sql	.=	'
+
+					AND
+
+					geb_warehouse.wh_pkey = :swh_alloc
+
+				';
+			}
+
+
+
+			$sql	.=	'
+
 				ORDER BY wh_code, loc_code
 
-
 			';
+
+
+
 
 				$html_results		=	'';
 
@@ -140,6 +168,18 @@ if ($login->isUserLoggedIn() == true) {
 				{
 
 					$stmt->bindValue(':sowner',		$user_company_uid,		PDO::PARAM_INT);
+
+
+					if ($user_warehouse_uid > 0)
+					{
+						//	The user has a warehouse assigned to them!
+						//	Only show locations related to it!
+						$stmt->bindValue(':swh_alloc',		$user_warehouse_uid,		PDO::PARAM_INT);
+
+					}
+
+
+
 					$stmt->execute();
 
 
@@ -225,13 +265,13 @@ if ($login->isUserLoggedIn() == true) {
 					wms_location.loc_note,
 					wms_location.loc_disabled,
 
-					geb_product.prod_code
+					wms_prodsku.prodsku_code
 
 
 					FROM  wms_location
 
 					INNER JOIN geb_warehouse ON wms_location.loc_wh_pkey = geb_warehouse.wh_pkey
-					LEFT JOIN geb_product ON wms_location.loc_magic_product = geb_product.prod_pkey
+					LEFT JOIN wms_prodsku ON wms_location.loc_magic_product = wms_prodsku.prodsku_pkey
 
 
 					WHERE
@@ -277,9 +317,10 @@ if ($login->isUserLoggedIn() == true) {
 							'loc_cat_d'			=>	leave_numbers_only($row['loc_cat_d']),
 							'loc_note'			=>	trim($row['loc_note']),
 							'loc_disabled'		=>	leave_numbers_only($row['loc_disabled']),
-							'prod_code'			=>	trim($row['prod_code'])
+							'prod_code'			=>	trim($row['prodsku_code'])
 
 						);
+
 
 
 					}
@@ -416,12 +457,14 @@ if ($login->isUserLoggedIn() == true) {
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
 				$type			=	leave_numbers_only($_POST['type_js']);
+				$package_unit	=	leave_numbers_only($_POST['pk_unit_js']);
 				$cat_a			=	leave_numbers_only($_POST['loc_cat_a_js']);
 				$cat_b			=	leave_numbers_only($_POST['loc_cat_b_js']);
 				$cat_c			=	leave_numbers_only($_POST['loc_cat_c_js']);
 				$cat_d			=	leave_numbers_only($_POST['loc_cat_d_js']);
 				$magic_product	=	trim($_POST['magic_product_js']);				//	Will need to convert string into a product UID!
 				$max_qty		=	leave_numbers_only($_POST['max_qty_js']);
+
 				$function		=	leave_numbers_only($_POST['function_js']);
 				$blocked		=	leave_numbers_only($_POST['blocked_js']);
 				$loc_desc		=	trim($_POST['loc_desc_js']);
@@ -459,7 +502,7 @@ if ($login->isUserLoggedIn() == true) {
 						loc_code,
 						loc_barcode
 
-						FROM geb_location
+						FROM wms_location
 
 						WHERE
 
@@ -511,8 +554,8 @@ if ($login->isUserLoggedIn() == true) {
 					}
 
 
-					//	Now... Since the operator is providing me potentially with a Magic Product I need to query the geb_product
-					//	table to see if there is a match. If there is a match ===>>> get the UID (prod_pkey) of that product and use it
+					//	Now... Since the operator is providing me potentially with a Magic Product I need to query the wms_prodsku
+					//	table to see if there is a match. If there is a match ===>>> get the UID (prodsku_pkey) of that product and use it
 					//	to insert!
 
 
@@ -529,17 +572,17 @@ if ($login->isUserLoggedIn() == true) {
 
 							SELECT
 
-							prod_pkey
+							prodsku_pkey
 
-							FROM geb_product
+							FROM wms_prodsku
 
 							WHERE
 
-							prod_code = :sprod_code
+							prodsku_code = :sprod_code
 
 							AND
 
-							prod_owner = :sprod_owner
+							prodsku_owner = :sprod_owner
 
 						';
 
@@ -568,7 +611,7 @@ if ($login->isUserLoggedIn() == true) {
 							{
 								//	!!! WINNER !!!
 								//	One product found! Allocated the $magic_product_uid to the prod_pkey
-								$magic_product_uid	=	$magic_arr[0]['prod_pkey'];
+								$magic_product_uid	=	$magic_arr[0]['prodsku_pkey'];
 								//	!!! WINNER !!!
 							}
 
@@ -605,7 +648,7 @@ if ($login->isUserLoggedIn() == true) {
 								
 								INTO
 
-								geb_location
+								wms_location
 								
 								(
 									loc_wh_pkey,
@@ -614,6 +657,7 @@ if ($login->isUserLoggedIn() == true) {
 									loc_barcode,
 									loc_function,
 									loc_type,
+									loc_pu_pkey,
 									loc_magic_product,
 									loc_max_qty,
 									loc_cat_a,
@@ -634,6 +678,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iloc_barcode,
 									:iloc_function,
 									:iloc_type,
+									:iloc_pu_pkey,
 									:iloc_magic_product,
 									:iloc_max_qty,
 									:iloc_cat_a,
@@ -657,6 +702,7 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iloc_barcode',			$barcode,				PDO::PARAM_STR);
 							$stmt->bindValue(':iloc_function',			$function,				PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_type',				$type,					PDO::PARAM_INT);
+							$stmt->bindValue(':iloc_pu_pkey',			$package_unit,			PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_magic_product',		$magic_product_uid,		PDO::PARAM_INT);
 							$stmt->bindValue(':iloc_max_qty',			$max_qty,				PDO::PARAM_INT);
 
@@ -748,6 +794,7 @@ if ($login->isUserLoggedIn() == true) {
 				$location		=	trim($_POST['location_js']);
 				$barcode		=	trim($_POST['barcode_js']);
 				$type			=	leave_numbers_only($_POST['type_js']);
+				$package_unit	=	leave_numbers_only($_POST['pk_unit_js']);
 				$cat_a			=	leave_numbers_only($_POST['cat_a_js']);
 				$cat_b			=	leave_numbers_only($_POST['cat_b_js']);
 				$cat_c			=	leave_numbers_only($_POST['cat_c_js']);
@@ -792,7 +839,7 @@ if ($login->isUserLoggedIn() == true) {
 							loc_code,
 							loc_barcode
 
-							FROM geb_location
+							FROM wms_location
 
 							WHERE
 
@@ -903,17 +950,17 @@ if ($login->isUserLoggedIn() == true) {
 
 							SELECT
 
-							prod_pkey
+							prodsku_pkey
 
-							FROM geb_product
+							FROM wms_prodsku
 
 							WHERE
 
-							prod_code = :sprod_code
+							prodsku_code = :sprod_code
 
 							AND
 
-							prod_owner = :sprod_owner
+							prodsku_owner = :sprod_owner
 
 						';
 
@@ -939,7 +986,7 @@ if ($login->isUserLoggedIn() == true) {
 							{
 								//	!!! WINNER !!!
 								//	One product found! Allocated the $magic_product_uid to the prod_pkey
-								$magic_product_uid	=	$magic_arr[0]['prod_pkey'];
+								$magic_product_uid	=	$magic_arr[0]['prodsku_pkey'];
 								//	!!! WINNER !!!
 							}
 
@@ -975,7 +1022,7 @@ if ($login->isUserLoggedIn() == true) {
 
 								UPDATE
 
-								geb_location
+								wms_location
 
 								SET
 
@@ -985,6 +1032,7 @@ if ($login->isUserLoggedIn() == true) {
 								loc_barcode			=		:uloc_barcode,
 								loc_function		=		:uloc_function,
 								loc_type			=		:uloc_type,
+								loc_pu_pkey			=		:uloc_pu_pkey,
 								loc_magic_product	=		:uloc_magic_product,
 								loc_max_qty			=		:uloc_max_qty,
 								loc_cat_a			=		:uloc_cat_a,
@@ -1005,23 +1053,24 @@ if ($login->isUserLoggedIn() == true) {
 							if ($stmt = $db->prepare($sql))
 							{
 
-								$stmt->bindValue(':uloc_wh_pkey',	$warehouse,						PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_owner',		$loc_owner,						PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_code',		$location,						PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_barcode',	$barcode,						PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_function',	$loc_function,					PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_type',		$type,							PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_magic_product',		$magic_product_uid,		PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_max_qty',			$max_qty,				PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_a',		$cat_a,							PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_b',		$cat_b,							PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_c',		$cat_c,							PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_cat_d',		$cat_d,							PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_blocked',	$blocked,						PDO::PARAM_INT);
-								$stmt->bindValue(':uloc_note',		$loc_desc,						PDO::PARAM_STR);
-								$stmt->bindValue(':uloc_disabled',	$disabled,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_wh_pkey',			$warehouse,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_owner',				$loc_owner,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_code',				$location,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_barcode',			$barcode,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_function',			$loc_function,					PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_type',				$type,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_pu_pkey',			$package_unit,					PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_magic_product',		$magic_product_uid,				PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_max_qty',			$max_qty,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_a',				$cat_a,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_b',				$cat_b,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_c',				$cat_c,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_cat_d',				$cat_d,							PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_blocked',			$blocked,						PDO::PARAM_INT);
+								$stmt->bindValue(':uloc_note',				$loc_desc,						PDO::PARAM_STR);
+								$stmt->bindValue(':uloc_disabled',			$disabled,						PDO::PARAM_INT);
 
-								$stmt->bindValue(':sloc_pkey',		$loc_uid,						PDO::PARAM_INT);
+								$stmt->bindValue(':sloc_pkey',				$loc_uid,						PDO::PARAM_INT);
 								$stmt->execute();
 								$db->commit();
 

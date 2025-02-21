@@ -343,7 +343,6 @@ if ($login->isUserLoggedIn() == true)
 
 				function(output)
 				{
-
 					// Parse the json  !!
 					var obje = jQuery.parseJSON(output);
 
@@ -375,7 +374,7 @@ if ($login->isUserLoggedIn() == true)
 						set_Element_Value_By_ID('id_recent_activity',		obje.data.menu_recent_activity);
 
 
-						set_Element_Value_By_ID('id_mgr_product_line',		obje.data.menu_mgr_product_line);
+						//set_Element_Value_By_ID('id_mgr_product_line',		obje.data.menu_mgr_product_line);
 						set_Element_Value_By_ID('id_mgr_product_sku',		obje.data.menu_mgr_product_sku);
 
 
@@ -499,7 +498,7 @@ if ($login->isUserLoggedIn() == true)
 					mpa_js					:	get_Element_Value_By_ID('id_mpa'),
 					mpp_js					:	get_Element_Value_By_ID('id_mpp'),
 					recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
-					mgr_product_line_js		:	get_Element_Value_By_ID('id_mgr_product_line'),
+					//mgr_product_line_js		:	get_Element_Value_By_ID('id_mgr_product_line'),
 					mgr_product_sku_js		:	get_Element_Value_By_ID('id_mgr_product_sku'),
 					my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 					adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
@@ -566,7 +565,7 @@ if ($login->isUserLoggedIn() == true)
 				mpa_js					:	get_Element_Value_By_ID('id_mpa'),
 				mpp_js					:	get_Element_Value_By_ID('id_mpp'),
 				recent_activity_js		:	get_Element_Value_By_ID('id_recent_activity'),
-				mgr_product_line_js		:	get_Element_Value_By_ID('id_mgr_product_line'),
+				//mgr_product_line_js		:	get_Element_Value_By_ID('id_mgr_product_line'),
 				mgr_product_sku_js		:	get_Element_Value_By_ID('id_mgr_product_sku'),
 				my_account_js			:	get_Element_Value_By_ID('id_my_account'),
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),

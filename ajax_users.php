@@ -66,9 +66,7 @@ if ($login->isUserLoggedIn() == true) {
 
 
 				SELECT
-
 				*
-
 				FROM users
 
 			';
@@ -179,7 +177,34 @@ if ($login->isUserLoggedIn() == true) {
 
 					SELECT
 
-					*
+
+					user_id,
+					user_name,
+					user_firstname,
+					user_surname,
+					user_email,
+					user_description,
+					user_is_admin,
+					user_company,
+					user_warehouse,
+					user_language,
+					user_active,
+					menu_adm_company,
+					menu_adm_warehouse,
+					menu_adm_warehouse_loc,
+					menu_adm_users,
+					menu_adm_category,
+					menu_adm_uom,
+					menu_prod_search,
+					menu_location_search,
+					menu_goodsin,
+					menu_mpa,
+					menu_mpp,
+					menu_recent_activity,
+					menu_mgr_product_line,
+					menu_mgr_product_sku,
+					menu_my_account
+
 
 					FROM users
 					
