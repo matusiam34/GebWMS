@@ -93,9 +93,9 @@ if ($login->isUserLoggedIn() == true) {
 				SELECT
 
 				geb_warehouse.wh_code,
+
 				wms_location.loc_pkey,
 				wms_location.loc_code,
-
 				wms_location.loc_barcode,
 				wms_location.loc_function,
 				wms_location.loc_type,
@@ -153,7 +153,6 @@ if ($login->isUserLoggedIn() == true) {
 				$html_results		.=	'<thead>';
 
 				$html_results		.=	'<tr>';
-				$html_results		.=		'<th>UID</th>';
 				$html_results		.=		'<th>' . $mylang['warehouse'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['location'] . '</th>';
 				$html_results		.=		'<th>' . $mylang['barcode'] . '</th>';
@@ -189,8 +188,7 @@ if ($login->isUserLoggedIn() == true) {
 						//	<AI>
 						$tr_style = (leave_numbers_only($row['loc_disabled']) == 1) ? ' style="background-color: #d9d9d9;"' : '';
 
-						$html_results .= '<tr' . $tr_style . '>';
-						$html_results .= '<td>' . trim($row['loc_pkey']) . '</td>';
+						$html_results .= '<tr data-id="' . leave_numbers_only($row['loc_pkey']) . '" ' . $tr_style . '>';
 						$html_results .= '<td>' . trim($row['wh_code']) . '</td>';
 
 						$loc_details_arr = decode_loc

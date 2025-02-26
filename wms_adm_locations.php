@@ -78,7 +78,7 @@ if ($login->isUserLoggedIn() == true)
 
 			// When the Admin selects a new location!
 			$('#id_company').change(function() {
-				get_all_locations();
+				get_all_locations(0);
 			});
 
 			$('#curr_table').on('click', 'tr', function()
@@ -88,14 +88,41 @@ if ($login->isUserLoggedIn() == true)
 					$(this).addClass('highlighted');
 
 
+
+					// Get the UOM ID from the data-id attribute
+					var locID = $(this).data('id');
+
+/*
 					//	Check if the row has a numer
 					if ($.isNumeric(	$(this).find('td:nth-child(1)').text()	))
 					{
-						$('#id_hidden').val($(this).find('td:nth-child(1)').text()); 
-						get_location();
+
 					}
+*/
+
+					// Get all the details from the table for the selected UOM
+					get_location(locID);
+
+
 
 			});
+
+
+
+
+			$('#updateBtn').on('click', function()
+			{
+				let highlightedRow = $('tr.highlighted');		// Get the highlighted row
+				let selectedId = highlightedRow.data('id');		// Get data-id from the highlighted row
+
+				if (selectedId) {
+					// Perform your update logic with the selectedId
+					update_location(selectedId);
+				} else {
+					$.alertable.error('123232', '<?php echo $mylang['select_package_unit']; ?>');
+				}
+			});
+
 
 
 
@@ -135,7 +162,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 		// Grab all locations !
-		function get_all_locations()
+		function get_all_locations(row2highlight)
 		{
 
 			$.post('ajax_wms_location.php', { 
@@ -215,7 +242,7 @@ if ($login->isUserLoggedIn() == true)
 
 					}
 
-					get_all_locations();
+					get_all_locations(0);
 
 
 				}
@@ -290,14 +317,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_location()
+		function get_location(locUID)
 		{
 
 			$.post('ajax_wms_location.php', {
 
 				action_code_js		:	1,
-				loc_uid_js			:	get_Element_Value_By_ID('id_hidden'),
+				loc_uid_js			:	locUID,
 				company_uid_js		:	get_Element_Value_By_ID('id_company')
+
 
 			},
 
@@ -381,7 +409,7 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					get_all_locations();	// repopulate the table !
+					get_all_locations(0);	// repopulate the table !
 					$.alertable.info(obje.control, obje.msg).always(function() {	});
 				}
 				else
@@ -399,71 +427,79 @@ if ($login->isUserLoggedIn() == true)
 
 
 		// UPDATE location
-		function update_location()
+		function update_location(locUID)
 		{
 
-			$.post('ajax_wms_location.php', { 
-
-				action_code_js		:	3,
-				owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
-				loc_uid_js			:	get_Element_Value_By_ID('id_hidden'),
-				warehouse_js		:	get_Element_Value_By_ID('id_warehouse'),
-				location_js			:	get_Element_Value_By_ID('id_location_name'),
-				barcode_js			:	get_Element_Value_By_ID('id_barcode'),
-				function_js			:	get_Element_Value_By_ID('id_function'),
-				type_js				:	get_Element_Value_By_ID('id_type'),
-				pk_unit_js			:	get_Element_Value_By_ID('id_package_unit'),
-				cat_a_js			:	get_Element_Value_By_ID('id_category_a'),
-				cat_b_js			:	get_Element_Value_By_ID('id_category_b'),
-				cat_c_js			:	get_Element_Value_By_ID('id_category_c'),
-				cat_d_js			:	get_Element_Value_By_ID('id_category_d'),
-				blocked_js			:	get_Element_Value_By_ID('id_blocked'),
-				loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
-				magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
-				max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
-				disabled_js			:	get_Element_Value_By_ID('id_location_status')
-
-			},
-
-			function(output)
+			if (locUID)
 			{
 
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
+				$.post('ajax_wms_location.php', { 
 
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
+					action_code_js		:	3,
+					owner_uid_js		:	get_Element_Value_By_ID('id_location_owner'),
+					loc_uid_js			:	locUID,
+					warehouse_js		:	get_Element_Value_By_ID('id_warehouse'),
+					location_js			:	get_Element_Value_By_ID('id_location_name'),
+					barcode_js			:	get_Element_Value_By_ID('id_barcode'),
+					function_js			:	get_Element_Value_By_ID('id_function'),
+					type_js				:	get_Element_Value_By_ID('id_type'),
+					pk_unit_js			:	get_Element_Value_By_ID('id_package_unit'),
+					cat_a_js			:	get_Element_Value_By_ID('id_category_a'),
+					cat_b_js			:	get_Element_Value_By_ID('id_category_b'),
+					cat_c_js			:	get_Element_Value_By_ID('id_category_c'),
+					cat_d_js			:	get_Element_Value_By_ID('id_category_d'),
+					blocked_js			:	get_Element_Value_By_ID('id_blocked'),
+					loc_desc_js			:	get_Element_Value_By_ID('id_desc'),
+					magic_product_js	:	get_Element_Value_By_ID('id_magic_product_name'),
+					max_qty_js			:	get_Element_Value_By_ID('id_max_qty'),
+					disabled_js			:	get_Element_Value_By_ID('id_location_status')
+
+				},
+
+				function(output)
 				{
 
-					get_all_locations();	// repopulate the table !
-					set_Element_Value_By_ID('id_location_owner', 0);
-					set_Element_Value_By_ID('id_warehouse', 0);
-					set_Element_Value_By_ID('id_location_name', '');
-					set_Element_Value_By_ID('id_barcode', '');
-					set_Element_Value_By_ID('id_function', 0);
-					set_Element_Value_By_ID('id_type', 0);
-					set_Element_Value_By_ID('id_hidden', 0);
-					set_Element_Value_By_ID('id_max_qty', 0);
-					set_Element_Value_By_ID('id_magic_product_name', '');
-					set_Element_Value_By_ID('id_category_a', 0);
-					set_Element_Value_By_ID('id_category_b', 0);
-					set_Element_Value_By_ID('id_category_c', 0);
-					set_Element_Value_By_ID('id_category_d', 0);
-					set_Element_Value_By_ID('id_blocked', 0);
-					set_Element_Value_By_ID('id_desc', '');
-					set_Element_Value_By_ID('id_location_status', 0);
-					set_Element_Value_By_ID('id_hidden', 0);
+					// Parse the json  !!
+					var obje = jQuery.parseJSON(output);
 
-				}
-				else
-				{
-					$.alertable.error(obje.control, obje.msg).always(function() {	});
-				}
+					// Control = 0 => Green light to GO !!!
+					if (obje.control == 0)
+					{
 
-			}).fail(function() {
-						// something went wrong
-						$.alertable.error('102558', '<?php	echo $mylang['server_error'];	?>');
-					});
+						get_all_locations(0);	// repopulate the table !
+						set_Element_Value_By_ID('id_location_owner', 0);
+						set_Element_Value_By_ID('id_warehouse', 0);
+						set_Element_Value_By_ID('id_location_name', '');
+						set_Element_Value_By_ID('id_barcode', '');
+						set_Element_Value_By_ID('id_function', 0);
+						set_Element_Value_By_ID('id_type', 0);
+						set_Element_Value_By_ID('id_hidden', 0);
+						set_Element_Value_By_ID('id_max_qty', 0);
+						set_Element_Value_By_ID('id_magic_product_name', '');
+						set_Element_Value_By_ID('id_category_a', 0);
+						set_Element_Value_By_ID('id_category_b', 0);
+						set_Element_Value_By_ID('id_category_c', 0);
+						set_Element_Value_By_ID('id_category_d', 0);
+						set_Element_Value_By_ID('id_blocked', 0);
+						set_Element_Value_By_ID('id_desc', '');
+						set_Element_Value_By_ID('id_location_status', 0);
+						set_Element_Value_By_ID('id_hidden', 0);
+
+					}
+					else
+					{
+						$.alertable.error(obje.control, obje.msg).always(function() {	});
+					}
+
+				}).fail(function() {
+							// something went wrong
+							$.alertable.error('102558', '<?php	echo $mylang['server_error'];	?>');
+						});
+
+			} else {
+				// Handle the case where no row is selected
+				$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
+			}
 
 		}
 
@@ -527,7 +563,7 @@ if ($login->isUserLoggedIn() == true)
 				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
-			$.post('geb_ajax_category.php', postData)
+			$.post('ajax_wms_categories.php', postData)
 				.done(function (output)
 				{
 					const obje = jQuery.parseJSON(output);
@@ -573,7 +609,7 @@ if ($login->isUserLoggedIn() == true)
 				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
-			$.post('geb_ajax_category.php', postData)
+			$.post('ajax_wms_categories.php', postData)
 				.done(function (output) {
 					const obje = jQuery.parseJSON(output);
 					
@@ -618,7 +654,7 @@ if ($login->isUserLoggedIn() == true)
 				company_uid_js		:	get_Element_Value_By_ID('id_company')
 			};
 
-			$.post('geb_ajax_category.php', postData)
+			$.post('ajax_wms_categories.php', postData)
 				.done(function (output) {
 					const obje = jQuery.parseJSON(output);
 					
@@ -886,6 +922,7 @@ $page_form	=	'
 
 
 
+
 						<div class="field" style="<?php echo $box_size_str; ?>">
 							<p class="help"><?php	echo $mylang['type'];		?></p>
 							<div class="field is-narrow">
@@ -909,6 +946,10 @@ $page_form	=	'
 
 
 
+
+
+
+
 						<div class="field" style="<?php echo $box_size_str; ?>">
 							<p class="help"><?php	echo $mylang['package_unit'];	?></p>
 							<div class="field is-narrow">
@@ -920,6 +961,7 @@ $page_form	=	'
 							  </div>
 							</div>
 						</div>
+
 
 
 
@@ -938,6 +980,8 @@ $page_form	=	'
 								<input id="id_max_qty" class="input is-normal" type="text" value="1">
 							</div>
 						</div>
+
+
 
 
 
@@ -1088,7 +1132,7 @@ $page_form	=	'
 		<div class="field" style="'. $box_size_str .'">
 			<p class="help">&nbsp;</p>
 			<div class="control">
-				<button class="button admin_class is-fullwidth"  onclick="update_location();">' . $mylang['update'] . '</button>
+				<button id="updateBtn" class="button admin_class is-fullwidth">' . $mylang['update'] . '</button>
 			</div>
 		</div>';
 	}
