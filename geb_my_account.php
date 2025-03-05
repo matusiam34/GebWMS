@@ -375,6 +375,13 @@ if ($login->isUserLoggedIn() == true)
 
 
 				echo	'</div>';
+
+
+				echo	'<div class="column is-3">';
+				echo	'<p>TD: Display ACL details here</p>';
+				echo	'</div>';	//	end of columns
+
+
 				echo	'</div>';	//	end of columns
 
 

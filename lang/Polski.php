@@ -128,7 +128,10 @@ $mylang = array(
 'billing_address'			=>	'Adres rozliczeniowy',
 'magic_product'				=>	'Magiczny Produkt',
 'set_password'				=>	'Ustaw hasło',
+'password'					=>	'Hasło',
 'enter_new_password'		=>	'Wprowadź nowe hasło',
+'permissions'				=>	'Uprawnienia',
+'user_info'					=>	'Dane użytkownika',
 
 
 //	Main menu Search lines

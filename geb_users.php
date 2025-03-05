@@ -139,6 +139,19 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
+
+		/*		For user details and ACL tabs... more in the future maybe as well... Keep the UI Clean Again!	*/
+        .tab-content
+		{
+            display: none;
+        }
+
+        .tab-content.is-active
+		{
+            display: block;
+        }
+
+
 	</style>
 
 
@@ -148,6 +161,24 @@ if ($login->isUserLoggedIn() == true)
 
 		$(document).ready(function() 
 		{
+
+
+
+			$(".tabs ul li").click(function()
+			{
+				// Remove active class from all tabs and content
+				$(".tabs ul li").removeClass("is-active");
+				$(".tab-content").removeClass("is-active");
+
+				// Add active class to the clicked tab
+				$(this).addClass("is-active");
+
+				// Show the corresponding tab content
+				let tabId = $(this).attr("data-tab");
+				$("#" + tabId).addClass("is-active");
+			});
+
+
 
 			// Triggers a function every time the row in the table departmentList is clicked !
 			$('#curr_table').on('click', 'tr', function()
@@ -248,6 +279,7 @@ if ($login->isUserLoggedIn() == true)
 
 			$('#setPasswordBtn').on('click', function()
 			{
+
 				let highlightedRow = $('tr.highlighted');		// Get the highlighted row
 				let selectedId = highlightedRow.data('id');		// Get data-id from the highlighted row
 
@@ -257,9 +289,6 @@ if ($login->isUserLoggedIn() == true)
 				if (selectedId)
 				{
 
-					//	Old one, can be potentially removed at some point!
-					//const setPassword_html	=	'<br><div class="field" style="<?php echo $box_size_str; ?>"><div class="control"><input id="newPassword" type="password" class="input" placeholder="<?php echo $mylang['enter_new_password']; ?>"></div></div><div class="field" style="<?php echo $box_size_str; ?>"><div class="control"><button id="submitPassword" class="button admin_class is-fullwidth"><?php echo $mylang['set_password']; ?></button></div></div><div class="field" style="<?php echo $box_size_str; ?>"><div class="control"><button id="cancelSetPassword" class="button admin_class is-fullwidth"><?php echo $mylang['cancel']; ?></button></div></div>';
-
 					const setPassword_html	=	'<br><div class="field" style="<?php echo $box_size_str; ?>"><div class="control password-container"><input id="newPassword" type="password" class="input" placeholder="<?php echo $mylang['enter_new_password']; ?>"><button type="button" class="toggle-visibility" onclick="togglePasswordVisibility(this)"><img src="images/eye.png" class="eye-icon"></button></div></div><div class="field" style="<?php echo $box_size_str; ?>"><div class="control"><button id="submitPassword" class="button admin_class is-fullwidth"><?php echo $mylang['set_password']; ?></button></div></div><div class="field" style="<?php echo $box_size_str; ?>"><div class="control"><button id="cancelSetPassword" class="button admin_class is-fullwidth"><?php echo $mylang['cancel']; ?></button></div></div>';
 
 					$.alertable.noButton('', setPassword_html);
@@ -267,6 +296,8 @@ if ($login->isUserLoggedIn() == true)
 				} else {
 					$.alertable.error('123232', '<?php echo $mylang['select_user']; ?>');
 				}
+
+
 			});
 
 
@@ -766,36 +797,47 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-	//	The user table + details + update button?
+	//	Everything about the user table.
 	$user_details_html	=	'';
 
-	$user_details_html	.=	'<div class="columns">';
-
-
-
-	// User table
 	$user_details_html	.=	'
 
-					<div class="column is-4">
 
-						<div class="tableAttr it-has-border">
-							<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
-								<thead>
-									<tr>
-										<th>' . $mylang['user'] . '</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
+		<div class="columns">
 
-					</div>';
+				<div class="column is-6">
+
+					<div class="tableAttr it-has-border">
+						<table class="table is-fullwidth is-hoverable is-scrollable" id="curr_table">
+							<thead>
+								<tr>
+									<th>' . $mylang['user'] . '</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+
+		</div>
 
 
 
-	// User details
-	$user_details_html	.=	'
+        <!-- Tabs Navigation -->
+        <div class="tabs is-boxed">
+            <ul>
+                <li class="is-active" data-tab="user-info"><a>' . $mylang['user_info'] . '</a></li>
+                <li data-tab="permissions"><a>' . $mylang['permissions'] . '</a></li>
+                <li data-tab="password"><a>' . $mylang['password'] . '</a></li>
+            </ul>
+        </div>
+
+        <!-- Tabs Content -->
+        <div class="tab-content is-active" id="user-info">
+
+			<div class="columns">
 
 
 					<div class="column is-2">
@@ -879,7 +921,7 @@ if ($login->isUserLoggedIn() == true)
 						</div>
 
 
-					<div class="field" style="'. $box_size_str .'">
+						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['admin'] . ':</p>
 							<div class="field is-narrow">
 							  <div class="control">
@@ -913,26 +955,537 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
+					</div>
+
+
+					<div class="column is-2">
+					</div>
+
+
+					<div class="column is-2">';
 
 
 
-						';
+		if (can_user_update($_SESSION['menu_adm_users']))
+		{
+
+			//	Update button section!
+			$user_details_html	.=	'
 
 
+				<div class="field" style="'. $box_size_str .'">
+					<p class="help">&nbsp;</p>
+					<div class="control">
+						<button id="updateDetailsBtn" class="button admin_class is-fullwidth">' . $mylang['save_details'] . '</button>
+					</div>
+				</div>
 
-	$user_details_html	.=	'
 
-					</div>';
-
-
-
-
-	$user_details_html	.=	'
-
+				<div class="field" style="'. $box_size_str .'">
+					<p class="help">&nbsp;</p>
+					<div class="control">
+						<button id="setPasswordBtn" class="button admin_class is-fullwidth">' . $mylang['set_password'] . '</button>
+					</div>
 				</div>';
 
 
+		}
+
+
+
+
+$user_details_html	.=	'
+					</div>
+
+
+
+
+
+			</div>
+
+
+
+			<div class="columns">
+
+
+
+			</div>
+
+
+
+        </div>
+
+
+        <div class="tab-content" id="permissions">
+
+
+
+			<div class="columns">
+
+				<div class="column is-2">
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['product_search'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_product_search">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['location_search'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select  style="' . $color_general . '" id="id_location_search">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+				</div>
+
+
+
+
+
+
+
+
+
+				<div class="column is-2">
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['goodsin'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_goodsin">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['mpa'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_mpa">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['mpp'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_mpp">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['recent_activity'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_recent_activity">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+				</div>
+
+
+
+
+
+				<div class="column is-2">
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['products'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_manager . '" id="id_mgr_product_sku">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+				</div>
+
+
+
+
+
+
+
+
+
+				<div class="column is-2">
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['my_account'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_my_account">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['users'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_users">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['warehouses'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_warehouses">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['warehouse_locations'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_wh_locations">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['categories'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_categories">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
+				</div>
+
+
+
+					<div class="column is-2">
+					</div>
+
+
+					<div class="column is-2">';
+
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_users']))
+	{
+
+		//	Update button section?!
+		//$user_details_html	.=	'<div class="column is-2">';
+
+		$user_details_html	.=	'
+
+			<div class="field" style="'. $box_size_str .'">
+				<p class="help">&nbsp;</p>
+				<div class="control">
+					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['update_acl'] . '</button>
+				</div>
+			</div>';
+
+		//$user_details_html	.=	'</div>';
+
+	}
+
+
+$user_details_html	.=	'
+
+
+					</div>
+
+
+
+
+
+
+
+
+
+
+			</div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="tab-content" id="password">
+
+
+
+			<div class="columns">
+
+				<div class="column is-2">
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['enter_new_password'] . ':</p>
+							<div class="control">
+								<input id="id_user_desc" class="input is-normal" type="text">
+							</div>
+						</div>
+
+
+
+				</div>
+
+
+
+
+
+
+
+
+
+				<div class="column is-2">
+
+				</div>
+
+
+
+
+
+				<div class="column is-2">
+
+				</div>
+
+
+
+
+
+
+
+
+
+				<div class="column is-2">
+
+
+				</div>
+
+
+
+					<div class="column is-2">
+					</div>
+
+
+					<div class="column is-2">';
+
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_users']))
+	{
+
+		//	Update button section?!
+		//$user_details_html	.=	'<div class="column is-2">';
+
+		$user_details_html	.=	'
+
+			<div class="field" style="'. $box_size_str .'">
+				<p class="help">&nbsp;</p>
+				<div class="control">
+					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['update_acl'] . '</button>
+				</div>
+			</div>';
+
+		//$user_details_html	.=	'</div>';
+
+	}
+
+
+$user_details_html	.=	'
+
+
+					</div>
+
+
+
+
+
+
+
+
+
+
+			</div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+';
+
+
+
 echo	$user_details_html;
+
 
 
 
@@ -949,146 +1502,6 @@ echo	$user_details_html;
 
 
 	$user_acl_html	=	'<div class="columns">';
-
-	$user_acl_html	.=	'<div class="column is-2">';
-
-	$user_acl_html	.=	'
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['product_search'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_product_search">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['location_search'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select  style="' . $color_general . '" id="id_location_search">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-';
-
-
-	$user_acl_html	.=	'</div>';
-
-
-
-
-
-	$user_acl_html	.=	'<div class="column is-2">';
-
-	$user_acl_html	.=	'
-
-
-
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['goodsin'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_goodsin">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['mpa'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_mpa">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['mpp'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_mpp">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['recent_activity'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_recent_activity">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>';
-
-
-
-
-
-	$user_acl_html	.=	'</div>';
-
-
 
 
 
@@ -1123,32 +1536,6 @@ echo	$user_details_html;
 
 */
 
-	$user_acl_html	.=	'
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['products'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_manager . '" id="id_mgr_product_sku">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-';
-
 
 
 	$user_acl_html	.=	'</div>';
@@ -1160,136 +1547,12 @@ echo	$user_details_html;
 	$user_acl_html	.=	'
 
 
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['my_account'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_general . '" id="id_my_account">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['users'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_admin . '" id="id_adm_users">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['warehouses'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_admin . '" id="id_adm_warehouses">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['warehouse_locations'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_admin . '" id="id_adm_wh_locations">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
-
-
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['categories'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_admin . '" id="id_adm_categories">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>
 ';
-
-
-
 
 
 	$user_acl_html	.=	'</div>';
 
 
-	// If the operator has the ability to update...
-	if (can_user_update($_SESSION['menu_adm_users']))
-	{
-
-		//	Update button section?!
-		$user_acl_html	.=	'<div class="column is-2">';
-
-		$user_acl_html	.=	'
-
-			<div class="field" style="'. $box_size_str .'">
-				<p class="help">&nbsp;</p>
-				<div class="control">
-					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['update_acl'] . '</button>
-				</div>
-			</div>';
-
-		$user_acl_html	.=	'</div>';
-
-	}
 
 
 
@@ -1327,22 +1590,6 @@ echo	$user_details_html;
 		}
 
 
-		if (can_user_update($_SESSION['menu_adm_users']))
-		{
-
-			//	Update button section?!
-			$user_acl_html	.=	'
-
-				<div class="field" style="'. $box_size_str .'">
-					<p class="help">&nbsp;</p>
-					<div class="control">
-						<button id="updateDetailsBtn" class="button admin_class is-fullwidth">' . $mylang['save_details'] . '</button>
-					</div>
-				</div>';
-
-		}
-
-
 
 		//	If the user can add or update ===>>> They can set the password!
 
@@ -1365,12 +1612,15 @@ echo	$user_details_html;
 
 	//$user_acl_html	.=	'</div>';	//	close the ACL "row"
 
-echo	$user_acl_html;
+//echo	$user_acl_html;
 
 
 
 		echo '</div>';
 	echo '</section>';
+
+
+
 
 
 

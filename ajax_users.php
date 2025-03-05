@@ -282,7 +282,10 @@ if ($login->isUserLoggedIn() == true) {
 				$mpp					=	leave_numbers_only($_POST['mpp_js']);
 				$recent_activity		=	leave_numbers_only($_POST['recent_activity_js']);
 
-				$mgr_product_line		=	leave_numbers_only($_POST['mgr_product_line_js']);
+				
+				//	For now not using the product line! SKUs only! Maybe one day
+				//$mgr_product_line		=	leave_numbers_only($_POST['mgr_product_line_js']);
+				
 				$mgr_product_sku		=	leave_numbers_only($_POST['mgr_product_sku_js']);
 
 
@@ -379,7 +382,6 @@ if ($login->isUserLoggedIn() == true) {
 								menu_mpa,
 								menu_mpp,
 								menu_recent_activity,
-								menu_mgr_product_line,
 								menu_mgr_product_sku,
 								menu_my_account
 							) 
@@ -407,7 +409,6 @@ if ($login->isUserLoggedIn() == true) {
 								:imenu_mpa,
 								:imenu_mpp,
 								:imenu_recent_activity,
-								:imenu_mgr_product_line,
 								:imenu_mgr_product_sku,
 								:imenu_my_account
 							)
@@ -423,6 +424,8 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':iuser_surname',				$user_lastname,		PDO::PARAM_STR);
 							$stmt->bindValue(':iuser_email',				$user_email,		PDO::PARAM_STR);
 							$stmt->bindValue(':iuser_description',			$user_desc,			PDO::PARAM_STR);
+							//	FIX
+							//	Probably needs to be fixed at some point... The admin can change the password so... Will see
 							$stmt->bindValue(':iuser_password_hash',		'$2y$10$D.mv5xg21s4Yi79a98UjUeCJk3/VEmKMu91yYDIiwOVxKZL.AmRqO',		PDO::PARAM_STR);
 							$stmt->bindValue(':iuser_company',				$user_company,		PDO::PARAM_INT);
 							$stmt->bindValue(':iuser_warehouse',			$user_warehouse,	PDO::PARAM_INT);
@@ -438,11 +441,17 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':imenu_mpa',					$mpa,				PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_mpp',					$mpp,				PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_recent_activity',		$recent_activity,	PDO::PARAM_INT);
-							$stmt->bindValue(':imenu_mgr_product_line',		$mgr_product_line,	PDO::PARAM_INT);
+
+
+							//	SQL bit:
+							//	menu_mgr_product_line,
+							//	:imenu_mgr_product_line,
+							//	PHP:
+							//	$stmt->bindValue(':imenu_mgr_product_line',		$mgr_product_line,	PDO::PARAM_INT);
+
+
 							$stmt->bindValue(':imenu_mgr_product_sku',		$mgr_product_sku,	PDO::PARAM_INT);
-
 							$stmt->bindValue(':imenu_my_account',			$my_account,		PDO::PARAM_INT);
-
 
 							$stmt->execute();
 							$db->commit();
@@ -690,7 +699,7 @@ if ($login->isUserLoggedIn() == true) {
 				$mpp					=	leave_numbers_only($_POST['mpp_js']);
 				$recent_activity		=	leave_numbers_only($_POST['recent_activity_js']);
 
-				$mgr_product_line		=	leave_numbers_only($_POST['mgr_product_line_js']);
+				//$mgr_product_line		=	leave_numbers_only($_POST['mgr_product_line_js']);
 				$mgr_product_sku		=	leave_numbers_only($_POST['mgr_product_sku_js']);
 
 
@@ -736,7 +745,6 @@ if ($login->isUserLoggedIn() == true) {
 						menu_mpa					=		:umenu_mpa,
 						menu_mpp					=		:umenu_mpp,
 						menu_recent_activity		=		:umenu_recent_activity,
-						menu_mgr_product_line		=		:umenu_mgr_product_line,
 						menu_mgr_product_sku		=		:umenu_mgr_product_sku,
 						menu_my_account				=		:umenu_my_account
 
@@ -761,7 +769,15 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':umenu_mpp',						$mpp,					PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_recent_activity',			$recent_activity,		PDO::PARAM_INT);
 
-						$stmt->bindValue(':umenu_mgr_product_line',			$mgr_product_line,		PDO::PARAM_INT);
+						//	Maybe at some point this will be required... For now only SKUs
+						//	menu_mgr_product_line is by default 32768 so all is good for now!
+
+						//	From the SQL bit:
+						//	menu_mgr_product_line		=		:umenu_mgr_product_line,
+						//	And PHP:
+						//	$stmt->bindValue(':umenu_mgr_product_line',			$mgr_product_line,		PDO::PARAM_INT);
+
+
 						$stmt->bindValue(':umenu_mgr_product_sku',			$mgr_product_sku,		PDO::PARAM_INT);
 
 						$stmt->bindValue(':umenu_my_account',				$my_account,			PDO::PARAM_INT);
@@ -794,7 +810,8 @@ if ($login->isUserLoggedIn() == true) {
 		else if ($action_code == 5)
 		{
 
-			//	Only an Admin of this system can update ACL!
+			//	Update ACL grants you the ability to update the password!
+			//	Maybe this should be : Admin + Update = Change password?
 			if
 			(
 

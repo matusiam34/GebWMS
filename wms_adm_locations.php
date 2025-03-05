@@ -775,53 +775,6 @@ if ($login->isUserLoggedIn() == true)
 	echo $top_menu;
 
 
-/*
-
-$page_form	=	'
-
-<div class="columns is-mobile">
-	<div class="column is-fullwidth">
-		<div class="field is-narrow">
-			<div class="control">
-				<div class="select is-fullwidth">
-					<select id="id_company">
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>';
-
-
-
-*/
-
-/*
-	//	DELETE
-
-				$page_form	=	'<p class="control">';
-				$page_form	.=		'<button class="button admin_class iconBackArrow" style="width:50px;" onClick="goBack();"></button>';
-				$page_form	.=	'</p>';
-*/
-
-
-/*
-				// The "menu"!
-				echo '<nav class="level">
-
-				<!-- Left side -->
-					<div class="level-left">
-
-					<div class="level-item">
-				' . $page_form . '
-					</div>
-
-					</div>
-
-				</nav>';
-*/
-
-
 
 ?>
 
@@ -989,6 +942,56 @@ $page_form	=	'
 
 
 
+<?php
+
+
+	//	Here grab the live categories into one array!
+	$sql	=	'
+
+
+			SELECT
+
+			cat_a_pkey,
+			cat_a_name
+
+			FROM geb_category_a
+
+			WHERE
+			
+			cat_a_owner = :scat_a_owner
+
+	';
+
+	$category_arr	=	array();	//	Store all Category A entries here!
+
+	$category_a_html	=	'';
+
+	if ($stmt = $db->prepare($sql))
+	{
+
+		$stmt->bindValue(':scat_a_owner',	$user_company_uid,		PDO::PARAM_INT);
+		$stmt->execute();
+
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+		{
+
+
+			$category_a_html .= '<option value="' . $row['cat_a_pkey'] . '"';
+/*
+			if ($key == $selectedValue)
+			{ 
+				$html .= ' selected'; 
+			}
+*/
+			$category_a_html .= '>' . $row['cat_a_name'] . '</option>';
+
+		}
+
+	}
+
+
+?>
+
 				<div class="column is-3">
 
 
@@ -999,6 +1002,7 @@ $page_form	=	'
 							<div class="select is-fullwidth">
 								<select id="id_category_a">
 									<option value="0"><?php	echo $mylang['none'];		?></option>
+									<?php	echo $category_a_html	?>
 								</select>
 							</div>
 						  </div>

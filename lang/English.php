@@ -131,7 +131,10 @@ $mylang = array(
 'billing_address'			=>	'Billing address',
 'magic_product'				=>	'Magic Product',
 'set_password'				=>	'Set password',
+'password'					=>	'Password',
 'enter_new_password'		=>	'Enter new password',
+'permissions'				=>	'Permissions',
+'user_info'					=>	'User info',
 
 
 //	Main menu Search lines
