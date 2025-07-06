@@ -32,7 +32,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title><?php	echo $mylang['package_unit'];	?></title>
+	<title><?php	echo $mylang['uom'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -72,7 +72,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 			// Triggers a function every time a row in the table is clicked
-			$('#package_table').on('click', 'tr', function()
+			$('#uom_table').on('click', 'tr', function()
 			{
 				// Check if the clicked row is inside the table header or if it doesn't have a data-id attribute
 				if ($(this).closest('thead').length || !$(this).data('id')) {
@@ -84,10 +84,10 @@ if ($login->isUserLoggedIn() == true)
 				$(this).addClass('highlighted');
 
 				// Get the UOM ID from the data-id attribute
-				var puID = $(this).data('id');
+				var uomID = $(this).data('id');
 
 				// Get all the details from the table for the selected UOM
-				get_one_package_unit_data(puID);
+				get_one_uom_data(uomID);
 			});
 
 
@@ -102,9 +102,9 @@ if ($login->isUserLoggedIn() == true)
 
 				if (selectedId) {
 					// Perform your update logic with the selectedId
-					update_pu(selectedId);
+					update_uom(selectedId);
 				} else {
-					$.alertable.error('123232', '<?php echo $mylang['select_package_unit']; ?>');
+					$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
 				}
 			});
 
@@ -118,12 +118,12 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_all_package_units(row2highlight)
+		function get_all_uom(row2highlight)
 		{
 
 			$.post('ajax_wms_uom.php', { 
 
-				action_code_js				:	20
+				action_code_js				:	10
 
 			},
 
@@ -136,12 +136,12 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					$('#package_table > tbody').html(obje.html);
+					$('#uom_table > tbody').html(obje.html);
 
 					//	only apply when row ID is provided and for this system it will always have to be > 0 (because db_uid)
 					if (row2highlight > 0)
 					{
-						highlightRowByDataId(row2highlight, 'package_table');
+						highlightRowByDataId(row2highlight, 'uom_table');
 					}
 				
 				}
@@ -158,16 +158,16 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
-		function get_one_package_unit_data(puID)
+		function get_one_uom_data(uomID)
 		{
 
-			if (puID)
+			if (uomID)
 			{
 
 				$.post('ajax_wms_uom.php', { 
 
-					action_code_js		:	22,
-					pu_uid_js			:	puID
+					action_code_js		:	12,
+					uom_uid_js			:	uomID
 
 				},
 
@@ -181,11 +181,11 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 
-						set_Element_Value_By_ID('id_pu_name',				obje.data.pu_code);
-						set_Element_Value_By_ID('id_pu_description',		obje.data.pu_description);
-						set_Element_Value_By_ID('id_pu_uom',				obje.data.pu_uom_pkey);
-						set_Element_Value_By_ID('id_pu_qty',				obje.data.pu_qty);
-						set_Element_Value_By_ID('id_pu_status',				obje.data.pu_disabled);
+						set_Element_Value_By_ID('id_uom_name',					obje.data.uom_code);
+						set_Element_Value_By_ID('id_uom_description',			obje.data.uom_description);
+						set_Element_Value_By_ID('id_uom_measurement_type',		obje.data.uom_type);
+						set_Element_Value_By_ID('id_uom_conv_factor',			obje.data.uom_conv_factor);
+						set_Element_Value_By_ID('id_uom_status',				obje.data.uom_disabled);
 
 					}
 					else
@@ -208,63 +208,18 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		// Add one Package UNIT
-		function add_pu()
-		{
-			const data =
-			{
-				action_code_js: 25,
-				pu_name_js: get_Element_Value_By_ID('id_pu_name'),
-				pu_description_js: get_Element_Value_By_ID('id_pu_description'),
-				pu_uom_js: get_Element_Value_By_ID('id_pu_uom'),
-				pu_qty_js: get_Element_Value_By_ID('id_pu_qty'),
-				pu_status_js: get_Element_Value_By_ID('id_pu_status')
-			};
-
-			$.post('ajax_wms_uom.php', data, function (output) {
-				let response;
-
-				try {
-					response = JSON.parse(output);
-				} catch (e) {
-					console.error("Invalid JSON response:", output);
-					$.alertable.error('JSON_PARSE_ERROR', 'Server response was not valid JSON.');
-					return;
-				}
-
-				if (response.control === 0)
-				{
-					get_all_package_units(0); // Refresh the table
-
-					set_Element_Value_By_ID('id_pu_name', '');
-					set_Element_Value_By_ID('id_pu_description', '');
-					set_Element_Value_By_ID('id_pu_uom', 10);
-					set_Element_Value_By_ID('id_pu_qty', 1);
-					set_Element_Value_By_ID('id_pu_status', 0);
-
-					$.alertable.info(response.control, response.msg);
-				} else {
-					$.alertable.error(response.control, response.msg);
-				}
-			})
-			.fail(function () {
-				$.alertable.error('101557', 'Server error. Please try again.');
-			});
-		}
-
-/*
-		//	Add one Package UNIT
-		function add_pu()
+		//	Add one UOM
+		function add_uom()
 		{
 
 			$.post('ajax_wms_uom.php', { 
 
-				action_code_js				:	25,
-				pu_name_js					:	get_Element_Value_By_ID('id_pu_name'),
-				pu_description_js			:	get_Element_Value_By_ID('id_pu_description'),
-				pu_uom_js					:	get_Element_Value_By_ID('id_pu_uom'),
-				pu_qty_js					:	get_Element_Value_By_ID('id_pu_qty'),
-				pu_status_js				:	get_Element_Value_By_ID('id_pu_status')
+				action_code_js				:	15,
+				uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
+				uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
+				uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
+				uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
+				uom_status_js				:	get_Element_Value_By_ID('id_uom_status')
 
 			},
 
@@ -278,13 +233,13 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 					//	Refresh the list
-					get_all_package_units(0);	// repopulate the table
+					get_all_uom(0);	// repopulate the table
 
-					set_Element_Value_By_ID('id_pu_name',			'');
-					set_Element_Value_By_ID('id_pu_description',	'');
-					set_Element_Value_By_ID('id_pu_uom',			10);
-					set_Element_Value_By_ID('id_pu_qty',			1);
-					set_Element_Value_By_ID('id_pu_status',			0);
+					set_Element_Value_By_ID('id_uom_name',					'');
+					set_Element_Value_By_ID('id_uom_description',			'');
+					set_Element_Value_By_ID('id_uom_measurement_type',		10);
+					set_Element_Value_By_ID('id_uom_conv_factor',			1);
+					set_Element_Value_By_ID('id_uom_status',				0);
 
 					$.alertable.info(obje.control, obje.msg);
 
@@ -301,30 +256,30 @@ if ($login->isUserLoggedIn() == true)
 					});
 
 		}
-*/
 
 
 
 
 
-		//	Update Package UNIT details
-		function update_pu(puID)
+
+		//	Update UOM details
+		function update_uom(uomID)
 		{
 
-			if (puID)
+			if (uomID)
 			{
 
-				let row_status	=	get_Element_Value_By_ID('id_pu_status');
+				let row_status	=	get_Element_Value_By_ID('id_uom_status');
 				
 				$.post('ajax_wms_uom.php', { 
 
-					action_code_js				:	27,
-					pu_uid_js					:	puID,
-					pu_name_js					:	get_Element_Value_By_ID('id_pu_name'),
-					pu_description_js			:	get_Element_Value_By_ID('id_pu_description'),
-					pu_uom_js					:	get_Element_Value_By_ID('id_pu_uom'),
-					pu_qty_js					:	get_Element_Value_By_ID('id_pu_qty'),
-					pu_status_js				:	row_status
+					action_code_js				:	17,
+					uom_uid_js					:	uomID,
+					uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
+					uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
+					uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
+					uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
+					uom_status_js				:	row_status
 
 				},
 
@@ -338,16 +293,16 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 						//	Update only the relevant part of the table without a full AJAX
-						updateRow(puID, 'package_table', [get_Element_Value_By_ID('id_pu_name')]);
+						updateRow(uomID, 'uom_table', [get_Element_Value_By_ID('id_uom_name')]);
 						//	If user disables the entry make sure to apply the RED
 						if (row_status == 0)
 						{
-							enableRowByDataId(puID, 'package_table');
+							enableRowByDataId(uomID, 'uom_table');
 						}
 
 						if (row_status == 1)
 						{
-							disableRowByDataId(puID, 'package_table');
+							disableRowByDataId(uomID, 'uom_table');
 						}
 
 						$.alertable.info(obje.control, obje.msg);
@@ -368,59 +323,6 @@ if ($login->isUserLoggedIn() == true)
 				$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
 			}
 
-
-		}
-
-
-
-
-
-		// Get UOMs and populate them for a selectbox!
-		function get_all_uoms()
-		{
-
-			$.post('ajax_wms_uom.php', { 
-
-				action_code_js		:	11
-
-			},
-
-			function(output)
-			{
-
-				// Parse the json  !!
-				var obje = jQuery.parseJSON(output);
-
-				// Control = 0 => Green light to GO !!!
-				if (obje.control == 0)
-				{
-
-					var len = obje.data.length;
-
-					emptySelectBox('id_pu_uom');
-
-
-					if(len > 0)
-					{
-
-						for (var i = 0; i < len; i++)
-						{
-							addOption2SelectBox('id_pu_uom', obje.data[i].uom_pkey, obje.data[i].uom_code);	
-						}
-
-					}
-
-
-				}
-				else
-				{
-					$.alertable.info(obje.control, obje.msg);
-				}
-
-			}).fail(function() {
-						// something went wrong -> could not execute php script most likely !
-						$.alertable.error('103560', '<?php	echo $mylang['server_error'];	?>');
-					});
 
 		}
 
@@ -459,7 +361,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_package_units(0); get_all_uoms();'>
+<body onLoad='get_all_uom(0);'>
 
 
 <?php
@@ -498,10 +400,10 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-4">
 
 						<div class="tableAttr it-has-border">
-							<table class="table is-fullwidth is-hoverable is-scrollable" id="package_table">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="uom_table">
 								<thead>
 									<tr>
-										<th>' . $mylang['package_unit'] . '</th>
+										<th>' . $mylang['uom'] . '</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -516,9 +418,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['package_unit'] . ':</p>
+							<p class="help">' . $mylang['uom'] . ':</p>
 							<div class="control">
-								<input id="id_pu_name" class="input is-normal" type="text" placeholder="BOX20">
+								<input id="id_uom_name" class="input is-normal" type="text" placeholder="COV">
 							</div>
 						</div>
 
@@ -526,18 +428,26 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
-								<input id="id_pu_description" class="input is-normal" type="text" placeholder="">
+								<input id="id_uom_description" class="input is-normal" type="text" placeholder="">
 							</div>
 						</div>
 
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['uom'] . ':</p>
+							<p class="help">' . $mylang['measurement_type'] . ':</p>
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-									<select id="id_pu_uom">
+									<select id="id_uom_measurement_type">';
+
+									//	Populate measurnment types that uses the array from lib_system
+									foreach ($measurement_type_arr as $measure_type_id => $measure_code)
+									{
+										$layout_details_html	.=	'<option value="' . $measure_type_id . '">' . $measure_code . '</option>';
+									}
+
+	$layout_details_html	.=	'
 									</select>
 								</div>
 							  </div>
@@ -547,9 +457,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['qty'] . ':</p>
+							<p class="help">' . $mylang['conv_factor'] . ':</p>
 							<div class="control">
-								<input id="id_pu_qty" class="input is-normal" type="text" placeholder="1.0">
+								<input id="id_uom_conv_factor" class="input is-normal" type="text" placeholder="1.0">
 							</div>
 						</div>
 
@@ -562,7 +472,7 @@ if ($login->isUserLoggedIn() == true)
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-									<select id="id_pu_status">
+									<select id="id_uom_status">
 
 										<option value="0">' . $mylang['active'] . '</option>
 										<option value="1">' . $mylang['disabled'] . '</option>
@@ -595,7 +505,7 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_pu();">' . $mylang['add'] . '</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_uom();">' . $mylang['add'] . '</button>
 							</div>
 						</div>
 

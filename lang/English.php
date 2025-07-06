@@ -98,6 +98,7 @@ $mylang = array(
 'count'						=>	'Count',
 'weight'					=>	'Weight',
 'volume'					=>	'Volume',
+'length'					=>	'Length',
 
 'measurement_type'			=>	'Measurement type',
 
@@ -158,6 +159,8 @@ $mylang = array(
 'warehouse_locations'		=>	'Warehouse Locations',
 'categories'				=>	'Categories',
 'package_unit'				=>	'Package Unit',
+'base_uom'					=>	'Base UOM',
+'uom_abbr'					=>	'UOM',	//	probably will delete this
 'uom'						=>	'Unit of Measure',	//	probably will delete this
 'measurement_unit'			=>	'Measurement Unit',
 'my_account'				=>	'My Account',

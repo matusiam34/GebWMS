@@ -95,6 +95,7 @@ $mylang = array(
 'count'						=>	'Liczba',
 'weight'					=>	'Waga',
 'volume'					=>	'Objętość',
+'length'					=>	'Długość',
 
 'measurement_type'			=>	'Typ miary',
 
@@ -155,6 +156,8 @@ $mylang = array(
 'warehouse_locations'		=>	'Lokalizacje w Magazynach',
 'categories'				=>	'Kategorie',
 'package_unit'				=>	'Jednostka opakowania',
+'base_uom'					=>	'Bazowa jednostka miary',
+'uom_abbr'					=>	'JM',
 'uom'						=>	'Jednostka Miary',	//	most likely obsolete...
 'measurement_unit'			=>	'Jednostka Miary',
 'my_account'				=>	'Moje Konto',

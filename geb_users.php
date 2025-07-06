@@ -830,7 +830,6 @@ if ($login->isUserLoggedIn() == true)
             <ul>
                 <li class="is-active" data-tab="user-info"><a>' . $mylang['user_info'] . '</a></li>
                 <li data-tab="permissions"><a>' . $mylang['permissions'] . '</a></li>
-                <li data-tab="password"><a>' . $mylang['password'] . '</a></li>
             </ul>
         </div>
 
@@ -966,6 +965,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+
 		if (can_user_update($_SESSION['menu_adm_users']))
 		{
 
@@ -978,16 +978,7 @@ if ($login->isUserLoggedIn() == true)
 					<div class="control">
 						<button id="updateDetailsBtn" class="button admin_class is-fullwidth">' . $mylang['save_details'] . '</button>
 					</div>
-				</div>
-
-
-				<div class="field" style="'. $box_size_str .'">
-					<p class="help">&nbsp;</p>
-					<div class="control">
-						<button id="setPasswordBtn" class="button admin_class is-fullwidth">' . $mylang['set_password'] . '</button>
-					</div>
 				</div>';
-
 
 		}
 
@@ -1354,128 +1345,65 @@ $user_details_html	.=	'
 
 
 
+		<div class="columns">';
 
 
+		if (can_user_add($_SESSION['menu_adm_users']))
+		{
+
+			$user_details_html	.=	'
 
 
+			<div class="column is-2">
 
-
-
-
-
-
-
-
-
-        <div class="tab-content" id="password">
-
-
-
-			<div class="columns">
-
-				<div class="column is-2">
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['enter_new_password'] . ':</p>
-							<div class="control">
-								<input id="id_user_desc" class="input is-normal" type="text">
-							</div>
-						</div>
-
-
-
-				</div>
-
-
-
-
-
-
-
-
-
-				<div class="column is-2">
-
-				</div>
-
-
-
-
-
-				<div class="column is-2">
-
-				</div>
-
-
-
-
-
-
-
-
-
-				<div class="column is-2">
-
-
-				</div>
-
-
-
-					<div class="column is-2">
+				<div class="field" style="'. $box_size_str .'">
+					<p class="help">&nbsp;</p>
+					<div class="control">
+						<button class="button admin_class is-fullwidth" onclick="add_new_user();">' . $mylang['add_user'] . '</button>
 					</div>
-
-
-					<div class="column is-2">';
-
-
-
-	// If the operator has the ability to update...
-	if (can_user_update($_SESSION['menu_adm_users']))
-	{
-
-		//	Update button section?!
-		//$user_details_html	.=	'<div class="column is-2">';
-
-		$user_details_html	.=	'
-
-			<div class="field" style="'. $box_size_str .'">
-				<p class="help">&nbsp;</p>
-				<div class="control">
-					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['update_acl'] . '</button>
 				</div>
-			</div>';
 
-		//$user_details_html	.=	'</div>';
+			</div>
 
-	}
+
+			';
+
+		}
+
+
+
+		//	Allow password change when Admin only? Or do I need the Admin to also have Update powers for this one?
+		//	FIX
+		if (check_for_admin($_SESSION['user_is_admin']))
+		{
+
+			$user_details_html	.=	'
+
+			<div class="column is-2">
+
+				<div class="field" style="'. $box_size_str .'">
+					<p class="help">&nbsp;</p>
+					<div class="control">
+						<button id="setPasswordBtn" class="button admin_class is-fullwidth">' . $mylang['set_password'] . '</button>
+					</div>
+				</div>
+
+			</div>
+
+
+			';
+
+
+		}
+
+
 
 
 $user_details_html	.=	'
 
 
-					</div>
 
-
-
-
-
-
-
-
-
-
-			</div>
-
-
-
-        </div>
-
-
-
-
-
-
+		</div>
 
 
 

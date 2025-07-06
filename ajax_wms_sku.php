@@ -161,6 +161,7 @@ if ($login->isUserLoggedIn() == true) {
 					'sku_description'		=> trim($_POST['sku_description_js']),
 					'sku_barcode'			=> trim($_POST['sku_barcode_js']),
 					'sku_package_unit'		=> leave_numbers_only($_POST['sku_package_unit_js']),
+					'sku_base_uom'			=> leave_numbers_only($_POST['sku_base_uom_js']),
 					'sku_category_a'		=> leave_numbers_only($_POST['sku_category_a_js']),
 					'sku_category_b'		=> leave_numbers_only($_POST['sku_category_b_js']),
 					'sku_category_c'		=> leave_numbers_only($_POST['sku_category_c_js']),
@@ -265,6 +266,7 @@ if ($login->isUserLoggedIn() == true) {
 									prodsku_desc,
 									prodsku_barcode,
 									prodsku_pu_pkey,
+									prodsku_base_uom_pkey,
 									prodsku_category_a,
 									prodsku_category_b,
 									prodsku_category_c,
@@ -281,6 +283,7 @@ if ($login->isUserLoggedIn() == true) {
 									:iprodsku_desc,
 									:iprodsku_barcode,
 									:iprodsku_pu_pkey,
+									:iprodsku_base_uom_pkey,
 									:iprodsku_category_a,
 									:iprodsku_category_b,
 									:iprodsku_category_c,
@@ -295,17 +298,18 @@ if ($login->isUserLoggedIn() == true) {
 						{
 
 
-							$stmt->bindValue(':iprodsku_owner',			$user_company_uid,							PDO::PARAM_INT);
-							$stmt->bindValue(':iprodsku_code',			$sku_arr['sku_code'],				PDO::PARAM_STR);
-							$stmt->bindValue(':iprodsku_group',			$sku_arr['sku_group_code'],		PDO::PARAM_STR);
-							$stmt->bindValue(':iprodsku_desc',			$sku_arr['sku_description'],		PDO::PARAM_STR);
-							$stmt->bindValue(':iprodsku_barcode',		$sku_arr['sku_barcode'],		PDO::PARAM_STR);
-							$stmt->bindValue(':iprodsku_pu_pkey',		$sku_arr['sku_package_unit'],			PDO::PARAM_INT);
+							$stmt->bindValue(':iprodsku_owner',				$user_company_uid,					PDO::PARAM_INT);
+							$stmt->bindValue(':iprodsku_code',				$sku_arr['sku_code'],				PDO::PARAM_STR);
+							$stmt->bindValue(':iprodsku_group',				$sku_arr['sku_group_code'],			PDO::PARAM_STR);
+							$stmt->bindValue(':iprodsku_desc',				$sku_arr['sku_description'],		PDO::PARAM_STR);
+							$stmt->bindValue(':iprodsku_barcode',			$sku_arr['sku_barcode'],			PDO::PARAM_STR);
+							$stmt->bindValue(':iprodsku_pu_pkey',			$sku_arr['sku_package_unit'],		PDO::PARAM_INT);
+							$stmt->bindValue(':iprodsku_base_uom_pkey',		$sku_arr['sku_base_uom'],			PDO::PARAM_INT);
 							$stmt->bindValue(':iprodsku_category_a',		$sku_arr['sku_category_a'],			PDO::PARAM_INT);
 							$stmt->bindValue(':iprodsku_category_b',		$sku_arr['sku_category_b'],			PDO::PARAM_INT);
 							$stmt->bindValue(':iprodsku_category_c',		$sku_arr['sku_category_c'],			PDO::PARAM_INT);
 							$stmt->bindValue(':iprodsku_category_d',		$sku_arr['sku_category_d'],			PDO::PARAM_INT);
-							$stmt->bindValue(':iprodsku_disabled',			$sku_arr['disabled'],					PDO::PARAM_INT);
+							$stmt->bindValue(':iprodsku_disabled',			$sku_arr['disabled'],				PDO::PARAM_INT);
 							$stmt->execute();
 							$db->commit();
 
@@ -330,21 +334,6 @@ if ($login->isUserLoggedIn() == true) {
 							$message_id		=	106201;
 							$message2op		=	$mylang['barcode_already_exists'];
 						}
-						elseif ($found_match == 3)
-						{
-							$message_id		=	106202;
-							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
-						}
-						elseif ($found_match == 4)
-						{
-							$message_id		=	106203;
-							$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_already_exists'];
-						}
-						elseif ($found_match == 5)
-						{
-							$message_id		=	106204;
-							$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_already_exists'];
-						}
 
 					}
 
@@ -354,6 +343,7 @@ if ($login->isUserLoggedIn() == true) {
 				}
 				else
 				{
+					//	Old method of having cases and stuff... FIX
 					//	Input checks have failed... Provide all the required messages so that the operator can fix them!
 
 					if ($input_checks	==	1)
@@ -364,32 +354,14 @@ if ($login->isUserLoggedIn() == true) {
 					elseif ($input_checks	==	2)
 					{
 						$message_id		=	106206;
-						$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['barcode_too_short'];
+						$message2op		=	$mylang['barcode_too_short'];
 					}
+					//	FIX
+					//	This is not implemented at all yet!
 					elseif ($input_checks	==	3)
 					{
 						$message_id		=	106207;
-						$message2op		=	'(' . $mylang['each'] . ') ' . $mylang['invalid_barcode'];
-					}
-					elseif ($input_checks	==	4)
-					{
-						$message_id		=	106208;
-						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['invalid_barcode'];
-					}
-					elseif ($input_checks	==	5)
-					{
-						$message_id		=	106209;
-						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['barcode_too_short'];
-					}
-					elseif ($input_checks	==	6)
-					{
-						$message_id		=	106210;
-						$message2op		=	'(' . $mylang['case'] . ') ' . $mylang['incorrect_qty'];
-					}
-					elseif ($input_checks	==	7)
-					{
-						$message_id		=	106210;
-						$message2op		=	$mylang['identical_barcodes'];
+						$message2op		=	$mylang['invalid_barcode'];
 					}
 
 
@@ -452,6 +424,7 @@ if ($login->isUserLoggedIn() == true) {
 						'sku_description'		=> trim($_POST['sku_description_js']),
 						'sku_barcode'			=> trim($_POST['sku_barcode_js']),
 						'sku_package_unit'		=> leave_numbers_only($_POST['sku_package_unit_js']),
+						'sku_base_uom'			=> leave_numbers_only($_POST['sku_base_uom_js']),
 						'sku_category_a'		=> leave_numbers_only($_POST['sku_category_a_js']),
 						'sku_category_b'		=> leave_numbers_only($_POST['sku_category_b_js']),
 						'sku_category_c'		=> leave_numbers_only($_POST['sku_category_c_js']),
@@ -587,20 +560,21 @@ if ($login->isUserLoggedIn() == true) {
 
 									SET
 
-									prodsku_code		=	:uprod_code,
-									prodsku_group		=	:uprod_group,
-									prodsku_desc		=	:uprod_desc,
-									prodsku_barcode		=	:uprod_barcode,
-									prodsku_pu_pkey		=	:uprod_pu_pkey,
-									prodsku_category_a	=	:uprod_category_a,
-									prodsku_category_b	=	:uprod_category_b,
-									prodsku_category_c	=	:uprod_category_c,
-									prodsku_category_d	=	:uprod_category_d,
-									prodsku_disabled	=	:uprod_disabled
+									prodsku_code				=	:uprod_code,
+									prodsku_group				=	:uprod_group,
+									prodsku_desc				=	:uprod_desc,
+									prodsku_barcode				=	:uprod_barcode,
+									prodsku_pu_pkey				=	:uprod_pu_pkey,
+									prodsku_base_uom_pkey		=	:uprod_base_uom_pkey,
+									prodsku_category_a			=	:uprod_category_a,
+									prodsku_category_b			=	:uprod_category_b,
+									prodsku_category_c			=	:uprod_category_c,
+									prodsku_category_d			=	:uprod_category_d,
+									prodsku_disabled			=	:uprod_disabled
 
 									WHERE
 
-									prodsku_pkey		=	:uprod_pkey
+									prodsku_pkey			=	:uprod_pkey
 
 
 							';
@@ -615,6 +589,7 @@ if ($login->isUserLoggedIn() == true) {
 								$stmt->bindValue(':uprod_desc',				$sku_arr['sku_description'],	PDO::PARAM_STR);
 								$stmt->bindValue(':uprod_barcode',			$sku_arr['sku_barcode'],		PDO::PARAM_STR);
 								$stmt->bindValue(':uprod_pu_pkey',			$sku_arr['sku_package_unit'],	PDO::PARAM_INT);
+								$stmt->bindValue(':uprod_base_uom_pkey',	$sku_arr['sku_base_uom'],		PDO::PARAM_INT);
 
 								$stmt->bindValue(':uprod_category_a',		$sku_arr['sku_category_a'],		PDO::PARAM_INT);
 								$stmt->bindValue(':uprod_category_b',		$sku_arr['sku_category_b'],		PDO::PARAM_INT);

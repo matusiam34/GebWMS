@@ -379,14 +379,14 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-				//	Manage Units of Measure! KG, Gallon, EACH
+				//	UOM ! KG, Gallon, EACH
 				if (is_it_enabled($_SESSION['menu_adm_uom']))
 				{
-					$uom_link		=	"location.href='wms_adm_measurement_unit.php'";
+					$uom_link		=	"location.href='wms_adm_uom.php'";
 
 					echo	'<div class="field">
 								<div class="control">
-									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $uom_link . '">' . $mylang['measurement_unit'] . '</a>
+									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $uom_link . '">' . $mylang['uom_abbr'] . '</a>
 								</div>
 							</div>';
 				}

@@ -284,6 +284,7 @@ if ($login->isUserLoggedIn() == true)
 				sku_group_code_js:		get_Element_Value_By_ID('id_group_code'),
 				sku_description_js:		get_Element_Value_By_ID('id_sku_description'),
 				sku_package_unit_js:	get_Element_Value_By_ID('id_package_unit'),
+				sku_base_uom_js:		get_Element_Value_By_ID('id_base_uom'),
 				sku_barcode_js:			get_Element_Value_By_ID('id_sku_barcode'),
 				sku_category_a_js:	 	get_Element_Value_By_ID('id_category_a'),
 				sku_category_b_js:		get_Element_Value_By_ID('id_category_b'),
@@ -331,6 +332,7 @@ if ($login->isUserLoggedIn() == true)
 				sku_group_code_js		:	get_Element_Value_By_ID('id_group_code'),
 				sku_description_js		:	get_Element_Value_By_ID('id_sku_description'),
 				sku_package_unit_js		:	get_Element_Value_By_ID('id_package_unit'),
+				sku_base_uom_js			:	get_Element_Value_By_ID('id_base_uom'),
 				sku_barcode_js			:	get_Element_Value_By_ID('id_sku_barcode'),
 				sku_category_a_js		: 	get_Element_Value_By_ID('id_category_a'),
 				sku_category_b_js		:	get_Element_Value_By_ID('id_category_b'),
@@ -465,14 +467,16 @@ $columns_html .= '</div>';
 		$prod_desc			=	"";
 		$prod_barcode		=	"";
 		$prod_pu			=	0;
+		$prod_bum			=	0;
 		$prod_category_a	=	0;
 		$prod_category_b	=	0;
 		$prod_category_c	=	0;
 		$prod_category_d	=	0;
 		$prod_disabled		=	0;	// active!
 
-		$category_arr		=	array();	//	store all categories here!
-		$pu_arr				=	array();	//	store all package units!
+		$category_arr			=	array();	//	store all categories here!
+		$pu_arr					=	array();	//	store all package units!
+		$bum_arr				=	array();	//	store all base unit of measure 
 
 
 
@@ -496,6 +500,7 @@ $columns_html .= '</div>';
 				$prod_desc				=	trim($row['prodsku_desc']);
 				$prod_barcode			=	trim($row['prodsku_barcode']);
 				$prod_pu				=	leave_numbers_only($row['prodsku_pu_pkey']);
+				$prod_bum				=	leave_numbers_only($row['prodsku_base_uom_pkey']);
 				$prod_category_a		=	leave_numbers_only($row['prodsku_category_a']);
 				$prod_category_b		=	leave_numbers_only($row['prodsku_category_b']);
 				$prod_category_c		=	leave_numbers_only($row['prodsku_category_c']);
@@ -656,6 +661,66 @@ $columns_html .= '</div>';
 
 
 
+
+			//	Generate the HTML code for the base uom selection...
+
+
+			//	Here grab the base UOMs into one array!
+			$sql	=	'
+
+
+					SELECT
+
+					*
+
+					FROM wms_uom
+
+					WHERE
+					
+					uom_owner = :scompany_owner
+					
+					ORDER BY uom_code ASC
+
+			';
+
+
+
+
+			if ($stmt = $db->prepare($sql))
+			{
+
+				$stmt->bindValue(':scompany_owner',	$user_company_uid,		PDO::PARAM_INT);
+				$stmt->execute();
+
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					// drop it into the final array...
+					$bum_arr[]	=	$row;
+				}
+
+			}
+
+
+
+			$bum_options = [];
+
+			// Populate category options arrays
+			foreach ($bum_arr as $bum)
+			{
+				$bum_options[$bum['uom_pkey']] = $bum['uom_code'];
+			}
+
+
+
+
+			$base_uom_html	=	generate_select_options($bum_options, leave_numbers_only($prod_bum), '');
+
+
+
+
+
+
+
 			$columns_html	.=	'<div class="columns">';
 
 			$columns_html	.=	'<div class="column is-3">';
@@ -706,12 +771,16 @@ $columns_html .= '</div>';
 
 
 <div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['barcode'] . ':</p>
-	<div class="control">
-		<input id="id_sku_barcode" class="input is-normal" type="text" placeholder="" value="'. $prod_barcode . '" name="id_sku_barcode">
+	<p class="help">' . $mylang['base_uom'] . ':</p>
+	<div class="field is-narrow">
+	  <div class="control">
+		<div class="select is-fullwidth">
+			<select id="id_base_uom" name="id_base_uom">' . $base_uom_html . '
+			</select>
+		</div>
+	  </div>
 	</div>
 </div>
-
 
 
 
@@ -731,6 +800,15 @@ $columns_html .= '</div>';
 			$columns_html	.=	'<div class="column is-3">';
 
 			$details_html	=	'
+
+
+
+<div class="field" style="'. $box_size_str .'">
+	<p class="help">' . $mylang['barcode'] . ':</p>
+	<div class="control">
+		<input id="id_sku_barcode" class="input is-normal" type="text" placeholder="" value="'. $prod_barcode . '" name="id_sku_barcode">
+	</div>
+</div>
 
 
 

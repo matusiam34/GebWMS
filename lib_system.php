@@ -129,7 +129,8 @@ $measurement_type_arr	=	array(
 
 	'10'	=>	$mylang['count'],
 	'20'	=>	$mylang['weight'],
-	'30'	=>	$mylang['volume']
+	'30'	=>	$mylang['volume'],
+	'40'	=>	$mylang['length']
 
 );
 
