@@ -17,7 +17,7 @@ if ($login->isUserLoggedIn() == true)
 	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
-	if (is_it_enabled($_SESSION['menu_adm_uom']))
+	if (is_it_enabled($_SESSION['menu_adm_container_type']))
 	{
 
 
@@ -32,7 +32,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title><?php	echo $mylang['uom'];	?></title>
+	<title><?php	echo $mylang['container_type'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -72,7 +72,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 			// Triggers a function every time a row in the table is clicked
-			$('#uom_table').on('click', 'tr', function()
+			$('#container_table').on('click', 'tr', function()
 			{
 				// Check if the clicked row is inside the table header or if it doesn't have a data-id attribute
 				if ($(this).closest('thead').length || !$(this).data('id')) {
@@ -84,10 +84,10 @@ if ($login->isUserLoggedIn() == true)
 				$(this).addClass('highlighted');
 
 				// Get the UOM ID from the data-id attribute
-				var uomID = $(this).data('id');
+				var ctypeID = $(this).data('id');
 
 				// Get all the details from the table for the selected UOM
-				get_one_uom_data(uomID);
+				get_one_ctype_data(ctypeID);
 			});
 
 
@@ -102,7 +102,7 @@ if ($login->isUserLoggedIn() == true)
 
 				if (selectedId) {
 					// Perform your update logic with the selectedId
-					update_uom(selectedId);
+					update_ctype(selectedId);
 				} else {
 					$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
 				}
@@ -118,10 +118,10 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		function get_all_uom(row2highlight)
+		function get_all_ctype(row2highlight)
 		{
 
-			$.post('ajax_wms_uom.php', { 
+			$.post('ajax_wms_ctype.php', { 
 
 				action_code_js				:	10
 
@@ -136,12 +136,12 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					$('#uom_table > tbody').html(obje.html);
+					$('#container_table > tbody').html(obje.html);
 
 					//	only apply when row ID is provided and for this system it will always have to be > 0 (because db_uid)
 					if (row2highlight > 0)
 					{
-						highlightRowByDataId(row2highlight, 'uom_table');
+						highlightRowByDataId(row2highlight, 'container_table');
 					}
 				
 				}
@@ -158,16 +158,16 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
-		function get_one_uom_data(uomID)
+		function get_one_ctype_data(ctypeID)
 		{
 
-			if (uomID)
+			if (ctypeID)
 			{
 
-				$.post('ajax_wms_uom.php', { 
+				$.post('ajax_wms_ctype.php', { 
 
 					action_code_js		:	12,
-					uom_uid_js			:	uomID
+					uom_uid_js			:	ctypeID
 
 				},
 
@@ -181,11 +181,9 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 
-						set_Element_Value_By_ID('id_uom_name',					obje.data.uom_code);
-						set_Element_Value_By_ID('id_uom_description',			obje.data.uom_description);
-						set_Element_Value_By_ID('id_uom_measurement_type',		obje.data.uom_type);
-						set_Element_Value_By_ID('id_uom_conv_factor',			obje.data.uom_conv_factor);
-						set_Element_Value_By_ID('id_uom_status',				obje.data.uom_disabled);
+						set_Element_Value_By_ID('id_ctype_name',				obje.data.uom_code);
+						set_Element_Value_By_ID('id_ctype_description',			obje.data.uom_description);
+						set_Element_Value_By_ID('id_ctype_status',				obje.data.uom_disabled);
 
 					}
 					else
@@ -209,17 +207,15 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Add one UOM
-		function add_uom()
+		function add_ctype()
 		{
 
-			$.post('ajax_wms_uom.php', { 
+			$.post('ajax_wms_ctype.php', { 
 
 				action_code_js				:	15,
-				uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
-				uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
-				uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
-				uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
-				uom_status_js				:	get_Element_Value_By_ID('id_uom_status')
+				uom_name_js					:	get_Element_Value_By_ID('id_ctype_name'),
+				uom_description_js			:	get_Element_Value_By_ID('id_ctype_description'),
+				uom_status_js				:	get_Element_Value_By_ID('id_ctype_status')
 
 			},
 
@@ -233,13 +229,11 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 					//	Refresh the list
-					get_all_uom(0);	// repopulate the table
+					get_all_ctype(0);	// repopulate the table
 
-					set_Element_Value_By_ID('id_uom_name',					'');
-					set_Element_Value_By_ID('id_uom_description',			'');
-					set_Element_Value_By_ID('id_uom_measurement_type',		10);
-					set_Element_Value_By_ID('id_uom_conv_factor',			1);
-					set_Element_Value_By_ID('id_uom_status',				0);
+					set_Element_Value_By_ID('id_ctype_name',					'');
+					set_Element_Value_By_ID('id_ctype_description',			'');
+					set_Element_Value_By_ID('id_ctype_status',				0);
 
 					$.alertable.info(obje.control, obje.msg);
 
@@ -263,22 +257,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 		//	Update UOM details
-		function update_uom(uomID)
+		function update_ctype(ctypeID)
 		{
 
-			if (uomID)
+			if (ctypeID)
 			{
 
-				let row_status	=	get_Element_Value_By_ID('id_uom_status');
+				let row_status	=	get_Element_Value_By_ID('id_ctype_status');
 				
-				$.post('ajax_wms_uom.php', { 
+				$.post('ajax_wms_ctype.php', { 
 
 					action_code_js				:	17,
-					uom_uid_js					:	uomID,
-					uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
-					uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
-					uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
-					uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
+					uom_uid_js					:	ctypeID,
+					uom_name_js					:	get_Element_Value_By_ID('id_ctype_name'),
+					uom_description_js			:	get_Element_Value_By_ID('id_ctype_description'),
 					uom_status_js				:	row_status
 
 				},
@@ -293,16 +285,16 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 						//	Update only the relevant part of the table without a full AJAX
-						updateRow(uomID, 'uom_table', [get_Element_Value_By_ID('id_uom_name')]);
+						updateRow(ctypeID, 'container_table', [get_Element_Value_By_ID('id_uom_name')]);
 						//	If user disables the entry make sure to apply the RED
 						if (row_status == 0)
 						{
-							enableRowByDataId(uomID, 'uom_table');
+							enableRowByDataId(ctypeID, 'container_table');
 						}
 
 						if (row_status == 1)
 						{
-							disableRowByDataId(uomID, 'uom_table');
+							disableRowByDataId(ctypeID, 'container_table');
 						}
 
 						$.alertable.info(obje.control, obje.msg);
@@ -361,7 +353,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_uom(0);'>
+<body onLoad='get_all_ctype(0);'>
 
 
 <?php
@@ -400,10 +392,10 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-4">
 
 						<div class="tableAttr it-has-border">
-							<table class="table is-fullwidth is-hoverable is-scrollable" id="uom_table">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="container_table">
 								<thead>
 									<tr>
-										<th>' . $mylang['uom'] . '</th>
+										<th>' . $mylang['container'] . '</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -418,9 +410,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['uom'] . ':</p>
+							<p class="help">' . $mylang['container'] . ':</p>
 							<div class="control">
-								<input id="id_uom_name" class="input is-normal" type="text" placeholder="COV">
+								<input id="id_ctype_name" class="input is-normal" type="text" placeholder="PALLET">
 							</div>
 						</div>
 
@@ -428,42 +420,9 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
-								<input id="id_uom_description" class="input is-normal" type="text" placeholder="">
+								<input id="id_ctype_description" class="input is-normal" type="text" placeholder="">
 							</div>
 						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['measurement_type'] . ':</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-fullwidth">
-									<select id="id_uom_measurement_type">';
-
-									//	Populate measurnment types that uses the array from lib_system
-									foreach ($measurement_type_arr as $measure_type_id => $measure_code)
-									{
-										$layout_details_html	.=	'<option value="' . $measure_type_id . '">' . $measure_code . '</option>';
-									}
-
-	$layout_details_html	.=	'
-									</select>
-								</div>
-							  </div>
-							</div>
-						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['conv_factor'] . ':</p>
-							<div class="control">
-								<input id="id_uom_conv_factor" class="input is-normal" type="text" placeholder="1.0">
-							</div>
-						</div>
-
-
 
 
 
@@ -472,7 +431,7 @@ if ($login->isUserLoggedIn() == true)
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-									<select id="id_uom_status">
+									<select id="id_ctype_status">
 
 										<option value="0">' . $mylang['active'] . '</option>
 										<option value="1">' . $mylang['disabled'] . '</option>
@@ -482,9 +441,6 @@ if ($login->isUserLoggedIn() == true)
 							  </div>
 							</div>
 						</div>
-
-
-
 
 
 
@@ -505,7 +461,7 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_uom();">' . $mylang['add'] . '</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_ctype();">' . $mylang['add'] . '</button>
 							</div>
 						</div>
 

@@ -365,6 +365,33 @@ if ($login->isUserLoggedIn() == true)
 				}
 
 
+
+
+
+
+
+
+
+
+
+
+
+				//	Manage the type of containers used in the warehouse
+				if (is_it_enabled($_SESSION['menu_adm_container_type']))
+				{
+					$container_type_link		=	"location.href='wms_adm_container_type.php'";
+
+					echo	'<div class="field">
+								<div class="control">
+									<a class="button is-normal is-fullwidth admin_class is-bold" onclick="' . $container_type_link . '">' . $mylang['container_type'] . '</a>
+								</div>
+							</div>';
+				}
+
+
+
+
+
 				//	Manage Packaging UNITS! PACK3, CASE24, EACH, PALLET144 etc 
 				if (is_it_enabled($_SESSION['menu_adm_uom']))
 				{

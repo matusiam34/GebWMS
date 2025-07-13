@@ -363,14 +363,13 @@ class Login
 				$_SESSION['menu_recent_activity']			=	$result_row->menu_recent_activity;
 				$_SESSION['menu_mgr_product_line']			=	$result_row->menu_mgr_product_line;
 				$_SESSION['menu_mgr_product_sku']			=	$result_row->menu_mgr_product_sku;
+				$_SESSION['menu_adm_container_type']		=	$result_row->menu_adm_container_type;
 				$_SESSION['menu_adm_uom']					=	$result_row->menu_adm_uom;
 				$_SESSION['menu_adm_company']				=	$result_row->menu_adm_company;
 				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;
 				$_SESSION['menu_adm_warehouse']				=	$result_row->menu_adm_warehouse;
 				$_SESSION['menu_adm_warehouse_loc']			=	$result_row->menu_adm_warehouse_loc;
 				$_SESSION['menu_adm_category']				=	$result_row->menu_adm_category;
-
-
 
 
 				//	Each user can be granted the ability to change their password and other settings... like Language :)

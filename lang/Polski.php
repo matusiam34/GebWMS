@@ -133,6 +133,7 @@ $mylang = array(
 'enter_new_password'		=>	'Wprowadź nowe hasło',
 'permissions'				=>	'Uprawnienia',
 'user_info'					=>	'Dane użytkownika',
+'system'					=>	'System',
 
 
 //	Main menu Search lines
@@ -154,6 +155,8 @@ $mylang = array(
 'users'						=>	'Użytkownicy',
 'warehouses'				=>	'Magazyny',
 'warehouse_locations'		=>	'Lokalizacje w Magazynach',
+'container_type'			=>	'Rodzaj kontenera',
+'container'					=>	'Kontener',
 'categories'				=>	'Kategorie',
 'package_unit'				=>	'Jednostka opakowania',
 'base_uom'					=>	'Bazowa jednostka miary',

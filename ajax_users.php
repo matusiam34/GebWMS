@@ -195,6 +195,7 @@ if ($login->isUserLoggedIn() == true) {
 					menu_adm_users,
 					menu_adm_category,
 					menu_adm_uom,
+					menu_adm_container_type,
 					menu_prod_search,
 					menu_location_search,
 					menu_goodsin,
@@ -294,7 +295,8 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_warehouses			=	leave_numbers_only($_POST['adm_warehouses_js']);
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
 				$adm_categories			=	leave_numbers_only($_POST['adm_categories_js']);
-
+				$adm_company			=	leave_numbers_only($_POST['adm_companies_js']);
+				$adm_container_type		=	leave_numbers_only($_POST['adm_container_type_js']);
 
 
 
@@ -376,6 +378,8 @@ if ($login->isUserLoggedIn() == true) {
 								menu_adm_warehouse_loc,
 								menu_adm_users,
 								menu_adm_category,
+								menu_adm_company,
+								menu_adm_container_type,
 								menu_prod_search,
 								menu_location_search,
 								menu_goodsin,
@@ -403,6 +407,8 @@ if ($login->isUserLoggedIn() == true) {
 								:imenu_adm_warehouse_loc,
 								:imenu_adm_users,
 								:imenu_adm_category,
+								:imenu_adm_company,
+								:imenu_adm_container_type,
 								:imenu_prod_search,
 								:imenu_location_search,
 								:imenu_goodsin,
@@ -414,6 +420,7 @@ if ($login->isUserLoggedIn() == true) {
 							)
 
 						';
+
 
 
 						if ($stmt = $db->prepare($sql))
@@ -435,6 +442,12 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':imenu_adm_warehouse_loc',	$adm_wh_locations,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_adm_users',			$adm_users,			PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_adm_category',			$adm_categories,	PDO::PARAM_INT);
+
+							$stmt->bindValue(':imenu_adm_company',			$adm_company,			PDO::PARAM_INT);
+							$stmt->bindValue(':imenu_adm_container_type',	$adm_container_type,	PDO::PARAM_INT);
+
+
+
 							$stmt->bindValue(':imenu_prod_search',			$product_search,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_location_search',		$location_search,	PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_goodsin',				$goodsin,			PDO::PARAM_INT);
@@ -710,6 +723,10 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_wh_locations		=	leave_numbers_only($_POST['adm_wh_locations_js']);
 				$adm_categories			=	leave_numbers_only($_POST['adm_categories_js']);
 
+				$adm_companies			=	leave_numbers_only($_POST['adm_companies_js']);
+				$adm_container_type		=	leave_numbers_only($_POST['adm_container_type_js']);
+
+
 				$user_uid				=	leave_numbers_only($_POST['user_uid_js']);		// remove anything that is not a number
 
 
@@ -746,7 +763,9 @@ if ($login->isUserLoggedIn() == true) {
 						menu_mpp					=		:umenu_mpp,
 						menu_recent_activity		=		:umenu_recent_activity,
 						menu_mgr_product_sku		=		:umenu_mgr_product_sku,
-						menu_my_account				=		:umenu_my_account
+						menu_my_account				=		:umenu_my_account,
+						menu_adm_company			=		:umenu_adm_company,
+						menu_adm_container_type		=		:umenu_adm_container_type
 
 						WHERE
 
@@ -781,6 +800,10 @@ if ($login->isUserLoggedIn() == true) {
 						$stmt->bindValue(':umenu_mgr_product_sku',			$mgr_product_sku,		PDO::PARAM_INT);
 
 						$stmt->bindValue(':umenu_my_account',				$my_account,			PDO::PARAM_INT);
+
+						$stmt->bindValue(':umenu_adm_company',				$adm_companies,			PDO::PARAM_INT);
+						$stmt->bindValue(':umenu_adm_container_type',		$adm_container_type,	PDO::PARAM_INT);
+
 
 						$stmt->bindValue(':suser_id',						$user_uid,				PDO::PARAM_INT);
 

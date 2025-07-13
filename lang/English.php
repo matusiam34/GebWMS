@@ -136,6 +136,7 @@ $mylang = array(
 'enter_new_password'		=>	'Enter new password',
 'permissions'				=>	'Permissions',
 'user_info'					=>	'User info',
+'system'					=>	'System',
 
 
 //	Main menu Search lines
@@ -157,6 +158,8 @@ $mylang = array(
 'users'						=>	'Users',
 'warehouses'				=>	'Warehouses',
 'warehouse_locations'		=>	'Warehouse Locations',
+'container_type'			=>	'Container Type',
+'container'					=>	'Container',
 'categories'				=>	'Categories',
 'package_unit'				=>	'Package Unit',
 'base_uom'					=>	'Base UOM',

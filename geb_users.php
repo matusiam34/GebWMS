@@ -414,6 +414,8 @@ if ($login->isUserLoggedIn() == true)
 						set_Element_Value_By_ID('id_adm_warehouses',		obje.data.menu_adm_warehouse);
 						set_Element_Value_By_ID('id_adm_wh_locations',		obje.data.menu_adm_warehouse_loc);
 						set_Element_Value_By_ID('id_adm_categories',		obje.data.menu_adm_category);
+						set_Element_Value_By_ID('id_adm_container_type',	obje.data.menu_adm_container_type);
+						set_Element_Value_By_ID('id_adm_companies',			obje.data.menu_adm_company);
 
 
 
@@ -536,6 +538,10 @@ if ($login->isUserLoggedIn() == true)
 					adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
 					adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
 					adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories'),
+					adm_companies_js		:	get_Element_Value_By_ID('id_adm_companies'),
+					adm_container_type_js	:	get_Element_Value_By_ID('id_adm_container_type'),
+
+
 					user_uid_js				:	userID
 
 				},
@@ -602,8 +608,9 @@ if ($login->isUserLoggedIn() == true)
 				adm_users_js			:	get_Element_Value_By_ID('id_adm_users'),
 				adm_warehouses_js		:	get_Element_Value_By_ID('id_adm_warehouses'),
 				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
-				adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories')
-
+				adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories'),
+				adm_companies_js		:	get_Element_Value_By_ID('id_adm_companies'),
+				adm_container_type_js	:	get_Element_Value_By_ID('id_adm_container_type')
 
 			},
 
@@ -798,7 +805,20 @@ if ($login->isUserLoggedIn() == true)
 
 
 	//	Everything about the user table.
-	$user_details_html	=	'';
+	$user_details_html		=	'';
+
+	//	All stuff related to the WMS
+	$gebwms_html			=	'';
+
+	//	All stuff related to the overall system
+	$system_html			=	'';
+
+
+	//	Buttons at the end of everything!
+	$low_buttons_html		=	'';
+
+
+
 
 	$user_details_html	.=	'
 
@@ -829,7 +849,8 @@ if ($login->isUserLoggedIn() == true)
         <div class="tabs is-boxed">
             <ul>
                 <li class="is-active" data-tab="user-info"><a>' . $mylang['user_info'] . '</a></li>
-                <li data-tab="permissions"><a>' . $mylang['permissions'] . '</a></li>
+                <li data-tab="gebwms"><a>GebWMS</a></li>
+                <li data-tab="system"><a>' . $mylang['system'] . '</a></li>
             </ul>
         </div>
 
@@ -990,24 +1011,23 @@ $user_details_html	.=	'
 
 
 
-
-
 			</div>
-
 
 
 			<div class="columns">
-
-
-
 			</div>
 
 
+        </div>';
 
-        </div>
 
 
-        <div class="tab-content" id="permissions">
+
+
+$gebwms_html	=	'
+
+
+        <div class="tab-content" id="gebwms">
 
 
 
@@ -1184,66 +1204,6 @@ $user_details_html	.=	'
 
 
 
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['my_account'] . ':</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-yellow is-fullwidth">
-									<select style="' . $color_general . '" id="id_my_account">
-
-										<option value="32768">X</option>
-										<option value="49152">E</option>
-										<option value="53248">EU</option>
-
-									</select>
-								</div>
-							  </div>
-							</div>
-						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['users'] . ':</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-yellow is-fullwidth">
-									<select style="' . $color_admin . '" id="id_adm_users">
-
-										<option value="32768">X</option>
-										<option value="49152">E</option>
-										<option value="57344">EA</option>
-										<option value="61440">EAU</option>
-										<option value="53248">EU</option>
-
-									</select>
-								</div>
-							  </div>
-							</div>
-						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['warehouses'] . ':</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-yellow is-fullwidth">
-									<select style="' . $color_admin . '" id="id_adm_warehouses">
-
-										<option value="32768">X</option>
-										<option value="49152">E</option>
-										<option value="57344">EA</option>
-										<option value="61440">EAU</option>
-										<option value="53248">EU</option>
-
-									</select>
-								</div>
-							  </div>
-							</div>
-						</div>
-
-
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['warehouse_locations'] . ':</p>
@@ -1288,6 +1248,25 @@ $user_details_html	.=	'
 
 
 
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['container_type'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_container_type">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
 
 				</div>
 
@@ -1308,12 +1287,12 @@ $user_details_html	.=	'
 		//	Update button section?!
 		//$user_details_html	.=	'<div class="column is-2">';
 
-		$user_details_html	.=	'
+		$gebwms_html	.=	'
 
 			<div class="field" style="'. $box_size_str .'">
 				<p class="help">&nbsp;</p>
 				<div class="control">
-					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['update_acl'] . '</button>
+					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['save'] . '</button>
 				</div>
 			</div>';
 
@@ -1322,16 +1301,10 @@ $user_details_html	.=	'
 	}
 
 
-$user_details_html	.=	'
+$gebwms_html	.=	'
 
 
 					</div>
-
-
-
-
-
-
 
 
 
@@ -1340,18 +1313,186 @@ $user_details_html	.=	'
 
 
 
-        </div>
+        </div>';
 
 
 
 
-		<div class="columns">';
+
+
+
+
+
+
+
+$system_html	=	'
+
+
+        <div class="tab-content" id="system">
+
+
+
+			<div class="columns">
+
+
+
+
+				<div class="column is-2">
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['my_account'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_general . '" id="id_my_account">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['companies'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_companies">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['warehouses'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_warehouses">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['users'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_users">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+				</div>
+
+
+
+					<div class="column is-2">
+					</div>
+
+					<div class="column is-2">
+					</div>
+
+					<div class="column is-2">
+					</div>
+
+					<div class="column is-2">
+					</div>
+
+
+					<div class="column is-2">';
+
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_users']))
+	{
+
+		//	Update button section?!
+		//$user_details_html	.=	'<div class="column is-2">';
+
+		$system_html	.=	'
+
+			<div class="field" style="'. $box_size_str .'">
+				<p class="help">&nbsp;</p>
+				<div class="control">
+					<button id="updateAclBtn" class="button admin_class is-fullwidth">' . $mylang['save'] . '</button>
+				</div>
+			</div>';
+
+		//$user_details_html	.=	'</div>';
+
+	}
+
+
+$system_html	.=	'
+
+
+					</div>
+
+
+
+
+			</div>
+
+
+
+        </div>';
+
+
+
+
+
+
+
+
+$low_buttons_html	=	'<div class="columns">';
 
 
 		if (can_user_add($_SESSION['menu_adm_users']))
 		{
 
-			$user_details_html	.=	'
+			$low_buttons_html	.=	'
 
 
 			<div class="column is-2">
@@ -1377,7 +1518,7 @@ $user_details_html	.=	'
 		if (check_for_admin($_SESSION['user_is_admin']))
 		{
 
-			$user_details_html	.=	'
+			$low_buttons_html	.=	'
 
 			<div class="column is-2">
 
@@ -1397,150 +1538,28 @@ $user_details_html	.=	'
 		}
 
 
-
-
-$user_details_html	.=	'
-
-
-
-		</div>
+$low_buttons_html	.=	'</div>';
 
 
 
 
-';
+
+
+
+
+
+
+
+
+
+
 
 
 
 echo	$user_details_html;
-
-
-
-
-
-
-
-//	<!--		The ACL section here		-->
-
-
-//	Configure the AC for each menu as a drop down. This should make it a bit easier.
-//	The trick will be to figure out which page has what options and provide them to the Administrator
-//	as an option. Do this once and all will be good! That is as long as the page that is configured does not
-//	expand in functionality... Keep that in mind!
-
-
-	$user_acl_html	=	'<div class="columns">';
-
-
-
-	$user_acl_html	.=	'<div class="column is-2">';
-
-/*
-
-	//	If I ever need Product Master!
-	$user_acl_html	.=	'
-
-
-<div class="field" style="'. $box_size_str .'">
-	<p class="help">' . $mylang['products'] . ':</p>
-	<div class="field is-narrow">
-	  <div class="control">
-		<div class="select is-yellow is-fullwidth">
-			<select style="' . $color_manager . '" id="id_mgr_product_line">
-
-				<option value="32768">X</option>
-				<option value="49152">E</option>
-				<option value="57344">EA</option>
-				<option value="61440">EAU</option>
-				<option value="53248">EU</option>
-
-			</select>
-		</div>
-	  </div>
-	</div>
-</div>';
-
-
-
-*/
-
-
-
-	$user_acl_html	.=	'</div>';
-
-
-
-	$user_acl_html	.=	'<div class="column is-2">';
-
-	$user_acl_html	.=	'
-
-
-';
-
-
-	$user_acl_html	.=	'</div>';
-
-
-
-
-
-
-	// If the operator has the ability to add or update...
-	if
-	(
-
-		(can_user_add($_SESSION['menu_adm_users']))
-
-		||
-
-		(can_user_update($_SESSION['menu_adm_users']))
-
-
-	)
-	{
-
-		//	Add user input + button
-		$user_acl_html	.=	'<div class="column is-2">';
-
-
-		if (can_user_add($_SESSION['menu_adm_users']))
-		{
-
-			$user_acl_html	.=	'
-
-				<div class="field" style="'. $box_size_str .'">
-					<p class="help">&nbsp;</p>
-					<div class="control">
-						<button class="button admin_class is-fullwidth" onclick="add_new_user();">' . $mylang['add_user'] . '</button>
-					</div>
-				</div>';
-
-		}
-
-
-
-		//	If the user can add or update ===>>> They can set the password!
-
-		//	Set password button
-		$user_acl_html	.=	'
-
-			<div class="field" style="'. $box_size_str .'">
-				<p class="help">&nbsp;</p>
-				<div class="control">
-					<button id="setPasswordBtn" class="button admin_class is-fullwidth">' . $mylang['set_password'] . '</button>
-				</div>
-			</div>';
-
-
-		$user_acl_html	.=	'</div>';
-
-	}
-
-
-
-	//$user_acl_html	.=	'</div>';	//	close the ACL "row"
-
-//echo	$user_acl_html;
+echo	$gebwms_html;
+echo	$system_html;
+echo	$low_buttons_html;
 
 
 
