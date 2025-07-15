@@ -167,7 +167,7 @@ if ($login->isUserLoggedIn() == true)
 				$.post('ajax_wms_ctype.php', { 
 
 					action_code_js		:	12,
-					uom_uid_js			:	ctypeID
+					ctype_uid_js		:	ctypeID
 
 				},
 
@@ -181,9 +181,10 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 
-						set_Element_Value_By_ID('id_ctype_name',				obje.data.uom_code);
-						set_Element_Value_By_ID('id_ctype_description',			obje.data.uom_description);
-						set_Element_Value_By_ID('id_ctype_status',				obje.data.uom_disabled);
+						set_Element_Value_By_ID('id_ctype_name',				obje.data.ctype_code);
+						set_Element_Value_By_ID('id_ctype_prefix',				obje.data.ctype_prefix);
+						set_Element_Value_By_ID('id_ctype_description',			obje.data.ctype_description);
+						set_Element_Value_By_ID('id_ctype_status',				obje.data.ctype_disabled);
 
 					}
 					else
@@ -206,16 +207,17 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		//	Add one UOM
+		//	Add one container type
 		function add_ctype()
 		{
 
 			$.post('ajax_wms_ctype.php', { 
 
 				action_code_js				:	15,
-				uom_name_js					:	get_Element_Value_By_ID('id_ctype_name'),
-				uom_description_js			:	get_Element_Value_By_ID('id_ctype_description'),
-				uom_status_js				:	get_Element_Value_By_ID('id_ctype_status')
+				ctype_name_js				:	get_Element_Value_By_ID('id_ctype_name'),
+				ctype_prefix_js				:	get_Element_Value_By_ID('id_ctype_prefix'),
+				ctype_description_js		:	get_Element_Value_By_ID('id_ctype_description'),
+				ctype_status_js				:	get_Element_Value_By_ID('id_ctype_status')
 
 			},
 
@@ -231,9 +233,10 @@ if ($login->isUserLoggedIn() == true)
 					//	Refresh the list
 					get_all_ctype(0);	// repopulate the table
 
-					set_Element_Value_By_ID('id_ctype_name',					'');
-					set_Element_Value_By_ID('id_ctype_description',			'');
-					set_Element_Value_By_ID('id_ctype_status',				0);
+					set_Element_Value_By_ID('id_ctype_name',			'');
+					set_Element_Value_By_ID('id_ctype_prefix',			'');
+					set_Element_Value_By_ID('id_ctype_description',		'');
+					set_Element_Value_By_ID('id_ctype_status',			0);
 
 					$.alertable.info(obje.control, obje.msg);
 
@@ -256,7 +259,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		//	Update UOM details
+		//	Update Container Type details
 		function update_ctype(ctypeID)
 		{
 
@@ -268,10 +271,11 @@ if ($login->isUserLoggedIn() == true)
 				$.post('ajax_wms_ctype.php', { 
 
 					action_code_js				:	17,
-					uom_uid_js					:	ctypeID,
-					uom_name_js					:	get_Element_Value_By_ID('id_ctype_name'),
-					uom_description_js			:	get_Element_Value_By_ID('id_ctype_description'),
-					uom_status_js				:	row_status
+					ctype_uid_js				:	ctypeID,
+					ctype_name_js				:	get_Element_Value_By_ID('id_ctype_name'),
+					ctype_prefix_js				:	get_Element_Value_By_ID('id_ctype_prefix'),
+					ctype_description_js		:	get_Element_Value_By_ID('id_ctype_description'),
+					ctype_status_js				:	get_Element_Value_By_ID('id_ctype_status')
 
 				},
 
@@ -285,7 +289,7 @@ if ($login->isUserLoggedIn() == true)
 					if (obje.control == 0)
 					{
 						//	Update only the relevant part of the table without a full AJAX
-						updateRow(ctypeID, 'container_table', [get_Element_Value_By_ID('id_uom_name')]);
+						updateRow(ctypeID, 'container_table', [get_Element_Value_By_ID('id_ctype_name')]);
 						//	If user disables the entry make sure to apply the RED
 						if (row_status == 0)
 						{
@@ -395,7 +399,7 @@ if ($login->isUserLoggedIn() == true)
 							<table class="table is-fullwidth is-hoverable is-scrollable" id="container_table">
 								<thead>
 									<tr>
-										<th>' . $mylang['container'] . '</th>
+										<th>' . $mylang['container_type'] . '</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -410,7 +414,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['container'] . ':</p>
+							<p class="help">' . $mylang['container_type'] . ':</p>
 							<div class="control">
 								<input id="id_ctype_name" class="input is-normal" type="text" placeholder="PALLET">
 							</div>
@@ -418,9 +422,19 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['prefix'] . ':</p>
+							<div class="control">
+								<input id="id_ctype_prefix" class="input is-normal" type="text" placeholder="PAL">
+							</div>
+						</div>
+
+
+
+
+						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
-								<input id="id_ctype_description" class="input is-normal" type="text" placeholder="">
+								<input id="id_ctype_description" class="input is-normal" type="text">
 							</div>
 						</div>
 

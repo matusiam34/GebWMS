@@ -165,7 +165,7 @@ $mylang = array(
 'measurement_unit'			=>	'Jednostka Miary',
 'my_account'				=>	'Moje Konto',
 'pick_order'				=>	'Spikuj zamówienie',
-
+'prefix'					=>	'Prefiks',
 'category'					=>	'Kategoria',
 
 
@@ -187,6 +187,7 @@ $mylang = array(
 'permissions_error'				=>	'Błąd uprawnień!',
 'warehouse_already_exists'		=>	'Magazyn już istnieje!',
 'uom_already_exists'			=>	'Jednostka miary już istnieje!',
+'container_type_already_exists'	=>	'Typ kontenera już istnieje!',
 'package_unit_already_exists'	=>	'Jednostka opakowania już istnieje!',
 'company_already_exists'		=>	'Firma już istnieje!',
 'user_already_exists'			=>	'Użytkownik już istnieje!',

@@ -168,7 +168,7 @@ $mylang = array(
 'measurement_unit'			=>	'Measurement Unit',
 'my_account'				=>	'My Account',
 'pick_order'				=>	'Pick Order',
-
+'prefix'					=>	'Prefix',
 'category'					=>	'Category',
 
 
@@ -190,6 +190,7 @@ $mylang = array(
 'permissions_error'				=>	'Permissions error!',
 'warehouse_already_exists'		=>	'Warehouse already exists!',
 'uom_already_exists'			=>	'UOM already exists!',
+'container_type_already_exists'	=>	'Container type already exists!',
 'package_unit_already_exists'	=>	'Package unit already exists!',
 'company_already_exists'		=>	'Company already exists!',
 'user_already_exists'			=>	'User already exists!',
