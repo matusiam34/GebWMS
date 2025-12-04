@@ -374,6 +374,7 @@ if ($login->isUserLoggedIn() == true)
 
 				function(output)
 				{
+
 					// Parse the json  !!
 					var obje = jQuery.parseJSON(output);
 
@@ -414,7 +415,10 @@ if ($login->isUserLoggedIn() == true)
 						set_Element_Value_By_ID('id_adm_warehouses',		obje.data.menu_adm_warehouse);
 						set_Element_Value_By_ID('id_adm_wh_locations',		obje.data.menu_adm_warehouse_loc);
 						set_Element_Value_By_ID('id_adm_categories',		obje.data.menu_adm_category);
+
 						set_Element_Value_By_ID('id_adm_container_type',	obje.data.menu_adm_container_type);
+						set_Element_Value_By_ID('id_adm_package_unit',		obje.data.menu_adm_package_unit);
+						set_Element_Value_By_ID('id_adm_unit_of_measure',	obje.data.menu_adm_uom);
 						set_Element_Value_By_ID('id_adm_companies',			obje.data.menu_adm_company);
 
 
@@ -540,7 +544,8 @@ if ($login->isUserLoggedIn() == true)
 					adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories'),
 					adm_companies_js		:	get_Element_Value_By_ID('id_adm_companies'),
 					adm_container_type_js	:	get_Element_Value_By_ID('id_adm_container_type'),
-
+					adm_package_unit_js		:	get_Element_Value_By_ID('id_adm_package_unit'),
+					adm_uom_js				:	get_Element_Value_By_ID('id_adm_unit_of_measure'),
 
 					user_uid_js				:	userID
 
@@ -610,7 +615,11 @@ if ($login->isUserLoggedIn() == true)
 				adm_wh_locations_js		:	get_Element_Value_By_ID('id_adm_wh_locations'),
 				adm_categories_js		:	get_Element_Value_By_ID('id_adm_categories'),
 				adm_companies_js		:	get_Element_Value_By_ID('id_adm_companies'),
-				adm_container_type_js	:	get_Element_Value_By_ID('id_adm_container_type')
+				adm_container_type_js	:	get_Element_Value_By_ID('id_adm_container_type'),
+				adm_package_unit_js		:	get_Element_Value_By_ID('id_adm_package_unit'),
+				adm_uom_js				:	get_Element_Value_By_ID('id_adm_unit_of_measure')
+ 
+
 
 			},
 
@@ -649,7 +658,7 @@ if ($login->isUserLoggedIn() == true)
 		function get_all_warehouses()
 		{
 
-			$.post('ajax_wms_warehouses.php', { 
+			$.post('ajax_warehouses.php', { 
 
 				action_code_js		:	20
 
@@ -1248,6 +1257,16 @@ $gebwms_html	=	'
 
 
 
+
+				</div>
+
+
+
+					<div class="column is-2">
+
+
+
+
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['container_type'] . ':</p>
 							<div class="field is-narrow">
@@ -1268,11 +1287,49 @@ $gebwms_html	=	'
 						</div>
 
 
-				</div>
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['package_unit'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_package_unit">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
 
 
 
-					<div class="column is-2">
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">' . $mylang['uom'] . ':</p>
+							<div class="field is-narrow">
+							  <div class="control">
+								<div class="select is-yellow is-fullwidth">
+									<select style="' . $color_admin . '" id="id_adm_unit_of_measure">
+
+										<option value="32768">X</option>
+										<option value="49152">E</option>
+										<option value="57344">EA</option>
+										<option value="61440">EAU</option>
+										<option value="53248">EU</option>
+
+									</select>
+								</div>
+							  </div>
+							</div>
+						</div>
+
+
+
+
 					</div>
 
 

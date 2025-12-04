@@ -364,6 +364,7 @@ class Login
 				$_SESSION['menu_mgr_product_line']			=	$result_row->menu_mgr_product_line;
 				$_SESSION['menu_mgr_product_sku']			=	$result_row->menu_mgr_product_sku;
 				$_SESSION['menu_adm_container_type']		=	$result_row->menu_adm_container_type;
+				$_SESSION['menu_adm_package_unit']			=	$result_row->menu_adm_package_unit;
 				$_SESSION['menu_adm_uom']					=	$result_row->menu_adm_uom;
 				$_SESSION['menu_adm_company']				=	$result_row->menu_adm_company;
 				$_SESSION['menu_adm_users']					=	$result_row->menu_adm_users;

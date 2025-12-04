@@ -462,7 +462,33 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-		//	Update button section?!
+	//	Show Add or Update related buttons only if the user permissions are set!
+
+
+	// If the operator has the ability to add...
+	if (can_user_add($_SESSION['menu_adm_container_type']))
+	{
+
+		$layout_details_html	.=	'
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_ctype();">' . $mylang['add'] . '</button>
+							</div>
+						</div>
+
+
+						';
+
+
+	}
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_container_type']))
+	{
+
 		$layout_details_html	.=	'
 
 						<div class="field" style="'. $box_size_str .'">
@@ -472,14 +498,9 @@ if ($login->isUserLoggedIn() == true)
 							</div>
 						</div>
 
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_ctype();">' . $mylang['add'] . '</button>
-							</div>
-						</div>
-
 						';
+
+	}
 
 
 

@@ -66,7 +66,9 @@ if ($login->isUserLoggedIn() == true) {
 
 
 				SELECT
+
 				*
+
 				FROM users
 
 			';
@@ -194,6 +196,8 @@ if ($login->isUserLoggedIn() == true) {
 					menu_adm_warehouse_loc,
 					menu_adm_users,
 					menu_adm_category,
+					menu_adm_package_unit,
+					menu_adm_uom,
 					menu_adm_uom,
 					menu_adm_container_type,
 					menu_prod_search,
@@ -298,6 +302,9 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_company			=	leave_numbers_only($_POST['adm_companies_js']);
 				$adm_container_type		=	leave_numbers_only($_POST['adm_container_type_js']);
 
+				$adm_package_unit		=	leave_numbers_only($_POST['adm_package_unit_js']);
+				$adm_uom				=	leave_numbers_only($_POST['adm_uom_js']);
+
 
 
 				if (strlen($user_username) >= 2)	//	I am allowing the username to be min 2 characters
@@ -380,6 +387,8 @@ if ($login->isUserLoggedIn() == true) {
 								menu_adm_category,
 								menu_adm_company,
 								menu_adm_container_type,
+								menu_adm_package_unit,
+								menu_adm_uom,
 								menu_prod_search,
 								menu_location_search,
 								menu_goodsin,
@@ -409,6 +418,8 @@ if ($login->isUserLoggedIn() == true) {
 								:imenu_adm_category,
 								:imenu_adm_company,
 								:imenu_adm_container_type,
+								:imenu_adm_package_unit,
+								:imenu_adm_uom,
 								:imenu_prod_search,
 								:imenu_location_search,
 								:imenu_goodsin,
@@ -446,6 +457,8 @@ if ($login->isUserLoggedIn() == true) {
 							$stmt->bindValue(':imenu_adm_company',			$adm_company,			PDO::PARAM_INT);
 							$stmt->bindValue(':imenu_adm_container_type',	$adm_container_type,	PDO::PARAM_INT);
 
+							$stmt->bindValue(':imenu_adm_package_unit',		$adm_package_unit,	PDO::PARAM_INT);
+							$stmt->bindValue(':imenu_adm_uom',				$adm_uom,			PDO::PARAM_INT);
 
 
 							$stmt->bindValue(':imenu_prod_search',			$product_search,	PDO::PARAM_INT);
@@ -726,6 +739,10 @@ if ($login->isUserLoggedIn() == true) {
 				$adm_companies			=	leave_numbers_only($_POST['adm_companies_js']);
 				$adm_container_type		=	leave_numbers_only($_POST['adm_container_type_js']);
 
+				$adm_package_unit		=	leave_numbers_only($_POST['adm_package_unit_js']);
+				$adm_uom				=	leave_numbers_only($_POST['adm_uom_js']);
+
+
 
 				$user_uid				=	leave_numbers_only($_POST['user_uid_js']);		// remove anything that is not a number
 
@@ -765,13 +782,18 @@ if ($login->isUserLoggedIn() == true) {
 						menu_mgr_product_sku		=		:umenu_mgr_product_sku,
 						menu_my_account				=		:umenu_my_account,
 						menu_adm_company			=		:umenu_adm_company,
-						menu_adm_container_type		=		:umenu_adm_container_type
+						menu_adm_container_type		=		:umenu_adm_container_type,
+						menu_adm_package_unit		=		:umenu_adm_package_unit,
+						menu_adm_uom				=		:umenu_adm_uom
+
 
 						WHERE
 
 						user_id	 =	:suser_id
 
 					';
+
+
 
 
 					if ($stmt = $db->prepare($sql))
@@ -803,7 +825,8 @@ if ($login->isUserLoggedIn() == true) {
 
 						$stmt->bindValue(':umenu_adm_company',				$adm_companies,			PDO::PARAM_INT);
 						$stmt->bindValue(':umenu_adm_container_type',		$adm_container_type,	PDO::PARAM_INT);
-
+						$stmt->bindValue(':umenu_adm_package_unit',			$adm_package_unit,		PDO::PARAM_INT);
+						$stmt->bindValue(':umenu_adm_uom',					$adm_uom,				PDO::PARAM_INT);
 
 						$stmt->bindValue(':suser_id',						$user_uid,				PDO::PARAM_INT);
 

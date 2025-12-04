@@ -17,7 +17,7 @@ if ($login->isUserLoggedIn() == true)
 	require_once('lib_system.php');
 
 	//	Certain access right checks should be executed here...
-	if (is_it_enabled($_SESSION['menu_adm_uom']))
+	if (is_it_enabled($_SESSION['menu_adm_warehouse']))
 	{
 
 
@@ -32,7 +32,7 @@ if ($login->isUserLoggedIn() == true)
 	<!-- Basic Page Needs
 	–––––––––––––––––––––––––––––––––––––––––––––––––– -->
 	<meta charset="utf-8">
-	<title><?php	echo $mylang['uom'];	?></title>
+	<title><?php	echo $mylang['warehouses'];	?></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 
@@ -70,10 +70,10 @@ if ($login->isUserLoggedIn() == true)
 		$(document).ready(function() 
 		{
 
-
-			// Triggers a function every time a row in the table is clicked
-			$('#uom_table').on('click', 'tr', function()
+			// Triggers a function every time the row in the table departmentList is clicked !
+			$('#warehouse_table').on('click', 'tr', function()
 			{
+
 				// Check if the clicked row is inside the table header or if it doesn't have a data-id attribute
 				if ($(this).closest('thead').length || !$(this).data('id')) {
 					return; // Exit the function if the header is clicked or there's no data-id attribute
@@ -84,13 +84,12 @@ if ($login->isUserLoggedIn() == true)
 				$(this).addClass('highlighted');
 
 				// Get the UOM ID from the data-id attribute
-				var uomID = $(this).data('id');
+				var whID = $(this).data('id');
 
-				// Get all the details from the table for the selected UOM
-				get_one_uom_data(uomID);
+				// Get all the details from the table...
+				get_one_warehouse_data(whID);
+
 			});
-
-
 
 
 
@@ -102,7 +101,7 @@ if ($login->isUserLoggedIn() == true)
 
 				if (selectedId) {
 					// Perform your update logic with the selectedId
-					update_uom(selectedId);
+					update_warehouse(selectedId);
 				} else {
 					$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
 				}
@@ -111,19 +110,16 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-
-
 		});
 
 
 
-		function get_all_uom(row2highlight)
+		function get_all_warehouses()
 		{
 
-			$.post('ajax_wms_uom.php', { 
+			$.post('ajax_warehouses.php', { 
 
-				action_code_js				:	10
+				action_code_js				:	0
 
 			},
 
@@ -136,14 +132,9 @@ if ($login->isUserLoggedIn() == true)
 				// Control = 0 => Green light to GO !!!
 				if (obje.control == 0)
 				{
-					$('#uom_table > tbody').html(obje.html);
+					$('#warehouse_table > tbody').empty();
+					$('#warehouse_table > tbody').append(obje.html);
 
-					//	only apply when row ID is provided and for this system it will always have to be > 0 (because db_uid)
-					if (row2highlight > 0)
-					{
-						highlightRowByDataId(row2highlight, 'uom_table');
-					}
-				
 				}
 				else
 				{
@@ -158,68 +149,56 @@ if ($login->isUserLoggedIn() == true)
 		}
 
 
-		function get_one_uom_data(uomID)
+		function get_one_warehouse_data(warehouseID)
 		{
 
-			if (uomID)
+
+			$.post('ajax_warehouses.php', { 
+
+				action_code_js			:	1,
+				warehouse_uid_js		:	warehouseID
+
+			},
+			function(output)
 			{
 
-				$.post('ajax_wms_uom.php', { 
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
 
-					action_code_js		:	12,
-					uom_uid_js			:	uomID
-
-				},
-
-				function(output)
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
 				{
 
-					// Parse the json  !!
-					var obje = jQuery.parseJSON(output);
+					set_Element_Value_By_ID('id_warehouse_name',			obje.data.wh_code);
+					set_Element_Value_By_ID('id_warehouse_description',		obje.data.wh_desc);
+					set_Element_Value_By_ID('id_warehouse_status',			obje.data.wh_disabled);
 
-					// Control = 0 => Green light to GO !!!
-					if (obje.control == 0)
-					{
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg);
+				}
 
-						set_Element_Value_By_ID('id_uom_name',					obje.data.uom_code);
-						set_Element_Value_By_ID('id_uom_description',			obje.data.uom_description);
-						set_Element_Value_By_ID('id_uom_measurement_type',		obje.data.uom_type);
-						set_Element_Value_By_ID('id_uom_conv_factor',			obje.data.uom_conv_factor);
-						set_Element_Value_By_ID('id_uom_status',				obje.data.uom_disabled);
-
-					}
-					else
-					{
-						$.alertable.error(obje.control, obje.msg);
-					}
-
-				}).fail(function() {
-							// something went wrong
-							$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
-						});
-
-			} else {
-				// Handle the case where no row is selected
-				$.alertable.error('123232', '<?php echo $mylang['nothing_selected']; ?>');
-			}
-
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('101556', '<?php	echo $mylang['server_error'];	?>');
+					});
 
 		}
 
 
 
-		//	Add one UOM
-		function add_uom()
+
+		//	Add warehouse
+		function add_warehouse()
 		{
 
-			$.post('ajax_wms_uom.php', { 
+			$.post('ajax_warehouses.php', { 
 
-				action_code_js				:	15,
-				uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
-				uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
-				uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
-				uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
-				uom_status_js				:	get_Element_Value_By_ID('id_uom_status')
+				action_code_js				:	2,
+				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
+				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
+				warehouse_status_js			:	get_Element_Value_By_ID('id_warehouse_status')
 
 			},
 
@@ -233,16 +212,7 @@ if ($login->isUserLoggedIn() == true)
 				if (obje.control == 0)
 				{
 					//	Refresh the list
-					get_all_uom(0);	// repopulate the table
-
-					set_Element_Value_By_ID('id_uom_name',					'');
-					set_Element_Value_By_ID('id_uom_description',			'');
-					set_Element_Value_By_ID('id_uom_measurement_type',		10);
-					set_Element_Value_By_ID('id_uom_conv_factor',			1);
-					set_Element_Value_By_ID('id_uom_status',				0);
-
-					$.alertable.info(obje.control, obje.msg);
-
+					get_all_warehouses();	// repopulate the table
 
 				}
 				else
@@ -261,68 +231,59 @@ if ($login->isUserLoggedIn() == true)
 
 
 
-
-		//	Update UOM details
-		function update_uom(uomID)
+		//	Update warehouse details
+		function update_warehouse(warehouseID)
 		{
 
-			if (uomID)
+			let row_status	=	get_Element_Value_By_ID('id_warehouse_status');
+
+			$.post('ajax_warehouses.php', { 
+
+				action_code_js				:	3,
+				warehouse_uid_js			:	warehouseID,
+				warehouse_name_js			:	get_Element_Value_By_ID('id_warehouse_name'),
+				warehouse_description_js	:	get_Element_Value_By_ID('id_warehouse_description'),
+				warehouse_status_js			:	row_status
+
+			},
+
+			function(output)
 			{
 
-				let row_status	=	get_Element_Value_By_ID('id_uom_status');
-				
-				$.post('ajax_wms_uom.php', { 
+				// Parse the json  !!
+				var obje = jQuery.parseJSON(output);
 
-					action_code_js				:	17,
-					uom_uid_js					:	uomID,
-					uom_name_js					:	get_Element_Value_By_ID('id_uom_name'),
-					uom_description_js			:	get_Element_Value_By_ID('id_uom_description'),
-					uom_measurement_type_js		:	get_Element_Value_By_ID('id_uom_measurement_type'),
-					uom_conv_factor_js			:	get_Element_Value_By_ID('id_uom_conv_factor'),
-					uom_status_js				:	row_status
-
-				},
-
-				function(output)
+				// Control = 0 => Green light to GO !!!
+				if (obje.control == 0)
 				{
 
-					// Parse the json  !!
-					var obje = jQuery.parseJSON(output);
-
-					// Control = 0 => Green light to GO !!!
-					if (obje.control == 0)
+					//	Update only the relevant part of the table without a full AJAX
+					updateRow(warehouseID, 'warehouse_table', [get_Element_Value_By_ID('id_warehouse_name')]);
+					//	If user disables the entry make sure to apply the RED
+					if (row_status == 0)
 					{
-						//	Update only the relevant part of the table without a full AJAX
-						updateRow(uomID, 'uom_table', [get_Element_Value_By_ID('id_uom_name')]);
-						//	If user disables the entry make sure to apply the RED
-						if (row_status == 0)
-						{
-							enableRowByDataId(uomID, 'uom_table');
-						}
-
-						if (row_status == 1)
-						{
-							disableRowByDataId(uomID, 'uom_table');
-						}
-
-						$.alertable.info(obje.control, obje.msg);
-
-					}
-					else
-					{
-						$.alertable.error(obje.control, obje.msg).always(function() {	});
+						enableRowByDataId(warehouseID, 'warehouse_table');
 					}
 
-				}).fail(function() {
-							// something went wrong
-							$.alertable.error('101558', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
-						});
+					if (row_status == 1)
+					{
+						disableRowByDataId(warehouseID, 'warehouse_table');
+					}
 
-			} else {
-				// Handle the case where no row is selected
-				$.alertable.error('101558', '<?php echo $mylang['nothing_selected']; ?>');
-			}
 
+					$.alertable.info(obje.control, obje.msg).always(function() {	});
+
+
+				}
+				else
+				{
+					$.alertable.error(obje.control, obje.msg).always(function() {	});
+				}
+
+			}).fail(function() {
+						// something went wrong
+						$.alertable.error('101558', '<?php	echo $mylang['server_error'];	?>').always(function() {	});
+					});
 
 		}
 
@@ -361,7 +322,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 </head>
-<body onLoad='get_all_uom(0);'>
+<body onLoad='get_all_warehouses();'>
 
 
 <?php
@@ -400,10 +361,10 @@ if ($login->isUserLoggedIn() == true)
 					<div class="column is-4">
 
 						<div class="tableAttr it-has-border">
-							<table class="table is-fullwidth is-hoverable is-scrollable" id="uom_table">
+							<table class="table is-fullwidth is-hoverable is-scrollable" id="warehouse_table">
 								<thead>
 									<tr>
-										<th>' . $mylang['uom'] . '</th>
+										<th>' . $mylang['warehouse'] . '</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -418,9 +379,9 @@ if ($login->isUserLoggedIn() == true)
 
 
 						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['uom'] . ':</p>
+							<p class="help">' . $mylang['warehouse'] . ':</p>
 							<div class="control">
-								<input id="id_uom_name" class="input is-normal" type="text" placeholder="COV">
+								<input id="id_warehouse_name" class="input is-normal" type="text" placeholder="COV">
 							</div>
 						</div>
 
@@ -428,42 +389,9 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">' . $mylang['description'] . ':</p>
 							<div class="control">
-								<input id="id_uom_description" class="input is-normal" type="text" placeholder="">
+								<input id="id_warehouse_description" class="input is-normal" type="text" placeholder="">
 							</div>
 						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['measurement_type'] . ':</p>
-							<div class="field is-narrow">
-							  <div class="control">
-								<div class="select is-fullwidth">
-									<select id="id_uom_measurement_type">';
-
-									//	Populate measurnment types that uses the array from lib_system
-									foreach ($measurement_type_arr as $measure_type_id => $measure_code)
-									{
-										$layout_details_html	.=	'<option value="' . $measure_type_id . '">' . $measure_code . '</option>';
-									}
-
-	$layout_details_html	.=	'
-									</select>
-								</div>
-							  </div>
-							</div>
-						</div>
-
-
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">' . $mylang['conv_factor'] . ':</p>
-							<div class="control">
-								<input id="id_uom_conv_factor" class="input is-normal" type="text" placeholder="1.0">
-							</div>
-						</div>
-
-
 
 
 
@@ -472,7 +400,7 @@ if ($login->isUserLoggedIn() == true)
 							<div class="field is-narrow">
 							  <div class="control">
 								<div class="select is-fullwidth">
-									<select id="id_uom_status">
+									<select id="id_warehouse_status">
 
 										<option value="0">' . $mylang['active'] . '</option>
 										<option value="1">' . $mylang['disabled'] . '</option>
@@ -481,14 +409,9 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							  </div>
 							</div>
-						</div>
+						</div>';
 
 
-
-
-
-
-						';
 
 
 
@@ -496,7 +419,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// If the operator has the ability to add...
-	if (can_user_add($_SESSION['menu_adm_uom']))
+	if (can_user_add($_SESSION['menu_adm_warehouse']))
 	{
 
 		$layout_details_html	.=	'
@@ -504,9 +427,10 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_uom();">' . $mylang['add'] . '</button>
+								<button class="button is-normal is-bold admin_class is-fullwidth"  onclick="add_warehouse();">' . $mylang['add'] . '</button>
 							</div>
 						</div>
+
 
 						';
 
@@ -515,7 +439,7 @@ if ($login->isUserLoggedIn() == true)
 
 
 	// If the operator has the ability to update...
-	if (can_user_update($_SESSION['menu_adm_uom']))
+	if (can_user_update($_SESSION['menu_adm_warehouse']))
 	{
 
 		$layout_details_html	.=	'
@@ -523,15 +447,13 @@ if ($login->isUserLoggedIn() == true)
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
 							<div class="control">
-								<button id="updateBtn" class="button is-normal is-bold admin_class is-fullwidth" >' . $mylang['save'] . '</button>
+								<button id="updateBtn" class="button is-normal is-bold admin_class is-fullwidth">' . $mylang['save'] . '</button>
 							</div>
 						</div>
 
 						';
 
 	}
-
-
 
 
 
@@ -543,9 +465,6 @@ if ($login->isUserLoggedIn() == true)
 echo	$layout_details_html;
 
 
-
-//	Place it in a better space maybe? Not urgent.
-//echo	'<input id="id_hidden" class="input is-normal" type="hidden">';
 
 
 		echo '</div>';

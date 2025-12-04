@@ -401,17 +401,14 @@ if ($login->isUserLoggedIn() == true)
 
 
 
+	//	Show Add or Update related buttons only if the user permissions are set!
 
 
-		//	Update button section?!
+	// If the operator has the ability to add...
+	if (can_user_add($_SESSION['menu_adm_company']))
+	{
+
 		$layout_details_html	.=	'
-
-						<div class="field" style="'. $box_size_str .'">
-							<p class="help">&nbsp;</p>
-							<div class="control">
-								<button id="updateBtn" class="button is-normal is-bold admin_class is-fullwidth">' . $mylang['save'] . '</button>
-							</div>
-						</div>
 
 						<div class="field" style="'. $box_size_str .'">
 							<p class="help">&nbsp;</p>
@@ -421,6 +418,31 @@ if ($login->isUserLoggedIn() == true)
 						</div>
 
 						';
+
+
+	}
+
+
+	// If the operator has the ability to update...
+	if (can_user_update($_SESSION['menu_adm_company']))
+	{
+
+		$layout_details_html	.=	'
+
+						<div class="field" style="'. $box_size_str .'">
+							<p class="help">&nbsp;</p>
+							<div class="control">
+								<button id="updateBtn" class="button is-normal is-bold admin_class is-fullwidth">' . $mylang['save'] . '</button>
+							</div>
+						</div>
+
+						';
+
+	}
+
+
+
+
 
 
 	//	close the column-4 div

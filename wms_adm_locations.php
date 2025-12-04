@@ -508,7 +508,7 @@ if ($login->isUserLoggedIn() == true)
 	function get_all_warehouses()
 	{
 
-		$.post('ajax_wms_warehouses.php', {
+		$.post('ajax_warehouses.php', {
 
 			action_code_js	:	20
 

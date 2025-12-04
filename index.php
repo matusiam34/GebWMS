@@ -327,16 +327,10 @@ if ($login->isUserLoggedIn() == true)
 								</div>';
 					}
 
-				}
-
-				//	Basic tool to manage warehouses!
-				//	Only show this if the user is the admin + has the access level toggled!
-				if	($user_company_uid == 0)
-				{
 
 					if (is_it_enabled($_SESSION['menu_adm_warehouse']))
 					{
-						$warehouses_link		=	"location.href='wms_adm_warehouses.php'";
+						$warehouses_link		=	"location.href='geb_warehouses.php'";
 
 						echo	'<div class="field">
 									<div class="control">
@@ -345,7 +339,10 @@ if ($login->isUserLoggedIn() == true)
 								</div>';
 					}
 
+
+
 				}
+
 
 
 				//	Locations... Hmmm... The main system admin can obviously manage locations... but for now the 
@@ -363,13 +360,6 @@ if ($login->isUserLoggedIn() == true)
 								</div>
 							</div>';
 				}
-
-
-
-
-
-
-
 
 
 
